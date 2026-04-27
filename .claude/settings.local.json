@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(mkdir -p app/screen/home/components app/screen/planos/components)",
+      "Bash(cp app/planos/components/CTASection.tsx app/planos/components/ComparisonAccordion.tsx app/planos/components/FAQ.tsx app/planos/components/HeroSection.tsx app/planos/components/PartnersBanner.tsx app/planos/components/PersonalizationSection.tsx app/planos/components/PlanCards.tsx app/screen/planos/components/)",
+      "Bash(cp app/components/home/BenefitsSection.tsx app/components/home/FAQHome.tsx app/components/home/PainPointsSection.tsx app/components/home/PartnersTicker.tsx app/screen/home/components/)",
+      "Bash(mkdir -p app/components/header app/components/footer app/pages/home app/pages/planos)",
+      "Bash(mv app/components/Header.tsx app/components/header/Header.tsx)",
+      "Bash(mv app/components/Footer.tsx app/components/footer/Footer.tsx)",
+      "Bash(mv app/screen/home/components/BenefitsSection.tsx app/pages/home/)",
+      "Bash(mv app/screen/home/components/FAQHome.tsx app/pages/home/)",
+      "Bash(npm install *)",
+      "Bash(mkdir -p app/pages/home/components app/pages/planos/components)",
+      "Bash(mv app/pages/home/BenefitsSection.tsx app/pages/home/components/)",
+      "Bash(mv app/pages/home/FAQHome.tsx app/pages/home/components/)",
+      "Bash(mv app/pages/home/HeroHome.tsx app/pages/home/components/)",
+      "Bash(mv app/pages/home/PainPointsSection.tsx app/pages/home/components/)",
+      "Bash(mkdir -p \"app/\\(pages\\)/home\" \"app/\\(pages\\)/planos\")",
+      "Bash(mv app/pages/home/Home.tsx \"app/\\(pages\\)/home/Home.tsx\")",
+      "Bash(mv app/pages/home/components \"app/\\(pages\\)/home/components\")",
+      "Bash(mv app/pages/planos/Planos.tsx \"app/\\(pages\\)/planos/Planos.tsx\")",
+      "Bash(mv app/pages/planos/components \"app/\\(pages\\)/planos/components\")",
+      "Bash(npx eslint *)",
+      "Bash(ls c:/Users/thiag/Desktop/fitmass/.env*)",
+      "Bash(npx prisma *)",
+      "Bash(npx tsx -e ' *)",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(JSON.stringify\\(Object.keys\\(p.devDependencies || {}\\)\\)\\)\")",
+      "Bash(xargs grep *)"
+    ]
+  }
+}

@@ -1,0 +1,189 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'AeroMatics';
+  src: url('/fonts/Aero Matics Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AeroMatics';
+  src: url('/fonts/Aero Matics Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AeroMatics';
+  src: url('/fonts/Aero Matics Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =====================================================
+   DESIGN TOKENS — cores e animações estáticas
+   ===================================================== */
+
+@theme {
+  --color-accent:   #88BD23;
+  --color-contrast: #333333;
+  --color-surface:  #F8F8F8;
+
+  --font-title: 'AeroMatics', 'Impact', 'Arial Black', sans-serif;
+
+  --animate-marquee: marquee 30s linear infinite;
+}
+
+/* Font body referencia a CSS var injetada pelo next/font */
+@theme inline {
+  --font-body: var(--font-encode-sans), 'Encode Sans', Arial, sans-serif;
+}
+
+/* =====================================================
+   KEYFRAMES
+   ===================================================== */
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* =====================================================
+   BASE
+   ===================================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Offset para anchors com header fixo (~80px) */
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+::selection {
+  background-color: #88BD23;
+  color: #ffffff;
+}
+
+body {
+  font-family: var(--font-body);
+  color: #333333;
+  background: #ffffff;
+}
+
+.font-title {
+  font-weight: 700;
+}
+
+/* =====================================================
+   PROSE — rich text content rendered from Tiptap HTML
+   ===================================================== */
+
+.prose-content {
+  font-family: var(--font-body);
+  color: #333333;
+  line-height: 1.8;
+}
+
+.prose-content h1,
+.prose-content h2,
+.prose-content h3,
+.prose-content h4 {
+  font-family: var(--font-title);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #333333;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.prose-content h1 { font-size: 2rem; }
+.prose-content h2 { font-size: 1.5rem; }
+.prose-content h3 { font-size: 1.25rem; }
+
+.prose-content p {
+  margin-bottom: 1.25rem;
+}
+
+.prose-content a {
+  color: #88BD23;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-content strong { font-weight: 700; }
+.prose-content em     { font-style: italic; }
+.prose-content s      { text-decoration: line-through; }
+
+.prose-content ul,
+.prose-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.prose-content ul { list-style-type: disc; }
+.prose-content ol { list-style-type: decimal; }
+
+.prose-content li { margin-bottom: 0.4rem; }
+
+.prose-content blockquote {
+  border-left: 3px solid #88BD23;
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  color: #555;
+  font-style: italic;
+}
+
+.prose-content code {
+  background: #f3f4f6;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+  font-family: 'Courier New', monospace;
+}
+
+.prose-content pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.25rem;
+  border-radius: 12px;
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+}
+
+.prose-content pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.875em;
+}
+
+.prose-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 2rem 0;
+}
+
+.prose-content img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+}
+
+.prose-content a {
+  color: #88BD23;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Tiptap selected image ring */
+.ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid #88BD23;
+  outline-offset: 2px;
+}

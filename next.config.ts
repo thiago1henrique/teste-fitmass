@@ -1,0 +1,19 @@
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'fitmass.com.br',
+        pathname: '/wp-content/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
+}
+
+export default nextConfig
