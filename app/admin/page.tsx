@@ -1,42 +1,31 @@
 import { redirect } from 'next/navigation'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { CognitoIdentityProviderClient, ListUsersCommand } from '@aws-sdk/client-cognito-identity-provider'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 import { getSession } from '@/lib/session'
-import { prisma } from '@/lib/prisma'
 import { PostsByMonthChart, PostsByStatusChart } from './_components/DashboardCharts'
 
 export const metadata = { title: 'Dashboard | Admin Fitmass' }
 
-/* ─── Helpers ────────────────────────────────────────────────────────────── */
-
 function buildMonthlyData(
-  posts: { createdAt: Date; status: string }[]
+  posts: { createdAt: string; status: string | null }[]
 ): { month: string; posts: number }[] {
   const now = new Date()
-  const months: { month: string; posts: number }[] = []
-
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+  return Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1)
     const label = d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })
     const count = posts.filter((p) => {
       const pd = new Date(p.createdAt)
       return pd.getFullYear() === d.getFullYear() && pd.getMonth() === d.getMonth()
     }).length
-    months.push({ month: label, posts: count })
-  }
-  return months
+    return { month: label, posts: count }
+  })
 }
 
-/* ─── Stat card ──────────────────────────────────────────────────────────── */
-
-function StatCard({
-  label,
-  value,
-  sub,
-  accent,
-}: {
-  label: string
-  value: number | string
-  sub?: string
-  accent?: boolean
+function StatCard({ label, value, sub, accent }: {
+  label: string; value: number | string; sub?: string; accent?: boolean
 }) {
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
@@ -49,39 +38,41 @@ function StatCard({
   )
 }
 
-/* ─── Page ───────────────────────────────────────────────────────────────── */
-
 export default async function AdminDashboard() {
   const session = await getSession()
   if (!session) redirect('/admin/login')
 
-  const [allPosts, publishedPosts, draftPosts, totalUsers] = await Promise.all([
-    prisma.post.findMany({
-      orderBy: { createdAt: 'desc' },
-      select: { id: true, title: true, status: true, createdAt: true, author: { select: { name: true } } },
-    }),
-    prisma.post.count({ where: { status: 'PUBLISHED' } }),
-    prisma.post.count({ where: { status: 'DRAFT' } }),
-    prisma.user.count(),
-  ])
+  const client = generateServerClientUsingCookies<Schema>({ config: outputs, cookies })
+  const { data: allPosts } = await client.models.Post.list({
+    filter: undefined,
+  })
 
-  const totalPosts    = allPosts.length
-  const monthlyData   = buildMonthlyData(allPosts)
-  const statusData    = [
+  const cognito    = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION ?? 'us-east-1' })
+  const { Users }  = await cognito.send(new ListUsersCommand({
+    UserPoolId: process.env.AMPLIFY_USERPOOL_ID ?? '',
+  })).catch(() => ({ Users: [] }))
+
+  const publishedPosts = allPosts.filter((p) => p.status === 'PUBLISHED').length
+  const draftPosts     = allPosts.filter((p) => p.status === 'DRAFT').length
+  const totalPosts     = allPosts.length
+  const totalUsers     = Users?.length ?? 0
+  const monthlyData    = buildMonthlyData(allPosts)
+  const statusData     = [
     { name: 'Publicados', value: publishedPosts },
     { name: 'Rascunhos',  value: draftPosts },
   ]
 
-  const recentPosts   = allPosts.slice(0, 5)
+  const recentPosts = [...allPosts]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5)
 
-  /* Publishing rate this month vs last */
-  const now = new Date()
-  const thisMonth  = allPosts.filter((p) => {
+  const now       = new Date()
+  const thisMonth = allPosts.filter((p) => {
     const d = new Date(p.createdAt)
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
   }).length
-  const lastMonth  = allPosts.filter((p) => {
-    const d = new Date(p.createdAt)
+  const lastMonth = allPosts.filter((p) => {
+    const d  = new Date(p.createdAt)
     const lm = new Date(now.getFullYear(), now.getMonth() - 1, 1)
     return d.getFullYear() === lm.getFullYear() && d.getMonth() === lm.getMonth()
   }).length
@@ -90,7 +81,6 @@ export default async function AdminDashboard() {
 
   return (
     <div className="p-8 space-y-8">
-      {/* Header */}
       <div>
         <h1 className="font-title text-3xl uppercase text-contrast tracking-wide">Dashboard</h1>
         <p className="font-body text-contrast/50 text-sm mt-1">
@@ -98,7 +88,6 @@ export default async function AdminDashboard() {
         </p>
       </div>
 
-      {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Total de posts"  value={totalPosts}      accent />
         <StatCard label="Publicados"      value={publishedPosts}  sub={`${Math.round(publishedPosts / Math.max(totalPosts, 1) * 100)}% do total`} />
@@ -106,13 +95,11 @@ export default async function AdminDashboard() {
         <StatCard label="Usuários"        value={totalUsers} />
       </div>
 
-      {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
         <PostsByMonthChart data={monthlyData} />
         <PostsByStatusChart data={statusData} />
       </div>
 
-      {/* Quick stats banner */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-accent/10 border border-accent/20 rounded-2xl p-5 flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center text-accent shrink-0">
@@ -153,14 +140,10 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* Recent posts table */}
       <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-title text-base uppercase text-contrast tracking-wide">Atividade recente</h2>
-          <a
-            href="/admin/posts"
-            className="font-body text-sm text-accent hover:text-accent/80 transition-colors"
-          >
+          <a href="/admin/posts" className="font-body text-sm text-accent hover:text-accent/80 transition-colors">
             Ver todos →
           </a>
         </div>
@@ -175,7 +158,7 @@ export default async function AdminDashboard() {
                 <div className="min-w-0">
                   <p className="font-body text-sm font-medium text-contrast truncate">{post.title}</p>
                   <p className="font-body text-xs text-contrast/40 mt-0.5">
-                    {post.author.name} · {new Date(post.createdAt).toLocaleDateString('pt-BR')}
+                    {post.authorName} · {new Date(post.createdAt).toLocaleDateString('pt-BR')}
                   </p>
                 </div>
               </div>
@@ -197,7 +180,6 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* Analytics notice */}
       <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-start gap-3">
         <svg className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -206,8 +188,7 @@ export default async function AdminDashboard() {
           <p className="font-body text-sm font-semibold text-blue-700">Métricas de acesso ao site</p>
           <p className="font-body text-xs text-blue-500 mt-0.5">
             Para visualizar visitas, sessões e origens de tráfego em tempo real, conecte o{' '}
-            <strong>Vercel Analytics</strong> ou <strong>Google Analytics</strong> ao projeto.
-            Os dados acima são gerados internamente pelo CMS.
+            <strong>AWS Amplify Analytics</strong> ou <strong>Google Analytics</strong> ao projeto.
           </p>
         </div>
       </div>

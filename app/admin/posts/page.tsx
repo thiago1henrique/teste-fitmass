@@ -1,6 +1,9 @@
 import { redirect } from 'next/navigation'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 import { getSession } from '@/lib/session'
-import { prisma } from '@/lib/prisma'
 import PostsTable from './_components/PostsTable'
 
 export const metadata = { title: 'Posts | Admin Fitmass' }
@@ -9,10 +12,17 @@ export default async function PostsPage() {
   const session = await getSession()
   if (!session) redirect('/admin/login')
 
-  const posts = await prisma.post.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: { author: { select: { name: true } } },
-  })
+  const client = generateServerClientUsingCookies<Schema>({ config: outputs, cookies })
+  const { data: rawPosts } = await client.models.Post.list({ filter: undefined })
+
+  const posts = rawPosts
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .map((p) => ({
+      ...p,
+      author:      { name: p.authorName },
+      publishedAt: p.publishedAt ? new Date(p.publishedAt) : null,
+      createdAt:   new Date(p.createdAt),
+    }))
 
   return (
     <div className="p-8">

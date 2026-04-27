@@ -6,6 +6,6 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params
-  bufferView(slug)
+  await bufferView(slug)
   return NextResponse.json({ ok: true })
 }

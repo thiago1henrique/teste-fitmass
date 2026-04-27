@@ -1,7 +1,10 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 import { getSession } from '@/lib/session'
-import { prisma } from '@/lib/prisma'
 import { updatePost } from '@/app/actions/posts'
 import PostForm from '../../_components/PostForm'
 
@@ -16,8 +19,17 @@ export default async function EditPostPage({
   if (!session) redirect('/admin/login')
 
   const { id } = await params
-  const post = await prisma.post.findUnique({ where: { id } })
-  if (!post) notFound()
+  const client = generateServerClientUsingCookies<Schema>({ config: outputs, cookies })
+  const { data: raw } = await client.models.Post.get({ id })
+  if (!raw) notFound()
+
+  const post = {
+    ...raw,
+    author:      { name: raw.authorName },
+    publishedAt: raw.publishedAt ? new Date(raw.publishedAt) : null,
+    createdAt:   new Date(raw.createdAt),
+    updatedAt:   new Date(raw.updatedAt),
+  }
 
   const action = updatePost.bind(null, id)
 

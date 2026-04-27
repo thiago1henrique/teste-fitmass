@@ -2,9 +2,16 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 import { getSession } from '@/lib/session'
 import { generateSlug } from '@/lib/slug'
+
+function getClient() {
+  return generateServerClientUsingCookies<Schema>({ config: outputs, cookies })
+}
 
 async function requireSession() {
   const session = await getSession()
@@ -13,35 +20,37 @@ async function requireSession() {
 }
 
 export async function createPost(formData: FormData) {
-  const session = await requireSession()
-
-  const title = formData.get('title') as string
-  const summary = formData.get('summary') as string
-  const content = formData.get('content') as string
-  const coverUrl = (formData.get('coverUrl') as string) || null
-  const status = (formData.get('status') as 'DRAFT' | 'PUBLISHED') ?? 'DRAFT'
+  const session    = await requireSession()
+  const title      = formData.get('title') as string
+  const summary    = formData.get('summary') as string
+  const content    = formData.get('content') as string
+  const coverUrl   = (formData.get('coverUrl') as string) || undefined
+  const status     = (formData.get('status') as 'DRAFT' | 'PUBLISHED') ?? 'DRAFT'
   const categories = formData.getAll('categories') as string[]
 
   if (!title || !summary || !content) {
     return { error: 'Título, resumo e conteúdo são obrigatórios.' }
   }
 
-  let slug = generateSlug(title)
-  const existing = await prisma.post.findUnique({ where: { slug } })
-  if (existing) slug = `${slug}-${Date.now()}`
+  const client = getClient()
 
-  await prisma.post.create({
-    data: {
-      title,
-      slug,
-      summary,
-      content,
-      coverUrl,
-      status,
-      categories,
-      publishedAt: status === 'PUBLISHED' ? new Date() : null,
-      authorId: session.userId,
-    },
+  let slug = generateSlug(title)
+  const { data: existing } = await client.models.Post.list({
+    filter: { slug: { eq: slug } },
+  })
+  if (existing.length > 0) slug = `${slug}-${Date.now()}`
+
+  await client.models.Post.create({
+    title,
+    slug,
+    summary,
+    content,
+    coverUrl,
+    status,
+    categories,
+    publishedAt:  status === 'PUBLISHED' ? new Date().toISOString() : undefined,
+    authorId:     session.userId,
+    authorName:   session.name,
   })
 
   revalidatePath('/blog')
@@ -52,34 +61,36 @@ export async function createPost(formData: FormData) {
 export async function updatePost(id: string, formData: FormData) {
   await requireSession()
 
-  const title = formData.get('title') as string
-  const summary = formData.get('summary') as string
-  const content = formData.get('content') as string
-  const coverUrl = (formData.get('coverUrl') as string) || null
-  const status = (formData.get('status') as 'DRAFT' | 'PUBLISHED') ?? 'DRAFT'
+  const title      = formData.get('title') as string
+  const summary    = formData.get('summary') as string
+  const content    = formData.get('content') as string
+  const coverUrl   = (formData.get('coverUrl') as string) || undefined
+  const status     = (formData.get('status') as 'DRAFT' | 'PUBLISHED') ?? 'DRAFT'
   const categories = formData.getAll('categories') as string[]
 
   if (!title || !summary || !content) {
     return { error: 'Título, resumo e conteúdo são obrigatórios.' }
   }
 
-  const post = await prisma.post.findUnique({ where: { id } })
+  const client = getClient()
+  const { data: post } = await client.models.Post.get({ id })
   if (!post) return { error: 'Post não encontrado.' }
 
-  const wasPublished = post.status === 'PUBLISHED'
+  const wasPublished   = post.status === 'PUBLISHED'
   const isNowPublished = status === 'PUBLISHED'
 
-  await prisma.post.update({
-    where: { id },
-    data: {
-      title,
-      summary,
-      content,
-      coverUrl,
-      status,
-      categories,
-      publishedAt: isNowPublished && !wasPublished ? new Date() : post.publishedAt,
-    },
+  await client.models.Post.update({
+    id,
+    title,
+    summary,
+    content,
+    coverUrl,
+    status,
+    categories,
+    publishedAt:
+      isNowPublished && !wasPublished
+        ? new Date().toISOString()
+        : post.publishedAt ?? undefined,
   })
 
   revalidatePath('/blog')
@@ -91,10 +102,11 @@ export async function updatePost(id: string, formData: FormData) {
 export async function deletePost(id: string) {
   await requireSession()
 
-  const post = await prisma.post.findUnique({ where: { id } })
+  const client = getClient()
+  const { data: post } = await client.models.Post.get({ id })
   if (!post) return { error: 'Post não encontrado.' }
 
-  await prisma.post.delete({ where: { id } })
+  await client.models.Post.delete({ id })
 
   revalidatePath('/blog')
   revalidatePath('/admin/posts')

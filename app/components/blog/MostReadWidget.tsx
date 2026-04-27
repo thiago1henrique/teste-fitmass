@@ -1,13 +1,23 @@
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 
 export default async function MostReadWidget() {
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED' },
-    orderBy: { views: 'desc' },
-    take: 5,
-    select: { title: true, slug: true, coverUrl: true, publishedAt: true, createdAt: true },
+  const client = generateServerClientUsingCookies<Schema>({
+    config: outputs,
+    cookies,
+    authMode: 'apiKey',
   })
+
+  const { data: allPosts } = await client.models.Post.list({
+    filter: { status: { eq: 'PUBLISHED' } },
+  })
+
+  const posts = allPosts
+    .sort((a, b) => (b.views ?? 0) - (a.views ?? 0))
+    .slice(0, 5)
 
   if (posts.length === 0) return null
 

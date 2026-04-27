@@ -1,13 +1,28 @@
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 
 export default async function RelatedPostsSection({ excludeSlug }: { excludeSlug: string }) {
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED', NOT: { slug: excludeSlug } },
-    orderBy: { publishedAt: 'desc' },
-    take: 3,
-    include: { author: { select: { name: true } } },
+  const client = generateServerClientUsingCookies<Schema>({
+    config: outputs,
+    cookies,
+    authMode: 'apiKey',
   })
+
+  const { data: allPosts } = await client.models.Post.list({
+    filter: { status: { eq: 'PUBLISHED' } },
+  })
+
+  const posts = allPosts
+    .filter((p) => p.slug !== excludeSlug)
+    .sort((a, b) => {
+      const da = a.publishedAt ?? a.createdAt
+      const db = b.publishedAt ?? b.createdAt
+      return new Date(db).getTime() - new Date(da).getTime()
+    })
+    .slice(0, 3)
 
   if (posts.length === 0) return null
 
@@ -55,15 +70,11 @@ export default async function RelatedPostsSection({ excludeSlug }: { excludeSlug
                 <div className="flex flex-col flex-1 p-6">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="font-body text-xs text-accent font-semibold uppercase tracking-widest">
-                      {post.author.name}
+                      {post.authorName}
                     </span>
                     <span className="w-1 h-1 rounded-full bg-contrast/20" aria-hidden="true" />
                     <time className="font-body text-xs text-contrast/40">
-                      {new Date(date).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </time>
                   </div>
 

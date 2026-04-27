@@ -1,40 +1,25 @@
-import { prisma } from './prisma'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 
-const buffer = new Map<string, number>()
-let flushTimer: ReturnType<typeof setTimeout> | null = null
-
-const DEBOUNCE_MS = 5_000
-const MAX_SLUGS = 50
-
-export function bufferView(slug: string): void {
-  buffer.set(slug, (buffer.get(slug) ?? 0) + 1)
-
-  if (buffer.size >= MAX_SLUGS) {
-    if (flushTimer) clearTimeout(flushTimer)
-    flushTimer = setTimeout(flush, 0)
-  } else {
-    if (flushTimer) clearTimeout(flushTimer)
-    flushTimer = setTimeout(flush, DEBOUNCE_MS)
-  }
-}
-
-async function flush(): Promise<void> {
-  if (buffer.size === 0) return
-  flushTimer = null
-
-  const snapshot = new Map(buffer)
-  buffer.clear()
-
+export async function bufferView(slug: string): Promise<void> {
   try {
-    await Promise.all(
-      Array.from(snapshot.entries()).map(([slug, count]) =>
-        prisma.post.updateMany({
-          where: { slug, status: 'PUBLISHED' },
-          data: { views: { increment: count } },
-        }),
-      ),
-    )
-  } catch (err) {
-    console.error('[views-buffer] flush failed:', err)
+    const client = generateServerClientUsingCookies<Schema>({
+      config: outputs,
+      cookies,
+      authMode: 'apiKey',
+    })
+    const { data: posts } = await client.models.Post.list({
+      filter: { slug: { eq: slug }, status: { eq: 'PUBLISHED' } },
+    })
+    if (posts[0]) {
+      await client.models.Post.update({
+        id: posts[0].id,
+        views: (posts[0].views ?? 0) + 1,
+      })
+    }
+  } catch {
+    // non-critical — fails silently in local dev without real AWS credentials
   }
 }

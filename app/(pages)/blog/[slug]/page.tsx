@@ -1,15 +1,34 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 import PostBody from './PostBody'
 import RelatedPostsSection from '@/app/components/blog/RelatedPostsSection'
 
 export const revalidate = 3600
 
+async function getPost(slug: string) {
+  const client = generateServerClientUsingCookies<Schema>({
+    config: outputs,
+    cookies,
+    authMode: 'apiKey',
+  })
+  const { data } = await client.models.Post.list({
+    filter: { slug: { eq: slug }, status: { eq: 'PUBLISHED' } },
+  })
+  return data[0] ?? null
+}
+
 export async function generateStaticParams() {
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED' },
-    select: { slug: true },
+  const client = generateServerClientUsingCookies<Schema>({
+    config: outputs,
+    cookies,
+    authMode: 'apiKey',
+  })
+  const { data: posts } = await client.models.Post.list({
+    filter: { status: { eq: 'PUBLISHED' } },
   })
   return posts.map(({ slug }) => ({ slug }))
 }
@@ -20,9 +39,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const post = await prisma.post.findUnique({
-    where: { slug, status: 'PUBLISHED' },
-  })
+  const post = await getPost(slug)
   if (!post) return {}
 
   return {
@@ -43,12 +60,16 @@ export default async function PostPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const post = await prisma.post.findUnique({
-    where: { slug, status: 'PUBLISHED' },
-    include: { author: { select: { name: true } } },
-  })
+  const raw = await getPost(slug)
+  if (!raw) notFound()
 
-  if (!post) notFound()
+  const post = {
+    ...raw,
+    author:      { name: raw.authorName },
+    publishedAt: raw.publishedAt ? new Date(raw.publishedAt) : null,
+    createdAt:   new Date(raw.createdAt),
+    updatedAt:   new Date(raw.updatedAt),
+  }
 
   return (
     <>

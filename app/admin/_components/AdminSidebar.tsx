@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { logoutAction } from '@/app/actions/auth'
+import { usePathname, useRouter } from 'next/navigation'
+import { signOut } from 'aws-amplify/auth'
 
 const navItems = [
   {
@@ -40,7 +40,14 @@ const navItems = [
 
 export default function AdminSidebar({ userRole, userName }: { userRole: string; userName: string }) {
   const pathname = usePathname()
+  const router   = useRouter()
   const isAdmin  = userRole === 'ADMIN'
+
+  async function handleLogout() {
+    await signOut()
+    router.push('/admin/login')
+    router.refresh()
+  }
 
   return (
     <aside className="w-64 shrink-0 bg-contrast flex flex-col sticky top-0 h-screen overflow-y-auto">
@@ -96,17 +103,15 @@ export default function AdminSidebar({ userRole, userName }: { userRole: string;
 
       {/* Logout */}
       <div className="px-4 pb-6">
-        <form action={logoutAction}>
-          <button
-            type="submit"
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-body text-sm text-white/40 hover:text-white hover:bg-white/5 transition-all duration-200"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            Sair
-          </button>
-        </form>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-body text-sm text-white/40 hover:text-white hover:bg-white/5 transition-all duration-200"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Sair
+        </button>
       </div>
     </aside>
   )

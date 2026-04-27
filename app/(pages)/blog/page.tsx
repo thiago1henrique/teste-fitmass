@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
-import { prisma } from '@/lib/prisma'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 import Blog from './Blog'
 
 export const revalidate = 60
@@ -20,25 +23,38 @@ export default async function BlogPage({
   const { page: pageParam, category } = await searchParams
   const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1)
 
-  const where = {
-    status: 'PUBLISHED' as const,
-    ...(category ? { categories: { has: category } } : {}),
-  }
+  const client = generateServerClientUsingCookies<Schema>({
+    config: outputs,
+    cookies,
+    authMode: 'apiKey',
+  })
 
-  const [posts, total] = await Promise.all([
-    prisma.post.findMany({
-      where,
-      orderBy: [{ publishedAt: 'desc' }, { createdAt: 'desc' }],
-      include: { author: { select: { name: true } } },
-      take: PAGE_SIZE,
-      skip: (page - 1) * PAGE_SIZE,
-    }),
-    prisma.post.count({ where }),
-  ])
+  const { data: allPosts } = await client.models.Post.list({
+    filter: { status: { eq: 'PUBLISHED' } },
+  })
+
+  let posts = allPosts
+    .filter((p) => !category || (p.categories ?? []).includes(category))
+    .sort((a, b) => {
+      const da = a.publishedAt ?? a.createdAt
+      const db = b.publishedAt ?? b.createdAt
+      return new Date(db).getTime() - new Date(da).getTime()
+    })
+
+  const total = posts.length
+  posts = posts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  const adapted = posts.map((p) => ({
+    ...p,
+    author: { name: p.authorName },
+    publishedAt: p.publishedAt ? new Date(p.publishedAt) : null,
+    createdAt:   new Date(p.createdAt),
+    updatedAt:   new Date(p.updatedAt),
+  }))
 
   return (
     <Blog
-      posts={posts}
+      posts={adapted}
       total={total}
       page={page}
       pageSize={PAGE_SIZE}

@@ -1,30 +1,42 @@
 'use client'
 
-import { useActionState } from 'react'
-import { useFormStatus } from 'react-dom'
-import { loginAction, type LoginState } from '@/app/actions/auth'
-
-function SubmitButton() {
-  const { pending } = useFormStatus()
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="w-full bg-accent text-white font-body font-bold uppercase tracking-widest text-sm px-6 py-3.5 rounded-xl hover:bg-accent/90 transition-colors disabled:opacity-60"
-    >
-      {pending ? 'Entrando…' : 'Entrar'}
-    </button>
-  )
-}
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'aws-amplify/auth'
 
 export default function LoginForm() {
-  const [state, action] = useActionState<LoginState, FormData>(loginAction, {})
+  const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const email    = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    if (!email || !password) {
+      setError('Preencha todos os campos.')
+      return
+    }
+
+    setError(null)
+    startTransition(async () => {
+      try {
+        await signIn({ username: email, password })
+        router.push('/admin')
+        router.refresh()
+      } catch {
+        setError('E-mail ou senha inválidos.')
+      }
+    })
+  }
 
   return (
-    <form action={action} className="space-y-4">
-      {state.error && (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
         <p className="bg-red-50 border border-red-200 text-red-700 font-body text-sm px-4 py-3 rounded-xl">
-          {state.error}
+          {error}
         </p>
       )}
 
@@ -56,7 +68,13 @@ export default function LoginForm() {
         />
       </div>
 
-      <SubmitButton />
+      <button
+        type="submit"
+        disabled={isPending}
+        className="w-full bg-accent text-white font-body font-bold uppercase tracking-widest text-sm px-6 py-3.5 rounded-xl hover:bg-accent/90 transition-colors disabled:opacity-60"
+      >
+        {isPending ? 'Entrando…' : 'Entrar'}
+      </button>
     </form>
   )
 }

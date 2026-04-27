@@ -3,6 +3,7 @@ import { Encode_Sans } from 'next/font/google'
 import { headers } from 'next/headers'
 import Footer from './components/footer/Footer'
 import CookieConsent from './components/CookieConsent'
+import ConfigureAmplify from './components/ConfigureAmplify'
 import './globals.css'
 
 const encodeSans = Encode_Sans({
@@ -27,6 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR" className={encodeSans.variable} suppressHydrationWarning>
       <body suppressHydrationWarning className="flex min-h-screen flex-col font-body antialiased">
+        <ConfigureAmplify />
         <div className="flex-1">
           {children}
         </div>

@@ -1,0 +1,32 @@
+{
+  "version": "1",
+  "auth": {
+    "aws_region": "REPLACE_WITH_REGION",
+    "user_pool_id": "REPLACE_WITH_USER_POOL_ID",
+    "user_pool_client_id": "REPLACE_WITH_CLIENT_ID",
+    "identity_pool_id": "REPLACE_WITH_IDENTITY_POOL_ID",
+    "unauthenticated_identities_enabled": true,
+    "password_policy": {
+      "min_length": 8,
+      "require_numbers": true,
+      "require_lowercase": true,
+      "require_uppercase": true,
+      "require_symbols": true
+    }
+  },
+  "data": {
+    "aws_region": "REPLACE_WITH_REGION",
+    "url": "REPLACE_WITH_APPSYNC_URL",
+    "api_key": "REPLACE_WITH_API_KEY",
+    "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
+    "authorization_types": [
+      "AMAZON_COGNITO_USER_POOLS",
+      "API_KEY"
+    ],
+    "model_introspection": {}
+  },
+  "storage": {
+    "aws_region": "REPLACE_WITH_REGION",
+    "bucket_name": "REPLACE_WITH_BUCKET_NAME"
+  }
+}

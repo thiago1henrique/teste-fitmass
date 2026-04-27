@@ -1,31 +1,34 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { jwtVerify } from 'jose'
-
-const secret = new TextEncoder().encode(
-  process.env.AUTH_SECRET ?? 'dev-secret-change-in-production'
-)
+import { fetchAuthSession } from 'aws-amplify/auth/server'
+import { runWithAmplifyServerContext } from '@/lib/amplify-server'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Forward x-pathname header so root layout can conditionally render Footer
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set('x-pathname', pathname)
 
-  // Protect /admin routes (but not /admin/login)
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-    const token = request.cookies.get('fitmass_session')?.value
-    if (!token) {
+    const response = NextResponse.next({ request: { headers: requestHeaders } })
+
+    const authenticated = await runWithAmplifyServerContext({
+      nextServerContext: { request, response },
+      operation: async (contextSpec) => {
+        try {
+          const session = await fetchAuthSession(contextSpec)
+          return !!session.tokens
+        } catch {
+          return false
+        }
+      },
+    })
+
+    if (!authenticated) {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
-    try {
-      await jwtVerify(token, secret)
-    } catch {
-      const response = NextResponse.redirect(new URL('/admin/login', request.url))
-      response.cookies.delete('fitmass_session')
-      return response
-    }
+
+    return response
   }
 
   return NextResponse.next({ request: { headers: requestHeaders } })

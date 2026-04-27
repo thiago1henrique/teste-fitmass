@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plano de Migração — Fitmass × AWS Amplify</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:        #88BD23;
+      --dark:         #333333;
+      --surface:      #F8F8F8;
+      --white:        #ffffff;
+      --border:       #e2e8f0;
+      --muted:        #64748b;
+      --aws:          #FF9900;
+      --aws-dark:     #232F3E;
+      --done-bg:      #f0fdf4;
+      --done-border:  #86efac;
+      --done-text:    #166534;
+      --warn-bg:      #fffbeb;
+      --warn-border:  #fbbf24;
+      --warn-text:    #92400e;
+      --code-bg:      #1e293b;
+      --red-bg:       #fff1f2;
+      --red-border:   #fecdd3;
+      --red-text:     #9f1239;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--surface);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--aws-dark);
+      color: var(--white);
+      padding: 52px 24px 44px;
+      text-align: center;
+    }
+    .header-logos {
+      display: flex; align-items: center; justify-content: center;
+      gap: 14px; margin-bottom: 20px;
+    }
+    .header-logos .logo-box {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 10px; padding: 10px 18px;
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .logo-box .ico { font-size: 20px; }
+    .logo-box.aws-box { color: var(--aws); border-color: var(--aws); }
+    .header-sep { color: rgba(255,255,255,.3); font-size: 20px; }
+    header h1 { font-size: clamp(22px, 4vw, 38px); font-weight: 700; margin-bottom: 10px; }
+    header p  { color: #94a3b8; font-size: 14px; max-width: 580px; margin: 0 auto; }
+
+    /* ── PROGRESS ── */
+    .progress-wrap { background: var(--white); border-bottom: 1px solid var(--border); padding: 18px 24px; }
+    .progress-inner { max-width: 960px; margin: 0 auto; }
+    .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; }
+    .progress-header strong { font-weight: 700; }
+    .progress-header span { color: var(--muted); }
+    .progress-track { height: 7px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 15%; background: var(--green); border-radius: 99px; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* ── ARCHITECTURE ── */
+    .arch {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 32px 24px; margin: 40px 0 16px; text-align: center;
+    }
+    .arch-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 24px;
+    }
+    .arch-rows { display: flex; flex-direction: column; gap: 20px; }
+    .arch-row  { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
+    .arch-row-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+      color: var(--muted); width: 80px; text-align: right; padding-right: 14px; flex-shrink: 0;
+    }
+    .arch-box {
+      background: var(--surface); border: 2px solid var(--border);
+      border-radius: 10px; padding: 12px 18px; text-align: center; min-width: 110px;
+    }
+    .arch-box.aws-b  { border-color: var(--aws); }
+    .arch-box.done-b { border-color: var(--done-text); background: var(--done-bg); }
+    .arch-box .ico   { font-size: 24px; display: block; margin-bottom: 4px; }
+    .arch-box .lbl   { font-size: 12px; font-weight: 700; }
+    .arch-box .sub   { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .arch-arrow { font-size: 18px; color: var(--muted); padding: 0 6px; }
+    .arch-boxes-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+    /* ── IMPACT TABLE ── */
+    .impact {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; margin: 16px 0 40px;
+    }
+    .impact table { width: 100%; border-collapse: collapse; }
+    .impact thead tr { background: var(--aws-dark); color: var(--white); }
+    .impact th { padding: 11px 16px; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; text-align: left; }
+    .impact td { padding: 12px 16px; font-size: 13px; border-top: 1px solid var(--border); vertical-align: middle; }
+    .impact tr:hover td { background: var(--surface); }
+    .impact tr.done-row td { background: var(--done-bg); }
+    .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
+    .tag-remove  { background: #fee2e2; color: #991b1b; }
+    .tag-new     { background: #dbeafe; color: #1e40af; }
+    .tag-change  { background: #fef9c3; color: #854d0e; }
+    .tag-done    { background: var(--done-bg); color: var(--done-text); border: 1px solid var(--done-border); }
+    .tag-keep    { background: #f3f4f6; color: #374151; }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--muted); margin: 48px 0 20px; display: flex; align-items: center; gap: 10px;
+    }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── PHASE ── */
+    .phase {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; margin-bottom: 20px; overflow: hidden;
+    }
+    .phase.done  { border-color: var(--done-border); }
+    .phase.warn  { border-color: var(--warn-border); }
+
+    .phase-header {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 24px; border-bottom: 1px solid var(--border);
+    }
+    .phase.done .phase-header { background: var(--done-bg); border-bottom-color: var(--done-border); }
+    .phase.warn .phase-header { background: var(--warn-bg); border-bottom-color: var(--warn-border); }
+
+    .num {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px; flex-shrink: 0; color: var(--white);
+    }
+    .num.n-aws  { background: var(--aws); color: var(--dark); }
+    .num.n-done { background: var(--done-text); font-size: 18px; }
+    .num.n-db   { background: #7c3aed; }
+    .num.n-auth { background: #0891b2; }
+    .num.n-s3   { background: var(--aws); color: var(--dark); }
+    .num.n-host { background: var(--aws-dark); }
+    .num.n-val  { background: #059669; }
+    .num.n-dns  { background: var(--dark); }
+
+    .phase-info h3 { font-size: 15px; font-weight: 700; }
+    .phase-info p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .phase-badge {
+      margin-left: auto; font-size: 11px; font-weight: 600;
+      padding: 4px 11px; border-radius: 99px; white-space: nowrap; flex-shrink: 0;
+    }
+    .badge-resp   { background: var(--surface); border: 1px solid var(--border); color: var(--dark); }
+    .badge-done   { background: #dcfce7; border: 1px solid var(--done-border); color: var(--done-text); }
+    .badge-warn   { background: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--warn-text); }
+
+    .phase-body { padding: 24px; }
+    .phase.done .phase-body { background: var(--done-bg); }
+
+    /* ── STEPS ── */
+    .steps { list-style: none; display: flex; flex-direction: column; gap: 10px; margin: 8px 0; }
+    .steps li { display: flex; gap: 12px; align-items: flex-start; font-size: 13.5px; }
+    .dot {
+      width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+    .dot-n   { background: var(--surface); border: 2px solid var(--green); color: var(--green); }
+    .dot-ok  { background: var(--done-text); color: var(--white); font-size: 13px; }
+
+    /* ── SUB-TITLE ── */
+    .sub-title {
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .05em; color: var(--muted); margin: 20px 0 10px;
+    }
+
+    /* ── CODE ── */
+    .code {
+      background: var(--code-bg); color: #e2e8f0; border-radius: 8px;
+      padding: 16px 18px; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 12px; line-height: 1.75; overflow-x: auto; margin: 10px 0;
+    }
+    .c-dim    { color: #475569; }
+    .c-blue   { color: #7dd3fc; }
+    .c-green  { color: #86efac; }
+    .c-pink   { color: #f472b6; }
+    .c-yellow { color: #fde68a; }
+    .c-orange { color: #fdba74; }
+
+    /* ── ALERT ── */
+    .alert {
+      display: flex; gap: 10px; padding: 13px 15px; border-radius: 8px;
+      font-size: 13px; margin: 12px 0; align-items: flex-start;
+    }
+    .alert.info { background: #eff6ff; border: 1px solid #93c5fd; color: #1e3a5f; }
+    .alert.warn { background: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--warn-text); }
+    .alert.done { background: var(--done-bg); border: 1px solid var(--done-border); color: var(--done-text); }
+    .alert .ai  { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── ENV TABLE ── */
+    .env-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12.5px; }
+    .env-table th {
+      background: var(--surface); padding: 8px 12px; text-align: left;
+      font-size: 10px; letter-spacing: .05em; text-transform: uppercase;
+      color: var(--muted); border: 1px solid var(--border);
+    }
+    .env-table td { padding: 9px 12px; border: 1px solid var(--border); vertical-align: top; }
+    .env-table tr:nth-child(even) td { background: var(--surface); }
+    .env-key { font-family: 'SF Mono','Fira Code','Consolas',monospace; font-size: 11px; font-weight: 700; }
+    .env-val { font-family: 'SF Mono','Fira Code','Consolas',monospace; font-size: 11px; color: var(--muted); word-break: break-all; }
+    .env-b { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #dbeafe; color: #1e40af; }
+
+    /* ── CHECKLIST ── */
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .checklist li {
+      display: flex; align-items: center; gap: 12px; font-size: 13px;
+      padding: 10px 14px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border);
+    }
+    .check-box { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 5px; flex-shrink: 0; background: var(--white); }
+
+    /* ── RESP GRID ── */
+    .resp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+    .resp-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .resp-card.done-card { border-color: var(--done-border); background: var(--done-bg); }
+    .role { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; color: var(--aws); }
+    .role.done-role { color: var(--done-text); }
+    .resp-card ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .resp-card li { font-size: 12px; padding-left: 14px; position: relative; }
+    .resp-card li::before { content: '→'; position: absolute; left: 0; color: var(--muted); font-size: 10px; top: 2px; }
+    .resp-card li.ok::before { content: '✔'; color: var(--done-text); }
+    .resp-card li.ok { color: var(--done-text); }
+
+    /* ── ROLLBACK ── */
+    .rollback { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 14px; padding: 24px; margin-top: 40px; }
+    .rollback h3 { font-size: 14px; font-weight: 700; color: var(--red-text); margin-bottom: 12px; }
+    .rollback ol { padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+
+    /* ── COMPLEXITY BANNER ── */
+    .complexity {
+      background: var(--aws-dark); color: var(--white);
+      border-radius: 12px; padding: 20px 24px; margin: 16px 0 32px;
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .complexity .ci { font-size: 28px; flex-shrink: 0; }
+    .complexity h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--aws); }
+    .complexity p  { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+    .complexity strong { color: var(--white); }
+
+    footer {
+      background: var(--aws-dark); color: #475569;
+      text-align: center; padding: 24px; font-size: 12px; margin-top: 60px;
+    }
+    footer span { color: var(--aws); font-weight: 700; }
+
+    @media (max-width: 640px) {
+      .arch-row { flex-direction: column; }
+      .arch-row-label { text-align: center; width: auto; padding: 0; }
+      .phase-badge { display: none; }
+      .header-logos { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HEADER ═══════════════════════ -->
+<header>
+  <div class="header-logos">
+    <div class="logo-box">
+      <span class="ico">⚛️</span> Next.js 16
+    </div>
+    <div class="header-sep">→</div>
+    <div class="logo-box aws-box">
+      <span class="ico">☁️</span> AWS Amplify (Gen 2)
+    </div>
+  </div>
+  <h1>Plano de Migração — Fitmass</h1>
+  <p>Migração completa do stack local para AWS Amplify: hospedagem, banco de dados DynamoDB, autenticação Cognito e storage S3.</p>
+</header>
+
+<!-- ═══════════════════════ PROGRESS ═══════════════════════ -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-header">
+      <strong>Progresso</strong>
+      <span>Fase 0 concluída (preparação do código) · 5 fases pendentes</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill"></div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ═══════════════════════ ARQUITETURA ═══════════════════════ -->
+  <div class="arch">
+    <div class="arch-label">Arquitetura alvo — 100% AWS Amplify</div>
+    <div class="arch-rows">
+      <div class="arch-row">
+        <div class="arch-row-label">Hosting</div>
+        <div class="arch-arrow"></div>
+        <div class="arch-box done-b">
+          <span class="ico">🐙</span><div class="lbl">GitHub</div><div class="sub">push → deploy</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box aws-b">
+          <span class="ico">☁️</span><div class="lbl">Amplify Hosting</div><div class="sub">Next.js SSR</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-row-label">Banco</div>
+        <div class="arch-arrow"></div>
+        <div class="arch-box aws-b">
+          <span class="ico">🗃️</span><div class="lbl">Amplify Data</div><div class="sub">DynamoDB</div>
+        </div>
+        <div class="arch-arrow">+</div>
+        <div class="arch-box aws-b">
+          <span class="ico">🔗</span><div class="lbl">AppSync</div><div class="sub">GraphQL API</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-row-label">Auth</div>
+        <div class="arch-arrow"></div>
+        <div class="arch-box aws-b">
+          <span class="ico">🔐</span><div class="lbl">Amplify Auth</div><div class="sub">Amazon Cognito</div>
+        </div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-row-label">Storage</div>
+        <div class="arch-arrow"></div>
+        <div class="arch-box aws-b">
+          <span class="ico">🪣</span><div class="lbl">Amplify Storage</div><div class="sub">Amazon S3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ AVISO DE COMPLEXIDADE ═══════════════════════ -->
+  <div class="complexity">
+    <div class="ci">⚠️</div>
+    <div>
+      <h4>Importante — esta é uma migração de plataforma</h4>
+      <p>
+        O Amplify não usa PostgreSQL. O banco nativo é <strong>DynamoDB (NoSQL)</strong>, gerenciado pelo <strong>Amplify Data</strong> com GraphQL via AppSync.
+        A autenticação sai do JWT customizado e passa para o <strong>Amazon Cognito</strong>.
+        Isso exige reescrita da camada de dados e auth — não é só trocar uma variável de ambiente.
+        <strong>O time deve avaliar a disponibilidade antes de iniciar as fases 2 e 3.</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ IMPACTO ═══════════════════════ -->
+  <div class="impact">
+    <table>
+      <thead>
+        <tr>
+          <th>Arquivo / Componente</th>
+          <th>Situação atual</th>
+          <th>Após migração</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="done-row">
+          <td><strong>amplify.yml</strong></td>
+          <td>Não existia</td>
+          <td>Build config para Amplify Hosting</td>
+          <td><span class="tag tag-done">✔️ Criado</span></td>
+        </tr>
+        <tr class="done-row">
+          <td><strong>@aws-sdk/client-s3</strong></td>
+          <td>Não instalado</td>
+          <td>Instalado (base para storage)</td>
+          <td><span class="tag tag-done">✔️ Instalado</span></td>
+        </tr>
+        <tr>
+          <td><strong>prisma/ + lib/prisma.ts</strong></td>
+          <td>PostgreSQL via Prisma</td>
+          <td>Removido — substituído por Amplify Data</td>
+          <td><span class="tag tag-remove">Remover</span></td>
+        </tr>
+        <tr>
+          <td><strong>lib/session.ts + middleware.ts</strong></td>
+          <td>JWT customizado (jose)</td>
+          <td>Cognito tokens via Amplify Auth</td>
+          <td><span class="tag tag-change">Reescrever</span></td>
+        </tr>
+        <tr>
+          <td><strong>app/actions/auth.ts</strong></td>
+          <td>bcryptjs + Prisma</td>
+          <td>Amplify Auth (Cognito signIn/signOut)</td>
+          <td><span class="tag tag-change">Reescrever</span></td>
+        </tr>
+        <tr>
+          <td><strong>app/actions/posts.ts</strong></td>
+          <td>prisma.post.create/update/delete</td>
+          <td>client.models.Post.create/update/delete</td>
+          <td><span class="tag tag-change">Reescrever</span></td>
+        </tr>
+        <tr>
+          <td><strong>app/actions/users.ts</strong></td>
+          <td>prisma.user.create/delete</td>
+          <td>Cognito User Pool admin actions</td>
+          <td><span class="tag tag-change">Reescrever</span></td>
+        </tr>
+        <tr>
+          <td><strong>app/api/upload/route.ts</strong></td>
+          <td>Filesystem / S3 parcial</td>
+          <td>Amplify Storage (S3 gerenciado)</td>
+          <td><span class="tag tag-change">Atualizar</span></td>
+        </tr>
+        <tr>
+          <td><strong>amplify/ (novo diretório)</strong></td>
+          <td>Não existe</td>
+          <td>Backend config: auth, data, storage</td>
+          <td><span class="tag tag-new">Criar</span></td>
+        </tr>
+        <tr>
+          <td><strong>next.config.ts</strong></td>
+          <td>remotePatterns parcial</td>
+          <td>Adicionar hostname do S3/Amplify</td>
+          <td><span class="tag tag-keep">Pequeno ajuste</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════ FASES ═══════════════════════ -->
+  <div class="section-title">Fases da migração</div>
+
+  <!-- ── FASE 0 — CONCLUÍDA ── -->
+  <div class="phase done">
+    <div class="phase-header">
+      <div class="num n-done">✔</div>
+      <div class="phase-info">
+        <h3>Fase 0 — Preparação inicial do código</h3>
+        <p>Arquivos de base criados. Colega de implantação não precisa tocar nestes.</p>
+      </div>
+      <div class="phase-badge badge-done">✔️ Concluído</div>
+    </div>
+    <div class="phase-body">
+      <div class="alert done">
+        <span class="ai">✔️</span>
+        <span>Itens abaixo já estão no repositório. O time pode seguir direto para a Fase 1.</span>
+      </div>
+      <ul class="steps">
+        <li><span class="dot dot-ok">✔</span> <strong>amplify.yml</strong> criado na raiz — Amplify Hosting usa automaticamente como build config</li>
+        <li><span class="dot dot-ok">✔</span> <strong>@aws-sdk/client-s3</strong> instalado no projeto</li>
+        <li><span class="dot dot-ok">✔</span> <strong>app/api/upload/route.ts</strong> — modo dual: usa S3 se env vars estiverem definidas, filesystem local como fallback</li>
+        <li><span class="dot dot-ok">✔</span> <strong>.env.example</strong> atualizado com todas as variáveis de produção comentadas</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── FASE 1 — SETUP AMPLIFY GEN 2 ── -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="num n-aws">1</div>
+      <div class="phase-info">
+        <h3>Fase 1 — Instalar e inicializar Amplify Gen 2</h3>
+        <p>Criar a estrutura <code>amplify/</code> com os recursos backend definidos em TypeScript</p>
+      </div>
+      <div class="phase-badge badge-resp">Dev responsável</div>
+    </div>
+    <div class="phase-body">
+
+      <div class="sub-title">1.1 — Instalar dependências</div>
+      <div class="code">npm install aws-amplify @aws-amplify/adapter-nextjs
+npm install --save-dev @aws-amplify/backend @aws-amplify/backend-cli</div>
+
+      <div class="sub-title">1.2 — Criar estrutura de diretórios</div>
+      <div class="code"><span class="c-dim"># Estrutura que será criada manualmente</span>
+amplify/
+  backend.ts          <span class="c-dim"># combina auth + data + storage</span>
+  auth/
+    resource.ts       <span class="c-dim"># Cognito config</span>
+  data/
+    resource.ts       <span class="c-dim"># DynamoDB schema</span>
+  storage/
+    resource.ts       <span class="c-dim"># S3 config</span></div>
+
+      <div class="sub-title">1.3 — amplify/backend.ts</div>
+      <div class="code"><span class="c-pink">import</span> { defineBackend } <span class="c-pink">from</span> <span class="c-yellow">'@aws-amplify/backend'</span>
+<span class="c-pink">import</span> { auth }    <span class="c-pink">from</span> <span class="c-yellow">'./auth/resource'</span>
+<span class="c-pink">import</span> { data }    <span class="c-pink">from</span> <span class="c-yellow">'./data/resource'</span>
+<span class="c-pink">import</span> { storage } <span class="c-pink">from</span> <span class="c-yellow">'./storage/resource'</span>
+
+defineBackend({ auth, data, storage })</div>
+
+      <div class="alert info">
+        <span class="ai">ℹ️</span>
+        <span>O Amplify Gen 2 provisiona toda a infraestrutura AWS (Cognito, DynamoDB, AppSync, S3) automaticamente a partir desses arquivos TypeScript. Nenhum clique manual no console AWS é necessário.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FASE 2 — AUTH / COGNITO ── -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="num n-auth">2</div>
+      <div class="phase-info">
+        <h3>Fase 2 — Autenticação: JWT customizado → Amazon Cognito</h3>
+        <p>Substituir jose + bcryptjs + cookie manual pelo Cognito gerenciado pelo Amplify Auth</p>
+      </div>
+      <div class="phase-badge badge-resp">Dev responsável</div>
+    </div>
+    <div class="phase-body">
+
+      <div class="alert warn">
+        <span class="ai">⚠️</span>
+        <span><strong>Impacto maior:</strong> o sistema de login atual (email + senha + cookie JWT) será substituído pelo Cognito. Os usuários existentes precisarão ser migrados ou recriados no Cognito.</span>
+      </div>
+
+      <div class="sub-title">2.1 — amplify/auth/resource.ts</div>
+      <div class="code"><span class="c-pink">import</span> { defineAuth } <span class="c-pink">from</span> <span class="c-yellow">'@aws-amplify/backend'</span>
+
+<span class="c-pink">export const</span> auth = defineAuth({
+  loginWith: {
+    email: <span class="c-green">true</span>,   <span class="c-dim">// login por e-mail + senha</span>
+  },
+  groups: [<span class="c-yellow">'ADMIN'</span>, <span class="c-yellow">'EDITOR'</span>],  <span class="c-dim">// equivalente ao Role do Prisma</span>
+})</div>
+
+      <div class="sub-title">2.2 — Reescrever lib/session.ts</div>
+      <div class="code"><span class="c-dim">// lib/session.ts — versão Amplify</span>
+<span class="c-pink">import</span> { getCurrentUser, fetchAuthSession } <span class="c-pink">from</span> <span class="c-yellow">'aws-amplify/auth'</span>
+<span class="c-pink">import</span> { runWithAmplifyServerContext } <span class="c-pink">from</span> <span class="c-yellow">'aws-amplify/adapter-core'</span>
+<span class="c-pink">import</span> { cookies } <span class="c-pink">from</span> <span class="c-yellow">'next/headers'</span>
+<span class="c-pink">import</span> { createServerRunner } <span class="c-pink">from</span> <span class="c-yellow">'@aws-amplify/adapter-nextjs'</span>
+<span class="c-pink">import</span> config <span class="c-pink">from</span> <span class="c-yellow">'@/amplifyconfiguration.json'</span>
+
+<span class="c-pink">export const</span> { runWithAmplifyServerContext: serverContext } =
+  createServerRunner({ config })
+
+<span class="c-pink">export async function</span> getSession() {
+  <span class="c-pink">return</span> serverContext({
+    nextServerContext: { cookies },
+    operation: <span class="c-pink">async</span> (ctx) => {
+      <span class="c-pink">try</span> {
+        <span class="c-pink">const</span> user = <span class="c-pink">await</span> getCurrentUser(ctx)
+        <span class="c-pink">const</span> session = <span class="c-pink">await</span> fetchAuthSession(ctx)
+        <span class="c-pink">const</span> groups = session.tokens?.accessToken?.payload[<span class="c-yellow">'cognito:groups'</span>] <span class="c-pink">as</span> string[]
+        <span class="c-pink">return</span> { userId: user.userId, email: user.signInDetails?.loginId, role: groups?.[<span class="c-green">0</span>] }
+      } <span class="c-pink">catch</span> { <span class="c-pink">return null</span> }
+    }
+  })
+}</div>
+
+      <div class="sub-title">2.3 — Reescrever middleware.ts</div>
+      <div class="code"><span class="c-dim">// middleware.ts — verifica token Cognito em vez de JWT customizado</span>
+<span class="c-pink">import</span> { fetchAuthSession } <span class="c-pink">from</span> <span class="c-yellow">'aws-amplify/auth/server'</span>
+<span class="c-pink">import</span> { NextRequest, NextResponse } <span class="c-pink">from</span> <span class="c-yellow">'next/server'</span>
+<span class="c-pink">import</span> { createServerRunner } <span class="c-pink">from</span> <span class="c-yellow">'@aws-amplify/adapter-nextjs'</span>
+<span class="c-pink">import</span> config <span class="c-pink">from</span> <span class="c-yellow">'./amplifyconfiguration.json'</span>
+
+<span class="c-pink">const</span> { runWithAmplifyServerContext } = createServerRunner({ config })
+
+<span class="c-pink">export async function</span> middleware(req: NextRequest) {
+  <span class="c-pink">const</span> headers = <span class="c-pink">new</span> Headers(req.headers)
+  headers.set(<span class="c-yellow">'x-pathname'</span>, req.nextUrl.pathname)
+
+  <span class="c-pink">if</span> (req.nextUrl.pathname.startsWith(<span class="c-yellow">'/admin'</span>) &&
+      req.nextUrl.pathname !== <span class="c-yellow">'/admin/login'</span>) {
+
+    <span class="c-pink">const</span> authenticated = <span class="c-pink">await</span> runWithAmplifyServerContext({
+      nextServerContext: { request: req, response: NextResponse.next() },
+      operation: <span class="c-pink">async</span> (ctx) => {
+        <span class="c-pink">try</span> {
+          <span class="c-pink">const</span> session = <span class="c-pink">await</span> fetchAuthSession(ctx)
+          <span class="c-pink">return</span> !!session.tokens
+        } <span class="c-pink">catch</span> { <span class="c-pink">return false</span> }
+      }
+    })
+
+    <span class="c-pink">if</span> (!authenticated)
+      <span class="c-pink">return</span> NextResponse.redirect(<span class="c-pink">new</span> URL(<span class="c-yellow">'/admin/login'</span>, req.url))
+  }
+
+  <span class="c-pink">return</span> NextResponse.next({ request: { headers } })
+}</div>
+
+      <div class="sub-title">2.4 — Reescrever app/actions/auth.ts</div>
+      <div class="code"><span class="c-dim">// Cognito signIn substitui bcrypt + prisma.user.findUnique</span>
+<span class="c-pink">import</span> { signIn, signOut } <span class="c-pink">from</span> <span class="c-yellow">'aws-amplify/auth'</span>
+
+<span class="c-pink">export async function</span> loginAction(_prev: LoginState, formData: FormData) {
+  <span class="c-pink">try</span> {
+    <span class="c-pink">await</span> signIn({
+      username: formData.get(<span class="c-yellow">'email'</span>) <span class="c-pink">as</span> string,
+      password: formData.get(<span class="c-yellow">'password'</span>) <span class="c-pink">as</span> string,
+    })
+    redirect(<span class="c-yellow">'/admin'</span>)
+  } <span class="c-pink">catch</span> {
+    <span class="c-pink">return</span> { error: <span class="c-yellow">'E-mail ou senha inválidos.'</span> }
+  }
+}</div>
+    </div>
+  </div>
+
+  <!-- ── FASE 3 — DATA / DYNAMODB ── -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="num n-db">3</div>
+      <div class="phase-info">
+        <h3>Fase 3 — Banco de dados: PostgreSQL/Prisma → DynamoDB via Amplify Data</h3>
+        <p>Maior esforço da migração. Reescrita de toda a camada de acesso a dados.</p>
+      </div>
+      <div class="phase-badge badge-warn">⚠️ Maior esforço</div>
+    </div>
+    <div class="phase-body">
+
+      <div class="alert warn">
+        <span class="ai">⚠️</span>
+        <span>DynamoDB é <strong>NoSQL</strong> — não há SQL, JOINs ou colunas. O Amplify Data cria uma GraphQL API (AppSync) na frente do DynamoDB que simplifica o acesso, mas a lógica de consulta muda.</span>
+      </div>
+
+      <div class="sub-title">3.1 — amplify/data/resource.ts (schema equivalente ao Prisma)</div>
+      <div class="code"><span class="c-pink">import</span> { type ClientSchema, a, defineData } <span class="c-pink">from</span> <span class="c-yellow">'@aws-amplify/backend'</span>
+
+<span class="c-pink">const</span> schema = a.schema({
+
+  Post: a.model({
+    title:       a.string().required(),
+    slug:        a.string().required(),
+    summary:     a.string().required(),
+    content:     a.string().required(),
+    coverUrl:    a.string(),
+    status:      a.enum([<span class="c-yellow">'DRAFT'</span>, <span class="c-yellow">'PUBLISHED'</span>]),
+    publishedAt: a.datetime(),
+    views:       a.integer().default(<span class="c-green">0</span>),
+    categories:  a.string().array(),
+    authorId:    a.string().required(),
+  }).authorization(allow => [
+    allow.groups([<span class="c-yellow">'ADMIN'</span>, <span class="c-yellow">'EDITOR'</span>]),
+    allow.guest().to([<span class="c-yellow">'read'</span>]),          <span class="c-dim">// blog público</span>
+  ]),
+
+  <span class="c-dim">// User gerenciado pelo Cognito — não precisa de model aqui</span>
+})
+
+<span class="c-pink">export type</span> Schema = <span class="c-pink">typeof</span> schema
+<span class="c-pink">export const</span> data = defineData({ schema })</div>
+
+      <div class="sub-title">3.2 — Reescrever app/actions/posts.ts com Amplify Data client</div>
+      <div class="code"><span class="c-pink">import</span> { generateServerClientUsingCookies } <span class="c-pink">from</span> <span class="c-yellow">'@aws-amplify/adapter-nextjs/data'</span>
+<span class="c-pink">import</span> { cookies } <span class="c-pink">from</span> <span class="c-yellow">'next/headers'</span>
+<span class="c-pink">import</span> config <span class="c-pink">from</span> <span class="c-yellow">'@/amplifyconfiguration.json'</span>
+<span class="c-pink">import type</span> { Schema } <span class="c-pink">from</span> <span class="c-yellow">'@/amplify/data/resource'</span>
+
+<span class="c-pink">const</span> client = generateServerClientUsingCookies&lt;Schema&gt;({ config, cookies })
+
+<span class="c-dim">// Antes: await prisma.post.create({ data: { ... } })</span>
+<span class="c-dim">// Depois:</span>
+<span class="c-pink">await</span> client.models.Post.create({ title, slug, summary, content, status, ... })
+
+<span class="c-dim">// Antes: await prisma.post.findUnique({ where: { slug } })</span>
+<span class="c-dim">// Depois:</span>
+<span class="c-pink">const</span> { data: posts } = <span class="c-pink">await</span> client.models.Post.list({
+  filter: { slug: { eq: slug } }
+})
+
+<span class="c-dim">// Antes: await prisma.post.delete({ where: { id } })</span>
+<span class="c-dim">// Depois:</span>
+<span class="c-pink">await</span> client.models.Post.delete({ id })</div>
+
+      <div class="sub-title">3.3 — Remover Prisma do projeto</div>
+      <div class="code">npm uninstall prisma @prisma/client @prisma/adapter-pg pg @types/pg
+<span class="c-dim"># Deletar: prisma/ lib/prisma.ts</span></div>
+    </div>
+  </div>
+
+  <!-- ── FASE 4 — STORAGE ── -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="num n-s3">4</div>
+      <div class="phase-info">
+        <h3>Fase 4 — Storage: S3 via Amplify Storage</h3>
+        <p>Formalizar o S3 dentro do ecossistema Amplify (bucket provisionado automaticamente)</p>
+      </div>
+      <div class="phase-badge badge-resp">Dev responsável</div>
+    </div>
+    <div class="phase-body">
+
+      <div class="sub-title">4.1 — amplify/storage/resource.ts</div>
+      <div class="code"><span class="c-pink">import</span> { defineStorage } <span class="c-pink">from</span> <span class="c-yellow">'@aws-amplify/backend'</span>
+
+<span class="c-pink">export const</span> storage = defineStorage({
+  name: <span class="c-yellow">'fitmassUploads'</span>,
+  access: (allow) => ({
+    <span class="c-yellow">'uploads/*'</span>: [
+      allow.guest.to([<span class="c-yellow">'read'</span>]),                           <span class="c-dim">// leitura pública (blog)</span>
+      allow.groups([<span class="c-yellow">'ADMIN'</span>, <span class="c-yellow">'EDITOR'</span>]).to([<span class="c-yellow">'read'</span>, <span class="c-yellow">'write'</span>, <span class="c-yellow">'delete'</span>]),
+    ],
+  }),
+})</div>
+
+      <div class="sub-title">4.2 — Atualizar app/api/upload/route.ts para Amplify Storage</div>
+      <div class="code"><span class="c-pink">import</span> { uploadData } <span class="c-pink">from</span> <span class="c-yellow">'aws-amplify/storage'</span>
+
+<span class="c-dim">// Substitui o PutObjectCommand manual do SDK:</span>
+<span class="c-pink">const</span> result = <span class="c-pink">await</span> uploadData({
+  path: <span class="c-yellow">`uploads/${name}`</span>,
+  data: buffer,
+  options: { contentType: file.type },
+}).result
+
+<span class="c-pink">const</span> url = <span class="c-yellow">`https://&lt;bucket&gt;.s3.&lt;region&gt;.amazonaws.com/uploads/${name}`</span>
+<span class="c-pink">return</span> NextResponse.json({ url })</div>
+    </div>
+  </div>
+
+  <!-- ── FASE 5 — HOSTING ── -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="num n-host">5</div>
+      <div class="phase-info">
+        <h3>Fase 5 — Amplify Hosting: conectar GitHub e fazer deploy</h3>
+        <p>O <code>amplify.yml</code> já está pronto. Conectar o repositório e configurar variáveis.</p>
+      </div>
+      <div class="phase-badge badge-resp">Dev implantação</div>
+    </div>
+    <div class="phase-body">
+
+      <ul class="steps">
+        <li><span class="dot dot-n">1</span> AWS Console → <strong>Amplify → New app → Host web app</strong></li>
+        <li><span class="dot dot-n">2</span> GitHub → autorizar → selecionar repositório <code>fitmass</code> → branch <code>main</code></li>
+        <li><span class="dot dot-n">3</span> Amplify detecta o <code>amplify.yml</code> automaticamente — confirmar</li>
+        <li><span class="dot dot-n">4</span> Em <strong>Advanced settings</strong> adicionar as variáveis abaixo</li>
+        <li><span class="dot dot-n">5</span> <strong>Save and deploy</strong> — primeiro build leva ~5 min</li>
+        <li><span class="dot dot-n">6</span> Na aba <strong>Backend environments</strong> → associar o backend Amplify ao app</li>
+      </ul>
+
+      <div class="sub-title" style="margin-top:20px;">Variáveis de ambiente no Amplify Console</div>
+      <table class="env-table">
+        <thead><tr><th>Variável</th><th>Valor</th><th>Ambiente</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="env-key">NODE_ENV</td>
+            <td class="env-val">production</td>
+            <td><span class="env-b">Production</span></td>
+          </tr>
+          <tr>
+            <td class="env-key">AMPLIFY_USERPOOL_ID</td>
+            <td class="env-val">Gerado automaticamente após deploy do backend</td>
+            <td><span class="env-b">Production</span></td>
+          </tr>
+          <tr>
+            <td class="env-key">AMPLIFY_WEBCLIENT_ID</td>
+            <td class="env-val">Gerado automaticamente após deploy do backend</td>
+            <td><span class="env-b">Production</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="alert info">
+        <span class="ai">ℹ️</span>
+        <span>Com Amplify Gen 2, a maioria das variáveis de conexão (Cognito, AppSync, S3) são injetadas automaticamente no build via <code>amplifyconfiguration.json</code> gerado pelo CLI. Não é necessário configurar manualmente cada serviço.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FASE 6 — VALIDAÇÃO ── -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="num n-val">6</div>
+      <div class="phase-info">
+        <h3>Fase 6 — Validação</h3>
+        <p>Checklist completo antes de apontar o domínio</p>
+      </div>
+      <div class="phase-badge badge-resp">Todo o time</div>
+    </div>
+    <div class="phase-body">
+      <ul class="checklist">
+        <li><span class="check-box"></span> Página inicial carrega (<code>/</code>)</li>
+        <li><span class="check-box"></span> Blog lista posts públicos (<code>/blog</code>)</li>
+        <li><span class="check-box"></span> Post individual abre pelo slug (<code>/blog/[slug]</code>)</li>
+        <li><span class="check-box"></span> Login com usuário Cognito funciona (<code>/admin/login</code>)</li>
+        <li><span class="check-box"></span> Sessão persiste após reload</li>
+        <li><span class="check-box"></span> Usuário EDITOR consegue criar post (DRAFT)</li>
+        <li><span class="check-box"></span> Upload de imagem salva no S3 e URL retorna correta</li>
+        <li><span class="check-box"></span> Imagem aparece no post publicado</li>
+        <li><span class="check-box"></span> Publicar post aparece no blog público</li>
+        <li><span class="check-box"></span> Editar e excluir post funcionam</li>
+        <li><span class="check-box"></span> Apenas ADMIN acessa gerenciamento de usuários</li>
+        <li><span class="check-box"></span> Usuário sem sessão é redirecionado para login</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── FASE 7 — DNS ── -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="num n-dns">7</div>
+      <div class="phase-info">
+        <h3>Fase 7 — Domínio customizado</h3>
+        <p>Somente após validação completa na URL gerada pelo Amplify</p>
+      </div>
+      <div class="phase-badge badge-resp">Responsável pelo domínio</div>
+    </div>
+    <div class="phase-body">
+      <ul class="steps">
+        <li><span class="dot dot-n">1</span> Amplify Console → <strong>Domain management → Add domain</strong></li>
+        <li><span class="dot dot-n">2</span> Inserir <code>fitmass.com.br</code> → o Amplify exibe os registros DNS</li>
+        <li><span class="dot dot-n">3</span> Adicionar registros no provedor do domínio atual</li>
+        <li><span class="dot dot-n">4</span> O Amplify provisiona HTTPS automaticamente (ACM certificate)</li>
+        <li><span class="dot dot-n">5</span> Propagação: até 48h (geralmente menos de 1h)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ RESPONSABILIDADES ═══════════════════════ -->
+  <div class="section-title">Responsabilidades</div>
+  <div class="resp-grid">
+    <div class="resp-card done-card">
+      <div class="role done-role">Código ✔️</div>
+      <ul>
+        <li class="ok">amplify.yml criado</li>
+        <li class="ok">@aws-sdk/client-s3 instalado</li>
+        <li class="ok">Upload com fallback local</li>
+        <li class="ok">.env.example documentado</li>
+      </ul>
+    </div>
+    <div class="resp-card">
+      <div class="role">Dev — Fase 1</div>
+      <ul>
+        <li>Instalar pacotes Amplify</li>
+        <li>Criar diretório amplify/</li>
+        <li>Definir backend.ts</li>
+      </ul>
+    </div>
+    <div class="resp-card">
+      <div class="role">Dev — Fase 2</div>
+      <ul>
+        <li>Definir auth/resource.ts</li>
+        <li>Reescrever session.ts</li>
+        <li>Reescrever middleware.ts</li>
+        <li>Reescrever actions/auth.ts</li>
+      </ul>
+    </div>
+    <div class="resp-card">
+      <div class="role">Dev — Fase 3</div>
+      <ul>
+        <li>Definir data/resource.ts</li>
+        <li>Reescrever actions/posts.ts</li>
+        <li>Reescrever actions/users.ts</li>
+        <li>Remover Prisma</li>
+      </ul>
+    </div>
+    <div class="resp-card">
+      <div class="role">Dev — Fase 4</div>
+      <ul>
+        <li>Definir storage/resource.ts</li>
+        <li>Atualizar upload route</li>
+      </ul>
+    </div>
+    <div class="resp-card">
+      <div class="role">Implantação — Fase 5</div>
+      <ul>
+        <li>Conectar GitHub ao Amplify</li>
+        <li>Deploy do backend (CLI)</li>
+        <li>Configurar env vars</li>
+        <li>Primeiro deploy</li>
+      </ul>
+    </div>
+    <div class="resp-card">
+      <div class="role">Todo o time — Fase 6</div>
+      <ul>
+        <li>Executar checklist</li>
+        <li>Reportar problemas</li>
+      </ul>
+    </div>
+    <div class="resp-card">
+      <div class="role">Domínio — Fase 7</div>
+      <ul>
+        <li>Registros DNS</li>
+        <li>Confirmar propagação</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ ROLLBACK ═══════════════════════ -->
+  <div class="rollback">
+    <h3>Plano de Rollback</h3>
+    <ol>
+      <li>O Amplify Hosting mantém a versão anterior automaticamente se o build falhar — nenhuma ação necessária</li>
+      <li>Para rollback de código: reverter o commit no GitHub — Amplify faz redeploy da versão anterior automaticamente</li>
+      <li>Para rollback de DNS: reverter os registros para o servidor anterior — a URL <code>*.amplifyapp.com</code> continua ativa para debugging</li>
+      <li>Os dados no DynamoDB não são afetados por rollback de hosting ou DNS</li>
+    </ol>
+  </div>
+
+</div>
+
+<footer>
+  Fitmass — Plano de Migração · <span>100% AWS Amplify Gen 2</span>
+</footer>
+
+</body>
+</html>

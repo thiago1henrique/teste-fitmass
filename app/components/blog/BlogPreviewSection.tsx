@@ -1,20 +1,33 @@
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
+import { cookies } from 'next/headers'
+import outputs from '@/amplify_outputs.json'
+import type { Schema } from '@/amplify/data/resource'
 
 export default async function BlogPreviewSection() {
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED' },
-    orderBy: { publishedAt: 'desc' },
-    take: 3,
-    include: { author: { select: { name: true } } },
+  const client = generateServerClientUsingCookies<Schema>({
+    config: outputs,
+    cookies,
+    authMode: 'apiKey',
   })
+
+  const { data: allPosts } = await client.models.Post.list({
+    filter: { status: { eq: 'PUBLISHED' } },
+  })
+
+  const posts = allPosts
+    .sort((a, b) => {
+      const da = a.publishedAt ?? a.createdAt
+      const db = b.publishedAt ?? b.createdAt
+      return new Date(db).getTime() - new Date(da).getTime()
+    })
+    .slice(0, 3)
 
   if (posts.length === 0) return null
 
   return (
     <section className="bg-surface py-16 px-4" aria-labelledby="blog-preview-heading">
       <div className="max-w-6xl mx-auto">
-        {/* Cabeçalho */}
         <div className="text-center mb-10">
           <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
@@ -31,7 +44,6 @@ export default async function BlogPreviewSection() {
           </p>
         </div>
 
-        {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {posts.map((post) => {
             const date = post.publishedAt ?? post.createdAt
@@ -60,15 +72,11 @@ export default async function BlogPreviewSection() {
                 <div className="flex flex-col flex-1 p-6">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="font-body text-xs text-accent font-semibold uppercase tracking-widest">
-                      {post.author.name}
+                      {post.authorName}
                     </span>
                     <span className="w-1 h-1 rounded-full bg-contrast/20" aria-hidden="true" />
                     <time className="font-body text-xs text-contrast/40">
-                      {new Date(date).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </time>
                   </div>
 
@@ -92,7 +100,6 @@ export default async function BlogPreviewSection() {
           })}
         </div>
 
-        {/* CTA */}
         <div className="text-center">
           <Link
             href="/blog"
