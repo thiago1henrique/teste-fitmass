@@ -1,6 +1,6 @@
 # Fitmass
 
-Fitmass é uma plataforma web moderna dedicada ao setor de fitness e bem-estar, oferecendo uma experiência completa tanto para usuários finais quanto para administradores.
+Fitmass é uma plataforma web moderna dedicada ao setor de fitness e bem-estar, oferecendo uma experiência completa tanto para usuários finais quanto para administradores. O projeto foi recentemente migrado para **AWS Amplify Gen 2**, utilizando uma arquitetura serverless robusta e escalável.
 
 ## Tecnologias
 
@@ -9,26 +9,28 @@ Este projeto utiliza as tecnologias mais recentes do ecossistema Web:
 - **Framework:** [Next.js 15+ (App Router)](https://nextjs.org/)
 - **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
 - **Estilização:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **Banco de Dados:** [PostgreSQL](https://www.postgresql.org/) com [Prisma ORM](https://www.prisma.io/)
+- **Backend-as-a-Service:** [AWS Amplify Gen 2](https://docs.amplify.aws/gen2/)
+  - **Data:** AWS AppSync (GraphQL) com DynamoDB
+  - **Auth:** Amazon Cognito
+  - **Storage:** Amazon S3
 - **Editor de Conteúdo:** [Tiptap](https://tiptap.dev/) (Rich Text Editor customizado)
 - **Gráficos:** [Recharts](https://recharts.org/)
-- **Autenticação:** JWT baseado em [Jose](https://github.com/panva/jose) e [Bcryptjs](https://github.com/dcodeIO/bcrypt.js)
 
 ## Funcionalidades
 
-- **Dashboard Administrativo:** Gestão completa de usuários, postagens e métricas de desempenho.
+- **Dashboard Administrativo:** Gestão completa de postagens e métricas.
 - **Blog Dinâmico:** Sistema de blog com suporte a categorias, contagem de visualizações e SEO otimizado.
 - **Editor Rich Text:** Interface intuitiva para criação de conteúdo com suporte a imagens e links.
-- **Gestão de Equipe:** Controle de acesso baseado em funções (ADMIN, EDITOR).
-- **Design Responsivo:** Interface moderna adaptada para todos os dispositivos.
+- **Gestão de Equipe:** Controle de acesso baseado em grupos do Cognito (ADMIN, EDITOR).
+- **Upload de Mídia:** Sistema de upload integrado com Amazon S3 (fallback local para desenvolvimento).
 - **Personalização:** Seções dinâmicas e integração com fontes personalizadas (Aero Matics).
 
 ## Instalação e Configuração
 
 ### Pré-requisitos
 
-- Node.js (versão recomendada v18 ou superior)
-- Instância do PostgreSQL
+- Node.js (v20 ou superior)
+- AWS CLI configurado (para implantação)
 
 ### Passo a passo
 
@@ -43,22 +45,14 @@ Este projeto utiliza as tecnologias mais recentes do ecossistema Web:
    npm install
    ```
 
-3. **Configure as variáveis de ambiente:**
-   Crie um arquivo `.env.local` na raiz do projeto seguindo o modelo do `.env.example`:
-   ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/fitmass"
-   AUTH_SECRET="sua_chave_secreta"
-   SEED_ADMIN_EMAIL="admin@fitmass.com.br"
-   SEED_ADMIN_PASSWORD="sua_senha_segura"
-   ```
-
-4. **Prepare o banco de dados:**
+3. **Inicie o Sandbox do Amplify:**
+   Isso criará um ambiente backend isolado na nuvem para desenvolvimento.
    ```bash
-   npx prisma migrate dev
-   npx prisma db seed
+   npx ampx sandbox
    ```
 
-5. **Inicie o servidor de desenvolvimento:**
+4. **Inicie o servidor de desenvolvimento:**
+   Em um novo terminal:
    ```bash
    npm run dev
    ```
@@ -67,15 +61,19 @@ Acesse [http://localhost:3000](http://localhost:3000) para ver o resultado.
 
 ## Estrutura do Projeto
 
+- `/amplify`: Definições de infraestrutura (Backend-as-Code).
+  - `/amplify/auth`: Configuração do Cognito.
+  - `/amplify/data`: Esquema de dados e autorização.
+  - `/amplify/storage`: Configuração do S3.
 - `/app`: Rotas e componentes do Next.js (App Router).
-- `/app/admin`: Módulo administrativo protegido.
-- `/app/api`: Endpoints da API.
-- `/components`: Componentes React reutilizáveis.
-- `/lib`: Utilitários e configurações de bibliotecas (Prisma, Sessão).
-- `/prisma`: Esquema do banco de dados e sementes (seeding).
-- `/public`: Ativos estáticos como fontes e imagens.
-- `/scripts`: Scripts utilitários para importação e correção de dados.
+  - `/app/admin`: Módulo administrativo protegido por Auth.
+  - `/app/api`: Endpoints auxiliares (Upload).
+  - `/app/actions`: Server Actions para manipulação de dados via Amplify.
+- `/components`: Componentes React modulares.
+- `/lib`: Utilitários (Amplify client, Sessão, Slug).
+- `/public`: Ativos estáticos como fontes e imagens locais.
+- `/scripts`: Scripts utilitários para importação de dados Legados (WP).
 
 ## Licença
 
-Este projeto é de uso privado.
+Este projeto é de uso privado da Fitmass.
