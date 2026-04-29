@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { fetchAuthSession } from 'aws-amplify/auth/server'
 import { runWithAmplifyServerContext } from '@/lib/amplify-server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   const requestHeaders = new Headers(request.headers)
