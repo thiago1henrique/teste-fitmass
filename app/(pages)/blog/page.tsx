@@ -46,6 +46,7 @@ export default async function BlogPage({
 
   const adapted = posts.map((p) => ({
     ...p,
+    categories: (p.categories?.filter((c): c is string => !!c) ?? []) as string[],
     author: { name: p.authorName },
     publishedAt: p.publishedAt ? new Date(p.publishedAt) : null,
     createdAt:   new Date(p.createdAt),

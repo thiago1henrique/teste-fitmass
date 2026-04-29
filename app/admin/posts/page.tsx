@@ -19,6 +19,7 @@ export default async function PostsPage() {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .map((p) => ({
       ...p,
+      status:      (p.status ?? 'DRAFT') as 'DRAFT' | 'PUBLISHED',
       author:      { name: p.authorName },
       publishedAt: p.publishedAt ? new Date(p.publishedAt) : null,
       createdAt:   new Date(p.createdAt),

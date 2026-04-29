@@ -25,6 +25,8 @@ export default async function EditPostPage({
 
   const post = {
     ...raw,
+    status:      (raw.status ?? 'DRAFT') as 'DRAFT' | 'PUBLISHED',
+    categories:  (raw.categories?.filter((c): c is string => !!c) ?? []) as string[],
     author:      { name: raw.authorName },
     publishedAt: raw.publishedAt ? new Date(raw.publishedAt) : null,
     createdAt:   new Date(raw.createdAt),
