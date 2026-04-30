@@ -28,7 +28,8 @@
       "Bash(npx tsc *)",
       "Bash(npx next *)",
       "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(JSON.stringify\\(Object.keys\\(p.devDependencies || {}\\)\\)\\)\")",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(node -e \"const j=require\\('./json/posts_fitmass_completo.json'\\); const urls=new Set\\(\\); for\\(const p of j\\){if\\(p.featureImage\\)urls.add\\(p.featureImage\\);if\\(p.imageLinks\\)p.imageLinks.forEach\\(u=>urls.add\\(u\\)\\);} console.log\\('Total imagens unicas:',urls.size\\); Array.from\\(urls\\).slice\\(0,3\\).forEach\\(u=>console.log\\(u\\)\\);\")"
     ]
   }
 }
