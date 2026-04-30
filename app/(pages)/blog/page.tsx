@@ -23,15 +23,21 @@ export default async function BlogPage({
   const { page: pageParam, category } = await searchParams
   const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1)
 
-  const client = generateServerClientUsingCookies<Schema>({
-    config: outputs,
-    cookies,
-    authMode: 'apiKey',
-  })
-
-  const { data: allPosts } = await client.models.Post.list({
-    filter: { status: { eq: 'PUBLISHED' } },
-  })
+  const allPosts = await (async () => {
+    try {
+      const client = generateServerClientUsingCookies<Schema>({
+        config: outputs,
+        cookies,
+        authMode: 'apiKey',
+      })
+      const { data } = await client.models.Post.list({
+        filter: { status: { eq: 'PUBLISHED' } },
+      })
+      return data
+    } catch {
+      return []
+    }
+  })()
 
   let posts = allPosts
     .filter((p) => !category || (p.categories ?? []).includes(category))

@@ -10,27 +10,35 @@ import RelatedPostsSection from '@/app/components/blog/RelatedPostsSection'
 export const revalidate = 3600
 
 async function getPost(slug: string) {
-  const client = generateServerClientUsingCookies<Schema>({
-    config: outputs,
-    cookies,
-    authMode: 'apiKey',
-  })
-  const { data } = await client.models.Post.list({
-    filter: { slug: { eq: slug }, status: { eq: 'PUBLISHED' } },
-  })
-  return data[0] ?? null
+  try {
+    const client = generateServerClientUsingCookies<Schema>({
+      config: outputs,
+      cookies,
+      authMode: 'apiKey',
+    })
+    const { data } = await client.models.Post.list({
+      filter: { slug: { eq: slug }, status: { eq: 'PUBLISHED' } },
+    })
+    return data[0] ?? null
+  } catch {
+    return null
+  }
 }
 
 export async function generateStaticParams() {
-  const client = generateServerClientUsingCookies<Schema>({
-    config: outputs,
-    cookies,
-    authMode: 'apiKey',
-  })
-  const { data: posts } = await client.models.Post.list({
-    filter: { status: { eq: 'PUBLISHED' } },
-  })
-  return posts.map(({ slug }) => ({ slug }))
+  try {
+    const client = generateServerClientUsingCookies<Schema>({
+      config: outputs,
+      cookies,
+      authMode: 'apiKey',
+    })
+    const { data: posts } = await client.models.Post.list({
+      filter: { status: { eq: 'PUBLISHED' } },
+    })
+    return posts.map(({ slug }) => ({ slug }))
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({

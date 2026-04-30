@@ -5,15 +5,21 @@ import outputs from '@/amplify_outputs.json'
 import type { Schema } from '@/amplify/data/resource'
 
 export default async function BlogPreviewSection() {
-  const client = generateServerClientUsingCookies<Schema>({
-    config: outputs,
-    cookies,
-    authMode: 'apiKey',
-  })
-
-  const { data: allPosts } = await client.models.Post.list({
-    filter: { status: { eq: 'PUBLISHED' } },
-  })
+  const allPosts = await (async () => {
+    try {
+      const client = generateServerClientUsingCookies<Schema>({
+        config: outputs,
+        cookies,
+        authMode: 'apiKey',
+      })
+      const { data } = await client.models.Post.list({
+        filter: { status: { eq: 'PUBLISHED' } },
+      })
+      return data
+    } catch {
+      return []
+    }
+  })()
 
   const posts = allPosts
     .sort((a, b) => {

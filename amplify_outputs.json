@@ -1,32 +1,255 @@
 {
-  "version": "1",
   "auth": {
-    "aws_region": "REPLACE_WITH_REGION",
-    "user_pool_id": "REPLACE_WITH_USER_POOL_ID",
-    "user_pool_client_id": "REPLACE_WITH_CLIENT_ID",
-    "identity_pool_id": "REPLACE_WITH_IDENTITY_POOL_ID",
-    "unauthenticated_identities_enabled": true,
+    "user_pool_id": "us-east-1_USskM9whS",
+    "aws_region": "us-east-1",
+    "user_pool_client_id": "chb6n70toacam8k92nqdi0lqc",
+    "identity_pool_id": "us-east-1:3c7b99a7-249c-4e6d-899b-1236e0df17c4",
+    "mfa_methods": [],
+    "standard_required_attributes": [
+      "email",
+      "given_name"
+    ],
+    "username_attributes": [
+      "email"
+    ],
+    "user_verification_types": [
+      "email"
+    ],
+    "groups": [
+      {
+        "ADMIN": {
+          "precedence": 0
+        }
+      },
+      {
+        "EDITOR": {
+          "precedence": 1
+        }
+      }
+    ],
+    "mfa_configuration": "NONE",
     "password_policy": {
       "min_length": 8,
-      "require_numbers": true,
       "require_lowercase": true,
-      "require_uppercase": true,
-      "require_symbols": true
-    }
+      "require_numbers": true,
+      "require_symbols": true,
+      "require_uppercase": true
+    },
+    "unauthenticated_identities_enabled": true
   },
   "data": {
-    "aws_region": "REPLACE_WITH_REGION",
-    "url": "REPLACE_WITH_APPSYNC_URL",
-    "api_key": "REPLACE_WITH_API_KEY",
+    "url": "https://riblcdirkjh4di5ojnq3tagqz4.appsync-api.us-east-1.amazonaws.com/graphql",
+    "aws_region": "us-east-1",
+    "api_key": "da2-pr2cblya45aspp4t6hau2bqcr4",
     "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
     "authorization_types": [
-      "AMAZON_COGNITO_USER_POOLS",
-      "API_KEY"
+      "API_KEY",
+      "AWS_IAM"
     ],
-    "model_introspection": {}
+    "model_introspection": {
+      "version": 1,
+      "models": {
+        "Post": {
+          "name": "Post",
+          "fields": {
+            "id": {
+              "name": "id",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "title": {
+              "name": "title",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "slug": {
+              "name": "slug",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "summary": {
+              "name": "summary",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "content": {
+              "name": "content",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "coverUrl": {
+              "name": "coverUrl",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "status": {
+              "name": "status",
+              "isArray": false,
+              "type": {
+                "enum": "PostStatus"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "publishedAt": {
+              "name": "publishedAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": []
+            },
+            "views": {
+              "name": "views",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "categories": {
+              "name": "categories",
+              "isArray": true,
+              "type": "String",
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true
+            },
+            "authorId": {
+              "name": "authorId",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "authorName": {
+              "name": "authorName",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "createdAt": {
+              "name": "createdAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            },
+            "updatedAt": {
+              "name": "updatedAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            }
+          },
+          "syncable": true,
+          "pluralName": "Posts",
+          "attributes": [
+            {
+              "type": "model",
+              "properties": {}
+            },
+            {
+              "type": "auth",
+              "properties": {
+                "rules": [
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "groups": [
+                      "ADMIN",
+                      "EDITOR"
+                    ],
+                    "operations": [
+                      "create",
+                      "update",
+                      "delete",
+                      "read"
+                    ]
+                  },
+                  {
+                    "allow": "public",
+                    "provider": "identityPool",
+                    "operations": [
+                      "read"
+                    ]
+                  },
+                  {
+                    "allow": "public",
+                    "provider": "apiKey",
+                    "operations": [
+                      "read",
+                      "update"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "primaryKeyInfo": {
+            "isCustomPrimaryKey": false,
+            "primaryKeyFieldName": "id",
+            "sortKeyFieldNames": []
+          }
+        }
+      },
+      "enums": {
+        "PostStatus": {
+          "name": "PostStatus",
+          "values": [
+            "DRAFT",
+            "PUBLISHED"
+          ]
+        }
+      },
+      "nonModels": {}
+    }
   },
   "storage": {
-    "aws_region": "REPLACE_WITH_REGION",
-    "bucket_name": "REPLACE_WITH_BUCKET_NAME"
-  }
+    "aws_region": "us-east-1",
+    "bucket_name": "amplify-fitmass-brunoroch-fitmassuploadsbucket98cf-llbkzn9wap4f",
+    "buckets": [
+      {
+        "name": "fitmassUploads",
+        "bucket_name": "amplify-fitmass-brunoroch-fitmassuploadsbucket98cf-llbkzn9wap4f",
+        "aws_region": "us-east-1",
+        "paths": {
+          "uploads/*": {
+            "guest": [
+              "get",
+              "list"
+            ],
+            "groupsADMIN": [
+              "get",
+              "list",
+              "write",
+              "delete"
+            ],
+            "groupsEDITOR": [
+              "get",
+              "list",
+              "write",
+              "delete"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "version": "1.4"
 }
