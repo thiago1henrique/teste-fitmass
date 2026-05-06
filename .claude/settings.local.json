@@ -28,7 +28,9 @@
       "Bash(npx tsc *)",
       "Bash(npx next *)",
       "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(JSON.stringify\\(Object.keys\\(p.devDependencies || {}\\)\\)\\)\")",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\" -Force)",
+      "Bash(Select-Object Name)"
     ]
   }
 }
