@@ -7,7 +7,7 @@ const navLinks = [
   { label: 'Início',  href: '/'               },
   { label: 'Planos',  href: '/planos'          },
   { label: 'Blog',    href: '/blog'            },
-  { label: 'Contato', href: '/planos#contato'  },
+  { label: 'Contato', href: '/contato'          },
 ]
 
 const cta = {
@@ -17,6 +17,6 @@ const cta = {
 
 export default function PagesLayoutClient() {
   const pathname = usePathname()
-  const forceDark = pathname.startsWith('/blog') || pathname === '/privacidade'
+  const forceDark = pathname.startsWith('/blog') || pathname === '/privacidade' || pathname === '/contato'
   return <Header navLinks={navLinks} cta={cta} forceDark={forceDark} />
 }

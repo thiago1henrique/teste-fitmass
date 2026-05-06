@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import type { MouseEvent } from 'react'
 
 export type NavLink = { label: string; href: string }
 export type CtaConfig = { label: string; href: string }
@@ -20,6 +22,18 @@ export default function Header({
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const rafRef = useRef<number>(0)
+  const pathname = usePathname()
+
+  function handleAnchorClick(e: MouseEvent<HTMLAnchorElement>, href: string) {
+    const hashIndex = href.indexOf('#')
+    if (hashIndex === -1) return
+    const pagePath = href.slice(0, hashIndex) || '/'
+    const anchor = href.slice(hashIndex + 1)
+    if (pathname !== pagePath) return
+    e.preventDefault()
+    document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' })
+    setMenuOpen(false)
+  }
 
   useEffect(() => {
     const onScroll = () => {
@@ -82,15 +96,23 @@ export default function Header({
 
         {/* Nav desktop */}
         <nav className="hidden md:flex items-center gap-8" aria-label="Navegação principal">
-          {navLinks.map(({ label, href }) => (
-            <a
-              key={label}
-              href={href}
-              className="font-body text-white/65 hover:text-white text-[0.9375rem] tracking-wide transition-colors duration-200"
-            >
-              {label}
-            </a>
-          ))}
+          {navLinks.map(({ label, href }) => {
+            const isActive = pathname === href
+            return (
+              <a
+                key={label}
+                href={href}
+                onClick={(e) => handleAnchorClick(e, href)}
+                className={`font-body text-[0.9375rem] tracking-wide transition-colors duration-200 ${
+                  isActive
+                    ? 'text-accent font-bold'
+                    : 'text-white/65 hover:text-white'
+                }`}
+              >
+                {label}
+              </a>
+            )
+          })}
         </nav>
 
         {/* CTA + hamburger */}
@@ -132,17 +154,24 @@ export default function Header({
         }`}
       >
         <div className="px-4 pb-4 pt-2 space-y-1 border-t border-white/10">
-          {navLinks.map(({ label, href }) => (
-            <a
-              key={label}
-              href={href}
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 font-body text-white/80 hover:text-white hover:bg-white/5 text-sm py-3 px-3 rounded-lg transition-colors duration-200"
-            >
-              <span className="w-1 h-1 rounded-full bg-accent flex-shrink-0" aria-hidden="true" />
-              {label}
-            </a>
-          ))}
+          {navLinks.map(({ label, href }) => {
+            const isActive = pathname === href
+            return (
+              <a
+                key={label}
+                href={href}
+                onClick={(e) => handleAnchorClick(e, href)}
+                className={`flex items-center gap-3 font-body text-sm py-3 px-3 rounded-lg transition-colors duration-200 ${
+                  isActive
+                    ? 'text-accent font-bold bg-white/5'
+                    : 'text-white/80 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span className={`w-1 h-1 rounded-full flex-shrink-0 ${isActive ? 'bg-accent' : 'bg-accent'}`} aria-hidden="true" />
+                {label}
+              </a>
+            )
+          })}
 
           <div className="pt-3 border-t border-white/10">
             <a

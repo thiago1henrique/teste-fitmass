@@ -17,6 +17,7 @@ const cookieStore = {
 } as any
 
 async function getPost(slug: string) {
+<<<<<<< HEAD
   // Use real cookies at runtime, mock at build time to avoid cookies() error
   const client = generateServerClientUsingCookies<Schema>({
     config: outputs,
@@ -39,6 +40,37 @@ export async function generateStaticParams() {
     filter: { status: { eq: 'PUBLISHED' } },
   })
   return posts.map(({ slug }) => ({ slug }))
+=======
+  try {
+    const client = generateServerClientUsingCookies<Schema>({
+      config: outputs,
+      cookies,
+      authMode: 'apiKey',
+    })
+    const { data } = await client.models.Post.list({
+      filter: { slug: { eq: slug }, status: { eq: 'PUBLISHED' } },
+    })
+    return data[0] ?? null
+  } catch {
+    return null
+  }
+}
+
+export async function generateStaticParams() {
+  try {
+    const client = generateServerClientUsingCookies<Schema>({
+      config: outputs,
+      cookies,
+      authMode: 'apiKey',
+    })
+    const { data: posts } = await client.models.Post.list({
+      filter: { status: { eq: 'PUBLISHED' } },
+    })
+    return posts.map(({ slug }) => ({ slug }))
+  } catch {
+    return []
+  }
+>>>>>>> dev-thiago
 }
 
 export async function generateMetadata({

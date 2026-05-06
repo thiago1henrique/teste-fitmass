@@ -1,0 +1,82 @@
+{
+  "planos_fitmass": {
+    "Menu do Aluno": {
+      "visualizacao_anamnese_aluno": { "gratis": true, "premium": true, "ultra": true },
+      "visualizacao_objetivos_aluno": { "gratis": true, "premium": true, "ultra": true },
+      "baixar_pdf_avaliacoes": { "gratis": true, "premium": true, "ultra": true },
+      "ver_historico_avaliacoes_aluno": { "gratis": true, "premium": true, "ultra": true },
+      "enviar_whatsapp": { "gratis": true, "premium": true, "ultra": true },
+      "remover_aluno_da_lista": { "gratis": true, "premium": true, "ultra": true },
+      "edicao_anamnese_aluno": { "gratis": false, "premium": true, "ultra": true },
+      "edicao_objetivos_aluno": { "gratis": false, "premium": true, "ultra": true },
+      "gerenciar_creditos_bioscan_aluno": { "gratis": false, "premium": true, "ultra": true },
+      "promover_aluno_para_coach": { "gratis": false, "premium": true, "ultra": true },
+      "integracao_automacao_creditos_bioscan": { "gratis": false, "premium": true, "ultra": true }
+    },
+    "Personalização": {
+      "criar_cards_personalizados_timeline_app": { "gratis": false, "premium": false, "ultra": true },
+      "personalizacao_cores_app": { "gratis": false, "premium": false, "ultra": true },
+      "telas_descanso_customizadas_bioscan_3_0": { "gratis": false, "premium": false, "ultra": true },
+      "telas_descanso_anuncios_clicaveis_bioscan_3_0": { "gratis": false, "premium": false, "ultra": true },
+      "criacao_pesquisas_customizadas_pos_medicao_bioscan_3_0": { "gratis": false, "premium": false, "ultra": true },
+      "personalizacao_cores_telas_bioscan_3_0": { "gratis": false, "premium": false, "ultra": true }
+    },
+    "Funcionalidades Avançadas": {
+      "dashboards": { "gratis": false, "premium": false, "ultra": true },
+      "integracao_erp_importacao_dados_automatica": { "gratis": false, "premium": false, "ultra": true },
+      "exportacao_todos_dados_medicoes_massa": { "gratis": false, "premium": false, "ultra": true },
+      "exportacao_dados_pesquisa": { "gratis": false, "premium": false, "ultra": true },
+      "dashboard_dados_pesquisas_criadas": { "gratis": false, "premium": false, "ultra": true },
+      "api_integracao_sistemas_externos": { "gratis": false, "premium": false, "ultra": true },
+      "webhook_disparo_externo": { "gratis": false, "premium": false, "ultra": true }
+    },
+    "Fitmass App": {
+      "lista_medicoes": { "gratis": true, "premium": true, "ultra": true },
+      "visualizar_dados_relatorios_bioscan": { "gratis": true, "premium": true, "ultra": true },
+      "visualizar_dados_relatorios_pocket": { "gratis": true, "premium": true, "ultra": true },
+      "visualizar_dados_relatorios_dobras": { "gratis": true, "premium": true, "ultra": true },
+      "visualizar_dados_relatorios_scanner": { "gratis": false, "premium": true, "ultra": true },
+      "filtrar_relatorios_tipo_medicao_data": { "gratis": false, "premium": true, "ultra": true },
+      "compartilhar_pdf_pagina": { "gratis": false, "premium": true, "ultra": true },
+      "reportar_erro_medicao_suporte_whatsapp": { "gratis": false, "premium": true, "ultra": true },
+      "visualizar_graficos_comparacao_valores": { "gratis": false, "premium": true, "ultra": true },
+      "adicionar_aluno_existente": { "gratis": false, "premium": true, "ultra": true },
+      "remover_aluno_meus_alunos": { "gratis": false, "premium": true, "ultra": true },
+      "contato_aluno_whatsapp": { "gratis": false, "premium": true, "ultra": true },
+      "editar_dados_aluno_nome_email_altura": { "gratis": false, "premium": true, "ultra": true },
+      "visualizar_quantidade_creditos_pocket_bioscan": { "gratis": false, "premium": true, "ultra": true },
+      "abrir_loja": { "gratis": false, "premium": true, "ultra": true },
+      "visualizar_termos_uso_politicas": { "gratis": false, "premium": true, "ultra": true },
+      "contatar_suporte": { "gratis": false, "premium": true, "ultra": true },
+      "excluir_minha_conta": { "gratis": false, "premium": true, "ultra": true },
+      "escanear_qr_code_realizar_medicao_bioscan": { "gratis": false, "premium": true, "ultra": true },
+      "realizar_medicao_pocket_e_dobras": { "gratis": false, "premium": true, "ultra": true },
+      "visualizar_dados_objetivos": { "gratis": false, "premium": true, "ultra": true },
+      "compartilhar_midia_instagramavel": { "gratis": false, "premium": true, "ultra": true },
+      "adicionar_remover_editar_imagem_avaliacao": { "gratis": false, "premium": true, "ultra": true },
+      "criar_editar_anamnese_objetivos_composicao": { "gratis": false, "premium": true, "ultra": true },
+      "criar_editar_circunferencias_ingestao_diaria": { "gratis": false, "premium": true, "ultra": true },
+      "alterar_medicao_referencia_inicial": { "gratis": false, "premium": true, "ultra": true },
+      "quanto_falta_atingir_objetivo": { "gratis": false, "premium": true, "ultra": true },
+      "graficos_compostos": { "gratis": false, "premium": true, "ultra": true },
+      "filtrar_tipo_medicao_periodo": { "gratis": false, "premium": true, "ultra": true },
+      "selecionar_duas_medicoes_mesmo_tipo": { "gratis": false, "premium": true, "ultra": true },
+      "visualizacao_comparacao_valores": { "gratis": false, "premium": true, "ultra": true },
+      "visualizacao_fotos_antes_depois": { "gratis": false, "premium": true, "ultra": true },
+      "transferir_credito_pocket": { "gratis": false, "premium": true, "ultra": true },
+      "cadastrar_novo_aluno": { "gratis": false, "premium": true, "ultra": true },
+      "visualizar_vinculo_estabelecimentos": { "gratis": false, "premium": true, "ultra": true },
+      "adicionar_excluir_vinculo_estabelecimentos": { "gratis": false, "premium": true, "ultra": true },
+      "validar_usuario_academia_e_codigo_integracao": { "gratis": false, "premium": true, "ultra": true },
+      "visualizar_vinculo_coach": { "gratis": false, "premium": true, "ultra": true },
+      "criar_conta_dados_integracao_estabelecimento": { "gratis": false, "premium": false, "ultra": true }
+    }
+  },
+  "metadata": {
+    "precos": {
+      "gratis": "R$ 0",
+      "premium": "R$ 509/mês",
+      "ultra": "R$ 899/mês"
+    }
+  }
+}

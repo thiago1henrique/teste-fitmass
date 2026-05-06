@@ -1,34 +1,97 @@
 'use client'
 
 import { useState } from 'react'
+import data from '@/public/json-precos.json'
+
+/* ─── Formatters ─────────────────────────────────────────────────────────── */
+
+const SPECIAL: Record<string, string> = {
+  bioscan: 'Bioscan',
+  pdf: 'PDF',
+  api: 'API',
+  erp: 'ERP',
+  qr: 'QR Code',
+  whatsapp: 'WhatsApp',
+  app: 'App',
+  coach: 'Coach',
+  pocket: 'Pocket',
+  scanner: 'Scanner',
+  timeline: 'Timeline',
+}
+
+function formatKey(key: string): string {
+  return key
+    .split('_')
+    .map((w) => SPECIAL[w.toLowerCase()] ?? (w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(' ')
+}
+
+/* ─── Data ───────────────────────────────────────────────────────────────── */
+
+const PLANS = ['gratis', 'premium', 'ultra'] as const
+type PlanKey = (typeof PLANS)[number]
+
+const PLAN_LABELS: Record<PlanKey, string> = { gratis: 'Grátis', premium: 'Premium', ultra: 'Ultra' }
+const ULTRA_IDX = 2
+
+type Feature = { name: string; availability: [boolean, boolean, boolean] }
+type Category = { name: string; features: Feature[] }
+
+const categories: Category[] = Object.entries(data.planos_fitmass).map(
+  ([catName, feats]) => ({
+    name: catName,
+    features: Object.entries(feats as Record<string, Record<PlanKey, boolean>>).map(
+      ([key, vals]) => ({
+        name: formatKey(key),
+        availability: PLANS.map((p) => vals[p]) as [boolean, boolean, boolean],
+      })
+    ),
+  })
+)
+
+const prices = data.metadata.precos as Record<PlanKey, string>
 
 /* ─── Icons ──────────────────────────────────────────────────────────────── */
 
-function BodyIcon() {
+function UserIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 flex-shrink-0"
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 shrink-0"
       stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="5" r="3" />
-      <path d="M8 12.5c0-2 1.5-3.5 4-3.5s4 1.5 4 3.5l1 7H7l1-7z" />
-      <path d="M8 13l-3 4M16 13l3 4" />
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </svg>
   )
 }
 
-function DashboardIcon() {
+function SlidersIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 flex-shrink-0"
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 shrink-0"
       stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2" y="3" width="20" height="14" rx="2" />
-      <path d="M8 21h8M12 17v4" />
-      <polyline points="6,13 9,9 12,11 15,7 18,9" />
+      <line x1="4" y1="21" x2="4" y2="14" />
+      <line x1="4" y1="10" x2="4" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12" y2="3" />
+      <line x1="20" y1="21" x2="20" y2="16" />
+      <line x1="20" y1="12" x2="20" y2="3" />
+      <line x1="1" y1="14" x2="7" y2="14" />
+      <line x1="9" y1="8" x2="15" y2="8" />
+      <line x1="17" y1="16" x2="23" y2="16" />
+    </svg>
+  )
+}
+
+function ZapIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 shrink-0"
+      stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
     </svg>
   )
 }
 
 function PhoneIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 flex-shrink-0"
+    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 shrink-0"
       stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="5" y="2" width="14" height="20" rx="2" />
       <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth={2.5} />
@@ -36,58 +99,12 @@ function PhoneIcon() {
   )
 }
 
-/* ─── Types ──────────────────────────────────────────────────────────────── */
-
-type Feature = {
-  name: string
-  availability: [boolean, boolean, boolean, boolean]
+const CATEGORY_ICONS: Record<string, React.FC> = {
+  'Menu do Aluno': UserIcon,
+  'Personalização': SlidersIcon,
+  'Funcionalidades Avançadas': ZapIcon,
+  'Fitmass App': PhoneIcon,
 }
-
-type Category = {
-  name: string
-  Icon: React.FC
-  features: Feature[]
-}
-
-/* ─── Data ───────────────────────────────────────────────────────────────── */
-
-const PLANS = ['Básico', 'Premium', 'ULTRA', 'Enterprise'] as const
-const ULTRA_COL = 2
-
-const categories: Category[] = [
-  {
-    name: 'Avaliação Corporal',
-    Icon: BodyIcon,
-    features: [
-      { name: 'Peso',             availability: [true,  true,  true,  true]  },
-      { name: 'IMC',              availability: [true,  true,  true,  true]  },
-      { name: 'Massa Magra',      availability: [true,  true,  true,  true]  },
-      { name: 'Gordura Corporal', availability: [true,  true,  true,  true]  },
-      { name: 'Gordura Visceral', availability: [false, true,  true,  true]  },
-      { name: 'Taxa Metabólica',  availability: [false, true,  true,  true]  },
-      { name: 'Idade Corporal',   availability: [false, false, true,  true]  },
-    ],
-  },
-  {
-    name: 'Software e Gestão',
-    Icon: DashboardIcon,
-    features: [
-      { name: 'Dashboard Admin',         availability: [true,  true,  true,  true]  },
-      { name: 'Histórico Ilimitado',     availability: [false, true,  true,  true]  },
-      { name: 'Exportação de PDF',       availability: [false, true,  true,  true]  },
-      { name: 'Comparativo de Evolução', availability: [false, false, true,  true]  },
-    ],
-  },
-  {
-    name: 'Experiência do Aluno',
-    Icon: PhoneIcon,
-    features: [
-      { name: 'Acesso via App',                      availability: [false, true,  true,  true]  },
-      { name: 'Notificações Push',                   availability: [false, false, true,  true]  },
-      { name: 'Personalização com Logo da Academia', availability: [false, false, true,  true]  },
-    ],
-  },
-]
 
 /* ─── Sub-components ─────────────────────────────────────────────────────── */
 
@@ -112,10 +129,8 @@ function XIcon() {
 /* ─── Component ──────────────────────────────────────────────────────────── */
 
 export default function ComparisonAccordion() {
-  const [openCategory, setOpenCategory] = useState<string | null>(null)
-
-  const toggle = (name: string) =>
-    setOpenCategory((prev) => (prev === name ? null : name))
+  const [open, setOpen] = useState<string | null>(null)
+  const toggle = (name: string) => setOpen((prev) => (prev === name ? null : name))
 
   return (
     <section
@@ -124,6 +139,7 @@ export default function ComparisonAccordion() {
       aria-labelledby="comparativo-heading"
     >
       <div className="max-w-5xl mx-auto">
+        {/* Header */}
         <div className="text-center mb-8">
           <span className="inline-flex items-center gap-2 bg-accent/10 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
@@ -140,26 +156,37 @@ export default function ComparisonAccordion() {
           </p>
         </div>
 
-        {/* Cabeçalho desktop */}
-        <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1fr_1fr] mb-2 px-6">
+        {/* Desktop column headers */}
+        <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1fr] mb-2 px-6">
           <div />
           {PLANS.map((plan, i) => (
             <div
               key={plan}
-              className={`text-center font-title text-sm uppercase tracking-widest py-2 ${
-                i === ULTRA_COL
-                  ? 'text-accent font-bold'
-                  : 'text-contrast/50'
-              }`}
+              className={`text-center py-2 ${i === ULTRA_IDX ? 'bg-accent/5 rounded-t-xl mx-0.5' : ''}`}
             >
-              {plan}
+              <div
+                className={`font-title text-sm uppercase tracking-widest ${
+                  i === ULTRA_IDX ? 'text-accent font-bold' : 'text-contrast/50'
+                }`}
+              >
+                {PLAN_LABELS[plan]}
+              </div>
+              <div
+                className={`font-body text-xs mt-0.5 ${
+                  i === ULTRA_IDX ? 'text-accent/70 font-semibold' : 'text-contrast/35'
+                }`}
+              >
+                {prices[plan]}
+              </div>
             </div>
           ))}
         </div>
 
+        {/* Accordion */}
         <div className="space-y-3">
           {categories.map((category) => {
-            const isOpen = openCategory === category.name
+            const isOpen = open === category.name
+            const Icon = CATEGORY_ICONS[category.name] ?? PhoneIcon
 
             return (
               <div
@@ -173,7 +200,6 @@ export default function ComparisonAccordion() {
                   aria-controls={`cat-${category.name.replace(/\s/g, '-')}`}
                 >
                   <div className="flex items-center gap-3">
-                    {/* Icon da categoria */}
                     <span
                       className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
                         isOpen
@@ -181,10 +207,13 @@ export default function ComparisonAccordion() {
                           : 'bg-accent/10 text-accent group-hover:bg-accent/20'
                       }`}
                     >
-                      <category.Icon />
+                      <Icon />
                     </span>
                     <span className="font-title text-xl uppercase tracking-wide text-contrast">
                       {category.name}
+                    </span>
+                    <span className="hidden sm:inline font-body text-xs text-contrast/35">
+                      {category.features.length} recursos
                     </span>
                   </div>
                   <svg
@@ -200,29 +229,30 @@ export default function ComparisonAccordion() {
                   role="region"
                   aria-label={category.name}
                   className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
-                    isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+                    isOpen ? 'max-h-1000 opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
-                  {/* Cabeçalho mobile */}
-                  <div className="md:hidden grid grid-cols-[2fr_1fr_1fr_1fr_1fr] bg-surface px-4 py-2 border-t border-gray-100">
+                  {/* Mobile column headers */}
+                  <div className="md:hidden grid grid-cols-[2fr_1fr_1fr_1fr] bg-surface px-4 py-2 border-t border-gray-100">
                     <div />
                     {PLANS.map((plan, i) => (
                       <div
                         key={plan}
                         className={`text-center text-[10px] font-body font-bold uppercase leading-tight ${
-                          i === ULTRA_COL ? 'text-accent' : 'text-contrast/50'
+                          i === ULTRA_IDX ? 'text-accent' : 'text-contrast/50'
                         }`}
                       >
-                        {plan}
+                        {PLAN_LABELS[plan]}
                       </div>
                     ))}
                   </div>
 
+                  {/* Feature rows */}
                   <div className="divide-y divide-gray-50">
                     {category.features.map((feature) => (
                       <div
                         key={feature.name}
-                        className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] items-center px-4 md:px-6 py-3 hover:bg-surface/60 transition-colors"
+                        className="grid grid-cols-[2fr_1fr_1fr_1fr] items-center px-4 md:px-6 py-3 hover:bg-surface/60 transition-colors"
                       >
                         <span className="font-body text-sm text-contrast pr-4">
                           {feature.name}
@@ -231,7 +261,7 @@ export default function ComparisonAccordion() {
                           <div
                             key={i}
                             className={`flex justify-center py-1 ${
-                              i === ULTRA_COL ? 'bg-accent/5 mx-0.5 rounded-md' : ''
+                              i === ULTRA_IDX ? 'bg-accent/5 mx-0.5 rounded-md' : ''
                             }`}
                           >
                             {available ? <CheckIcon /> : <XIcon />}
