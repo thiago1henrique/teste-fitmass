@@ -32,8 +32,10 @@
     "@types/node": "^20.19.39",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sax": "^1.2.7",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
+    "sax": "^1.6.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5"

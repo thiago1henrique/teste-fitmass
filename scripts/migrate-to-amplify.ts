@@ -30,8 +30,8 @@ interface WpPost {
   title: string
   slug: string
   date: string
+  authorName?: string
   featureImage?: string | null
-  imageLinks?: string[]
   content: string
   categories?: string[]
 }
@@ -55,10 +55,59 @@ function extractSummary(html: string): string {
 
 // ── Category inference ─────────────────────────────────────────────────────
 
-const PREDEFINED = ['Saúde', 'Bioimpedância', 'Fitness', 'Tecnologia'] as const
+const PREDEFINED = [
+  'App', 'Bioscan', 'Corporativo', 'Estabelecimentos',
+  'Pocket', 'Profissionais', 'Saúde', 'Scanner', 'System',
+] as const
 type Category = (typeof PREDEFINED)[number]
 
 const KEYWORDS: Record<Category, string[]> = {
+  App: [
+    'aplicativo', 'app', 'mobile', 'android', 'ios', 'smartphone',
+    'celular', 'download', 'instalar', 'tela', 'interface', 'notificação',
+    'notificacao', 'push', 'login', 'cadastro', 'conta', 'usuário', 'usuario',
+    'fitmass app', 'aplicação mobile', 'aplicacao mobile',
+  ],
+  Bioscan: [
+    'bioscan', 'bio scan', 'bioimpedância', 'bioimpedancia',
+    'composição corporal', 'composicao corporal',
+    'gordura corporal', 'percentual de gordura', 'massa muscular', 'massa magra',
+    'massa gorda', 'massa óssea', 'massa ossea', 'massa corporal',
+    'avaliação física', 'avaliacao fisica', 'avaliação corporal',
+    'imc', 'índice de massa', 'indice de massa',
+    'água corporal', 'agua corporal', 'hidratação corporal',
+    'anamnese', 'protocolo de avaliação',
+  ],
+  Corporativo: [
+    'corporativo', 'empresa', 'negócio', 'negocio', 'b2b',
+    'parceiro', 'parceria', 'franquia', 'franqueado', 'investimento',
+    'empreendedor', 'empreendedorismo', 'mercado', 'setor',
+    'white label', 'marca própria', 'marca propria', 'revendedor',
+    'distribuidor', 'representante', 'contrato', 'proposta comercial',
+    'faturamento', 'receita', 'lucro', 'roi', 'crescimento',
+  ],
+  Estabelecimentos: [
+    'academia', 'studio', 'estúdio', 'ginásio', 'ginasio',
+    'clínica', 'clinica', 'espaço fitness', 'espaco fitness',
+    'unidade', 'estabelecimento', 'centro esportivo', 'centro de saúde',
+    'spa', 'crossfit box', 'pilates', 'nutricionista clínica',
+    'consultório', 'consultorio', 'gym',
+  ],
+  Pocket: [
+    'pocket', 'portátil', 'portatil', 'compacto', 'dispositivo portátil',
+    'balança portátil', 'balança portatil', 'fitmass pocket',
+    'leveza', 'fácil de transportar', 'facil de transportar',
+    'pequeno porte', 'atendimento domiciliar', 'visita domiciliar',
+    'campo', 'externo', 'mobilidade',
+  ],
+  Profissionais: [
+    'profissional', 'personal trainer', 'personal',
+    'nutricionista', 'educador físico', 'educador fisico',
+    'coach', 'consultor', 'fisioterapeuta', 'médico', 'medico',
+    'enfermeiro', 'avaliador', 'treinador', 'especialista',
+    'certificação', 'certificacao', 'formação', 'formacao',
+    'carreira', 'atendimento', 'cliente', 'paciente', 'aluno',
+  ],
   Saúde: [
     'saúde', 'saudável', 'saudavel', 'nutrição', 'nutricao', 'nutriente',
     'alimentação', 'alimentacao', 'dieta', 'vitamina', 'mineral', 'proteína',
@@ -68,47 +117,24 @@ const KEYWORDS: Record<Category, string[]> = {
     'colesterol', 'glicose', 'pressão arterial', 'pressao arterial',
     'inflamação', 'inflamacao', 'metabolismo', 'hormônio', 'hormonio',
     'obesidade', 'emagrecimento', 'emagrecer', 'perda de peso',
-    'estilo de vida', 'qualidade de vida', 'hábito', 'habito',
-    'criança', 'crianca', 'infantil', 'idoso', 'gestante',
+    'qualidade de vida', 'estilo de vida', 'hábito', 'habito',
+    'treino', 'exercício', 'exercicio', 'atividade física', 'atividade fisica',
   ],
-  Bioimpedância: [
-    'bioimpedância', 'bioimpedancia', 'composição corporal', 'composicao corporal',
-    'gordura corporal', 'percentual de gordura', 'massa muscular', 'massa magra',
-    'massa gorda', 'massa óssea', 'massa ossea', 'massa corporal',
-    'avaliação física', 'avaliacao fisica', 'avaliação corporal',
-    'imc', 'índice de massa', 'indice de massa',
-    'água corporal', 'agua corporal', 'hidratação corporal',
-    'balança', 'balanca', 'medição', 'medicao', 'mensuração',
-    'circunferência', 'circunferencia', 'dobra cutânea', 'dobra cutanea',
-    'anamnese', 'protocolo de avaliação',
-    'fitmass', 'white label', 'software de avaliação',
+  Scanner: [
+    'scanner', 'escaneamento', 'scan', 'hardware', 'equipamento',
+    'aparelho', 'dispositivo', 'sensor', 'leitura corporal',
+    'fitmass scanner', 'balança inteligente', 'smart scale',
+    'eletrodos', 'corrente elétrica', 'corrente eletrica',
+    'impedância', 'impedancia', 'instalação', 'instalacao',
+    'manutenção', 'manutencao', 'calibração', 'calibracao',
   ],
-  Fitness: [
-    'treino', 'treinamento', 'exercício', 'exercicio', 'academia',
-    'musculação', 'musculacao', 'hipertrofia', 'força', 'forca',
-    'cardio', 'aeróbico', 'aerobico', 'anaeróbico', 'anaerobico',
-    'resistência', 'resistencia', 'funcional', 'crossfit', 'calistenia',
-    'corrida', 'ciclismo', 'natação', 'natacao', 'esporte', 'atleta',
-    'personal', 'coach', 'aquecimento', 'alongamento',
-    'agachamento', 'supino', 'deadlift', 'levantamento',
-    'série', 'serie', 'repetição', 'repeticao', 'carga', 'intervalo',
-    'peito', 'costas', 'bíceps', 'biceps', 'tríceps', 'triceps',
-    'ombro', 'perna', 'glúteo', 'gluteo', 'abdômen', 'abdomen',
-    'queima de gordura', 'condicionamento', 'performance',
-    'pré-treino', 'pre-treino', 'pós-treino', 'pos-treino',
-    'frequência cardíaca', 'frequencia cardiaca', 'zona de treino',
-    'branding fitness', 'academia fitness',
-  ],
-  Tecnologia: [
-    'tecnologia', 'software', 'sistema', 'plataforma', 'aplicativo',
-    'app', 'digital', 'inovação', 'inovacao', 'inteligência artificial',
-    'inteligencia artificial', 'ia', 'dados', 'gestão', 'gestao',
-    'automação', 'automacao', 'dashboard', 'relatório', 'relatorio',
-    'api', 'integração', 'integracao', 'cloud', 'nuvem',
-    'wearable', 'smartwatch', 'sensor', 'monitor',
-    'machine learning', 'algoritmo', 'análise de dados', 'analise de dados',
-    'digitalização', 'digitalizacao', 'transformação digital',
-    'aplicação', 'aplicacao', 'ferramenta digital',
+  System: [
+    'sistema', 'plataforma', 'software', 'gestão', 'gestao',
+    'dashboard', 'relatório', 'relatorio', 'dados', 'automação', 'automacao',
+    'integração', 'integracao', 'api', 'cloud', 'nuvem',
+    'fitmass system', 'painel', 'cadastro de clientes', 'histórico',
+    'historico', 'evolução', 'evolucao', 'acompanhamento',
+    'monitoramento', 'rastreamento', 'métricas', 'metricas',
   ],
 }
 
@@ -142,7 +168,7 @@ function inferCategories(title: string, summary: string, content: string): strin
   })
 
   const best = scores.reduce((a, b) => (a.total >= b.total ? a : b))
-  return best.total >= SCORE_THRESHOLD ? [best.cat] : ['Saúde', 'Fitness']
+  return best.total >= SCORE_THRESHOLD ? [best.cat] : ['Saúde']
 }
 
 // ── Cognito auth ───────────────────────────────────────────────────────────
@@ -366,7 +392,7 @@ async function main() {
         views: 0,
         categories,
         authorId: userId,
-        authorName,
+        authorName: post.authorName ?? authorName,
       })
 
       console.log(`  ✔ [post] ${post.slug} [${categories.join(', ')}]`)
