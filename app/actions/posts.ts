@@ -6,23 +6,21 @@ import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/da
 import { cookies } from 'next/headers'
 import outputs from '@/amplify_outputs.json'
 import type { Schema } from '@/amplify/data/resource'
-import { getSession } from '@/lib/session'
 import { generateSlug } from '@/lib/slug'
+import { requireSession, auditLog } from '@/lib/auth-utils'
+
+const TITLE_MAX    = 200
+const SUMMARY_MAX  = 500
+const CONTENT_MAX  = 100_000
 
 function getClient() {
   return generateServerClientUsingCookies<Schema>({ config: outputs, cookies })
 }
 
-async function requireSession() {
-  const session = await getSession()
-  if (!session) redirect('/admin/login')
-  return session
-}
-
 export async function createPost(formData: FormData) {
   const session    = await requireSession()
-  const title      = formData.get('title') as string
-  const summary    = formData.get('summary') as string
+  const title      = (formData.get('title') as string)?.trim()
+  const summary    = (formData.get('summary') as string)?.trim()
   const content    = formData.get('content') as string
   const coverUrl   = (formData.get('coverUrl') as string) || undefined
   const status     = (formData.get('status') as 'DRAFT' | 'PUBLISHED') ?? 'DRAFT'
@@ -31,6 +29,9 @@ export async function createPost(formData: FormData) {
   if (!title || !summary || !content) {
     return { error: 'Título, resumo e conteúdo são obrigatórios.' }
   }
+  if (title.length > TITLE_MAX)   return { error: `Título deve ter no máximo ${TITLE_MAX} caracteres.` }
+  if (summary.length > SUMMARY_MAX) return { error: `Resumo deve ter no máximo ${SUMMARY_MAX} caracteres.` }
+  if (content.length > CONTENT_MAX) return { error: `Conteúdo deve ter no máximo ${CONTENT_MAX} caracteres.` }
 
   const client = getClient()
 
@@ -53,16 +54,17 @@ export async function createPost(formData: FormData) {
     authorName:   session.name,
   })
 
+  auditLog('post_created', session.userId, { slug, status })
+
   revalidatePath('/blog')
   revalidatePath('/admin/posts')
   redirect('/admin/posts')
 }
 
 export async function updatePost(id: string, formData: FormData) {
-  await requireSession()
-
-  const title      = formData.get('title') as string
-  const summary    = formData.get('summary') as string
+  const session    = await requireSession()
+  const title      = (formData.get('title') as string)?.trim()
+  const summary    = (formData.get('summary') as string)?.trim()
   const content    = formData.get('content') as string
   const coverUrl   = (formData.get('coverUrl') as string) || undefined
   const status     = (formData.get('status') as 'DRAFT' | 'PUBLISHED') ?? 'DRAFT'
@@ -71,10 +73,17 @@ export async function updatePost(id: string, formData: FormData) {
   if (!title || !summary || !content) {
     return { error: 'Título, resumo e conteúdo são obrigatórios.' }
   }
+  if (title.length > TITLE_MAX)   return { error: `Título deve ter no máximo ${TITLE_MAX} caracteres.` }
+  if (summary.length > SUMMARY_MAX) return { error: `Resumo deve ter no máximo ${SUMMARY_MAX} caracteres.` }
+  if (content.length > CONTENT_MAX) return { error: `Conteúdo deve ter no máximo ${CONTENT_MAX} caracteres.` }
 
   const client = getClient()
   const { data: post } = await client.models.Post.get({ id })
   if (!post) return { error: 'Post não encontrado.' }
+
+  if (post.authorId !== session.userId && session.role !== 'ADMIN') {
+    return { error: 'Sem permissão para editar este post.' }
+  }
 
   const wasPublished   = post.status === 'PUBLISHED'
   const isNowPublished = status === 'PUBLISHED'
@@ -93,6 +102,8 @@ export async function updatePost(id: string, formData: FormData) {
         : post.publishedAt ?? undefined,
   })
 
+  auditLog('post_updated', session.userId, { id, status })
+
   revalidatePath('/blog')
   revalidatePath(`/blog/${post.slug}`)
   revalidatePath('/admin/posts')
@@ -100,13 +111,19 @@ export async function updatePost(id: string, formData: FormData) {
 }
 
 export async function deletePost(id: string) {
-  await requireSession()
+  const session = await requireSession()
 
   const client = getClient()
   const { data: post } = await client.models.Post.get({ id })
   if (!post) return { error: 'Post não encontrado.' }
 
+  if (post.authorId !== session.userId && session.role !== 'ADMIN') {
+    return { error: 'Sem permissão para excluir este post.' }
+  }
+
   await client.models.Post.delete({ id })
+
+  auditLog('post_deleted', session.userId, { id, slug: post.slug })
 
   revalidatePath('/blog')
   revalidatePath('/admin/posts')

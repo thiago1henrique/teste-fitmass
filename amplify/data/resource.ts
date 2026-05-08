@@ -18,7 +18,8 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.groups(['ADMIN', 'EDITOR']),
       allow.guest().to(['read']),
-      allow.publicApiKey().to(['read', 'update']),
+      // update intentionally removed — view counting must use a backend-only resolver
+      allow.publicApiKey().to(['read']),
     ]),
 })
 
@@ -28,6 +29,6 @@ export const data = defineData({
   schema,
   authorizationModes: {
     defaultAuthorizationMode: 'userPool',
-    apiKeyAuthorizationMode: { expiresInDays: 30 },
+    apiKeyAuthorizationMode: { expiresInDays: 7 },
   },
 })

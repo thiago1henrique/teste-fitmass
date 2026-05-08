@@ -1,6 +1,7 @@
 'use client'
 
 import { useTransition, useState, useCallback, useRef } from 'react'
+import DOMPurify from 'isomorphic-dompurify'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TiptapImage from '@tiptap/extension-image'
@@ -299,7 +300,7 @@ function LivePreview({
         {html && html !== '<p></p>' ? (
           <div
             className="prose-content text-sm"
-            dangerouslySetInnerHTML={{ __html: html }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }) }}
           />
         ) : (
           <p className="font-body text-sm text-contrast/20 italic">O conteúdo aparecerá aqui…</p>

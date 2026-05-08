@@ -19,8 +19,9 @@ export default async function LoginPage() {
       <div className="relative w-full max-w-sm">
         <div className="text-center mb-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* Logo local: coloque o arquivo SVG em public/logo-white.svg */}
           <img
-            src="https://fitmass.com.br/wp-content/uploads/2023/05/Logo-Fitmass-branca.svg"
+            src="/logo-white.svg"
             alt="Fitmass"
             className="h-10 w-auto mx-auto mb-6"
           />

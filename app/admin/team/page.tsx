@@ -7,6 +7,9 @@ import {
 import { getSession } from '@/lib/session'
 import TeamManager from './TeamManager'
 
+// Cognito hard cap per request is 60; paginate if you expect more users
+const LIST_LIMIT = 60
+
 export const metadata = { title: 'Equipe | Admin Fitmass' }
 
 const USER_POOL = process.env.AMPLIFY_USERPOOL_ID ?? ''
@@ -23,8 +26,8 @@ export default async function TeamPage() {
   const cognito = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION ?? 'us-east-1' })
 
   const [{ Users: allUsers }, { Users: adminUsers }] = await Promise.all([
-    cognito.send(new ListUsersCommand({ UserPoolId: USER_POOL })).catch(() => ({ Users: [] })),
-    cognito.send(new ListUsersInGroupCommand({ UserPoolId: USER_POOL, GroupName: 'ADMIN' })).catch(() => ({ Users: [] })),
+    cognito.send(new ListUsersCommand({ UserPoolId: USER_POOL, Limit: LIST_LIMIT })).catch(() => ({ Users: [] })),
+    cognito.send(new ListUsersInGroupCommand({ UserPoolId: USER_POOL, GroupName: 'ADMIN', Limit: LIST_LIMIT })).catch(() => ({ Users: [] })),
   ])
 
   const adminSubs = new Set((adminUsers ?? []).map((u) => attr(u.Attributes, 'sub')))

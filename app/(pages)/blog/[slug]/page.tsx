@@ -9,38 +9,7 @@ import RelatedPostsSection from '@/app/components/blog/RelatedPostsSection'
 
 export const revalidate = 3600
 
-const cookieStore = {
-  get: () => undefined,
-  getAll: () => [],
-  set: () => {},
-  delete: () => {},
-} as any
-
 async function getPost(slug: string) {
-<<<<<<< HEAD
-  // Use real cookies at runtime, mock at build time to avoid cookies() error
-  const client = generateServerClientUsingCookies<Schema>({
-    config: outputs,
-    cookies: typeof window === 'undefined' && !cookies ? () => cookieStore : cookies,
-    authMode: 'apiKey',
-  })
-  const { data } = await client.models.Post.list({
-    filter: { slug: { eq: slug }, status: { eq: 'PUBLISHED' } },
-  })
-  return data[0] ?? null
-}
-
-export async function generateStaticParams() {
-  const client = generateServerClientUsingCookies<Schema>({
-    config: outputs,
-    cookies: () => cookieStore,
-    authMode: 'apiKey',
-  })
-  const { data: posts } = await client.models.Post.list({
-    filter: { status: { eq: 'PUBLISHED' } },
-  })
-  return posts.map(({ slug }) => ({ slug }))
-=======
   try {
     const client = generateServerClientUsingCookies<Schema>({
       config: outputs,
@@ -70,7 +39,6 @@ export async function generateStaticParams() {
   } catch {
     return []
   }
->>>>>>> dev-thiago
 }
 
 export async function generateMetadata({

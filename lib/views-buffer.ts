@@ -20,6 +20,7 @@ export async function bufferView(slug: string): Promise<void> {
       })
     }
   } catch {
-    // non-critical — fails silently in local dev without real AWS credentials
+    // View counting is currently disabled: apiKey no longer has update permission.
+    // To re-enable, implement a backend-only Lambda resolver with IAM auth.
   }
 }

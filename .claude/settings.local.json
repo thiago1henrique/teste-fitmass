@@ -31,7 +31,11 @@
       "Bash(xargs grep *)",
       "Bash(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\" -Force)",
       "Bash(Select-Object Name)",
-      "Bash(node -e \"const j=require\\('./json/posts_fitmass_completo.json'\\); const urls=new Set\\(\\); for\\(const p of j\\){if\\(p.featureImage\\)urls.add\\(p.featureImage\\);if\\(p.imageLinks\\)p.imageLinks.forEach\\(u=>urls.add\\(u\\)\\);} console.log\\('Total imagens unicas:',urls.size\\); Array.from\\(urls\\).slice\\(0,3\\).forEach\\(u=>console.log\\(u\\)\\);\")"
+      "Bash(node -e \"const j=require\\('./json/posts_fitmass_completo.json'\\); const urls=new Set\\(\\); for\\(const p of j\\){if\\(p.featureImage\\)urls.add\\(p.featureImage\\);if\\(p.imageLinks\\)p.imageLinks.forEach\\(u=>urls.add\\(u\\)\\);} console.log\\('Total imagens unicas:',urls.size\\); Array.from\\(urls\\).slice\\(0,3\\).forEach\\(u=>console.log\\(u\\)\\);\")",
+      "Bash(grep -r \"fetch\\(\" \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\" ! -path \"*/node_modules/*\")",
+      "Bash(grep -r \"eval\\\\|innerHTML\\\\|innerHTML\\\\|exec\\\\|new Function\" \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\" ! -path \"*/node_modules/*\" ! -path \"*/.next/*\")",
+      "Bash(Remove-Item \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\middleware.ts\")",
+      "Bash(del \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\middleware.ts\")"
     ]
   }
 }

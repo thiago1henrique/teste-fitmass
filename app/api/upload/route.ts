@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
+import { randomUUID } from 'crypto'
 import path from 'path'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSession } from '@/lib/session'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
@@ -15,6 +17,10 @@ const s3 = s3Configured
 export async function POST(request: NextRequest) {
   const session = await getSession()
   if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
+  if (!checkRateLimit(`upload:${session.userId}`, 20, 60_000)) {
+    return NextResponse.json({ error: 'Muitos uploads. Aguarde um momento.' }, { status: 429 })
+  }
 
   const formData = await request.formData()
   const file = formData.get('file') as File | null
@@ -29,7 +35,7 @@ export async function POST(request: NextRequest) {
   const bytes  = await file.arrayBuffer()
   const buffer = Buffer.from(bytes)
   const ext    = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
-  const name   = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+  const name   = `${randomUUID()}.${ext}`
 
   if (s3) {
     const key = `uploads/${name}`
