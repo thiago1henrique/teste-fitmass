@@ -81,7 +81,7 @@ export default async function AdminDashboard() {
   const monthSign = monthDiff > 0 ? `+${monthDiff}` : `${monthDiff}`
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-8 space-y-6 sm:space-y-8">
       <div>
         <h1 className="font-title text-3xl uppercase text-contrast tracking-wide">Dashboard</h1>
         <p className="font-body text-contrast/50 text-sm mt-1">

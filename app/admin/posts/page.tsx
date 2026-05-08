@@ -29,8 +29,8 @@ export default async function PostsPage() {
     }))
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 sm:p-8">
+      <div className="flex items-center justify-between mb-6 sm:mb-8 gap-3">
         <div>
           <h1 className="font-title text-3xl uppercase text-contrast tracking-wide">Posts</h1>
           <p className="font-body text-contrast/50 text-sm mt-1">{posts.length} post(s) no total</p>

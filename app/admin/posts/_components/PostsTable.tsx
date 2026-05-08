@@ -84,11 +84,12 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
   return (
     <div>
       {/* Toolbar de busca + filtro */}
-      <div className="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-0 max-w-sm">
+      <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center gap-3">
+        {/* Campo de busca */}
+        <div className="relative flex-1">
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-contrast/30 pointer-events-none"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803a7.5 7.5 0 0010.607 0z" />
           </svg>
@@ -97,12 +98,12 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
             placeholder="Buscar por título, autor ou slug…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg font-body text-sm text-contrast placeholder-contrast/30 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50 transition"
+            className="w-full pl-9 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-body text-sm text-contrast placeholder-gray-400 focus:outline-none focus:bg-white focus:border-gray-300 transition"
           />
           {search && (
             <button
               onClick={() => setSearch('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-contrast/30 hover:text-contrast/60 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               aria-label="Limpar busca"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -112,25 +113,28 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
           )}
         </div>
 
-        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-          {(['ALL', 'PUBLISHED', 'DRAFT'] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`font-body text-xs font-semibold px-3 py-1.5 rounded-md transition-colors ${
-                statusFilter === s
-                  ? 'bg-white text-contrast shadow-sm'
-                  : 'text-contrast/50 hover:text-contrast'
-              }`}
-            >
-              {s === 'ALL' ? 'Todos' : s === 'PUBLISHED' ? 'Publicados' : 'Rascunhos'}
-            </button>
-          ))}
-        </div>
+        {/* Filtros de status + contagem */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-0.5 bg-gray-100 rounded-xl p-1">
+            {(['ALL', 'PUBLISHED', 'DRAFT'] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`font-body text-xs font-semibold px-3 py-1.5 rounded-lg transition-all ${
+                  statusFilter === s
+                    ? 'bg-white text-contrast shadow-sm'
+                    : 'text-contrast/45 hover:text-contrast/70'
+                }`}
+              >
+                {s === 'ALL' ? 'Todos' : s === 'PUBLISHED' ? 'Publicados' : 'Rascunhos'}
+              </button>
+            ))}
+          </div>
 
-        <span className="font-body text-xs text-contrast/40 shrink-0">
-          {filtered.length} de {posts.length}
-        </span>
+          <span className="font-body text-xs text-contrast/35 tabular-nums">
+            {filtered.length}/{posts.length}
+          </span>
+        </div>
       </div>
 
       {filtered.length === 0 ? (
