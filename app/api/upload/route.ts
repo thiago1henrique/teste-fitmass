@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import { randomUUID } from 'crypto'
 import path from 'path'
+import sharp from 'sharp'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSession } from '@/lib/session'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -13,6 +14,15 @@ const s3Configured = !!(process.env.AWS_S3_BUCKET && process.env.AWS_REGION)
 const s3 = s3Configured
   ? new S3Client({ region: process.env.AWS_REGION })
   : null
+
+async function toWebP(buffer: Buffer, mimeType: string): Promise<{ data: Buffer; mime: string }> {
+  // SVG and GIF are kept as-is (sharp doesn't handle animated GIF → WebP reliably)
+  if (mimeType === 'image/svg+xml' || mimeType === 'image/gif') {
+    return { data: buffer, mime: mimeType }
+  }
+  const data = await sharp(buffer).webp({ quality: 85 }).toBuffer()
+  return { data, mime: 'image/webp' }
+}
 
 export async function POST(request: NextRequest) {
   const session = await getSession()
@@ -32,20 +42,23 @@ export async function POST(request: NextRequest) {
   if (file.size > MAX_SIZE)
     return NextResponse.json({ error: 'Arquivo muito grande (máx. 5 MB)' }, { status: 400 })
 
-  const bytes  = await file.arrayBuffer()
-  const buffer = Buffer.from(bytes)
-  const ext    = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
-  const name   = `${randomUUID()}.${ext}`
+  const rawBuffer = Buffer.from(await file.arrayBuffer())
+  const { data: buffer, mime } = await toWebP(rawBuffer, file.type)
+
+  const ext  = mime === 'image/webp' ? 'webp' : (file.name.split('.').pop()?.toLowerCase() ?? 'bin')
+  const name = `${randomUUID()}.${ext}`
 
   if (s3) {
-    const key = `uploads/${name}`
+    const key = `site/uploads/${name}`
     await s3.send(new PutObjectCommand({
       Bucket: process.env.AWS_S3_BUCKET!,
       Key: key,
       Body: buffer,
-      ContentType: file.type,
+      ContentType: mime,
     }))
-    const url = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`
+    const url = process.env.AWS_S3_PUBLIC_URL
+      ? `${process.env.AWS_S3_PUBLIC_URL.replace(/\/$/, '')}/${key}`
+      : `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`
     return NextResponse.json({ url })
   }
 

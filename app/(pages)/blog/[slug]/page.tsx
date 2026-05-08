@@ -4,6 +4,7 @@ import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/da
 import { cookies } from 'next/headers'
 import outputs from '@/amplify_outputs.json'
 import type { Schema } from '@/amplify/data/resource'
+import { listAll } from '@/lib/list-all'
 import PostBody from './PostBody'
 import RelatedPostsSection from '@/app/components/blog/RelatedPostsSection'
 
@@ -16,9 +17,9 @@ async function getPost(slug: string) {
       cookies,
       authMode: 'apiKey',
     })
-    const { data } = await client.models.Post.list({
-      filter: { slug: { eq: slug }, status: { eq: 'PUBLISHED' } },
-    })
+    const data = await listAll((t) =>
+      client.models.Post.list({ filter: { slug: { eq: slug }, status: { eq: 'PUBLISHED' } }, nextToken: t })
+    )
     return data[0] ?? null
   } catch {
     return null
@@ -32,9 +33,9 @@ export async function generateStaticParams() {
       cookies,
       authMode: 'apiKey',
     })
-    const { data: posts } = await client.models.Post.list({
-      filter: { status: { eq: 'PUBLISHED' } },
-    })
+    const posts = await listAll((t) =>
+      client.models.Post.list({ filter: { status: { eq: 'PUBLISHED' } }, nextToken: t, limit: 500 })
+    )
     return posts.map(({ slug }) => ({ slug }))
   } catch {
     return []

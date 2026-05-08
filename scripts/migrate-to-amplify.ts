@@ -11,10 +11,8 @@
 import { config } from 'dotenv'
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import {
-  CognitoIdentityProviderClient,
-  AdminInitiateAuthCommand,
-} from '@aws-sdk/client-cognito-identity-provider'
+import { Amplify } from 'aws-amplify'
+import { signIn, fetchAuthSession } from 'aws-amplify/auth'
 import {
   S3Client,
   PutObjectCommand,
@@ -23,6 +21,7 @@ import {
 import outputs from '../amplify_outputs.json'
 
 config({ path: '.env.local' })
+Amplify.configure(outputs)
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -180,18 +179,12 @@ async function authenticate(): Promise<{ token: string; userId: string; authorNa
     throw new Error('Defina ADMIN_EMAIL e ADMIN_PASSWORD no .env.local')
   }
 
-  const cognito = new CognitoIdentityProviderClient({ region: outputs.auth.aws_region })
-  const result = await cognito.send(
-    new AdminInitiateAuthCommand({
-      AuthFlow: 'ADMIN_USER_PASSWORD_AUTH',
-      UserPoolId: outputs.auth.user_pool_id,
-      ClientId: outputs.auth.user_pool_client_id,
-      AuthParameters: { USERNAME: email, PASSWORD: password },
-    }),
-  )
+  const { isSignedIn, nextStep } = await signIn({ username: email, password })
+  if (!isSignedIn) throw new Error(`Login incompleto: ${nextStep.signInStep}`)
 
+  const session = await fetchAuthSession()
   // AppSync with Cognito User Pools auth requires the ID Token (contains cognito:groups)
-  const idToken = result.AuthenticationResult?.IdToken
+  const idToken = session.tokens?.idToken?.toString()
   if (!idToken) throw new Error('Token não retornado pelo Cognito')
 
   const payload = JSON.parse(Buffer.from(idToken.split('.')[1], 'base64url').toString()) as {
@@ -260,8 +253,9 @@ async function createPost(
 
 // ── S3 image upload ────────────────────────────────────────────────────────
 
-const s3 = new S3Client({ region: outputs.storage.aws_region })
-const BUCKET = outputs.storage.bucket_name
+const S3_REGION = outputs.storage.aws_region
+const s3 = new S3Client({ region: S3_REGION })
+const BUCKET = 'fitmass-public-imgs'
 const WP_URL_RE = /https?:\/\/fitmass\.com\.br\/wp-content\/uploads\/[^"'\s)>]+/g
 
 const MIME: Record<string, string> = {
@@ -271,11 +265,11 @@ const MIME: Record<string, string> = {
 
 function wpUrlToS3Key(url: string): string {
   const filename = url.split('/').pop()!.split('?')[0]
-  return `uploads/wp-${filename}`
+  return `site/uploads/wp-${filename}`
 }
 
 function s3PublicUrl(key: string): string {
-  return `https://${BUCKET}.s3.${outputs.storage.aws_region}.amazonaws.com/${key}`
+  return `https://${BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`
 }
 
 async function uploadImage(url: string): Promise<string | null> {

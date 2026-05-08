@@ -3,11 +3,12 @@ import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/da
 import { cookies } from 'next/headers'
 import outputs from '@/amplify_outputs.json'
 import type { Schema } from '@/amplify/data/resource'
+import { listAll } from '@/lib/list-all'
 import Blog from './Blog'
 
 export const revalidate = 60
 
-export const PAGE_SIZE = 12
+export const PAGE_SIZE = 15
 
 export const metadata: Metadata = {
   title: 'Blog | Fitmass',
@@ -18,9 +19,9 @@ export const metadata: Metadata = {
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string }>
+  searchParams: Promise<{ page?: string; category?: string; search?: string }>
 }) {
-  const { page: pageParam, category } = await searchParams
+  const { page: pageParam, category, search } = await searchParams
   const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1)
 
   const allPosts = await (async () => {
@@ -30,17 +31,23 @@ export default async function BlogPage({
         cookies,
         authMode: 'apiKey',
       })
-      const { data } = await client.models.Post.list({
-        filter: { status: { eq: 'PUBLISHED' } },
-      })
-      return data
+      return await listAll((t) =>
+        client.models.Post.list({ filter: { status: { eq: 'PUBLISHED' } }, nextToken: t, limit: 500 })
+      )
     } catch {
       return []
     }
   })()
 
+  const q = search?.trim().toLowerCase() ?? ''
+
   let posts = allPosts
     .filter((p) => !category || (p.categories ?? []).includes(category))
+    .filter((p) =>
+      !q ||
+      p.title.toLowerCase().includes(q) ||
+      (p.summary ?? '').toLowerCase().includes(q)
+    )
     .sort((a, b) => {
       const da = a.publishedAt ?? a.createdAt
       const db = b.publishedAt ?? b.createdAt
@@ -66,6 +73,7 @@ export default async function BlogPage({
       page={page}
       pageSize={PAGE_SIZE}
       category={category ?? null}
+      search={q || null}
     />
   )
 }

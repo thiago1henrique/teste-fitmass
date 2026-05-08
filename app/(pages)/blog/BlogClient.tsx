@@ -13,8 +13,6 @@ export type Post = {
   author: { name: string }
 }
 
-const PREDEFINED = ['Saúde', 'Bioimpedância', 'Fitness', 'Tecnologia']
-
 function fmt(date: Date) {
   return new Date(date).toLocaleDateString('pt-BR', {
     day: '2-digit',
@@ -23,10 +21,11 @@ function fmt(date: Date) {
   })
 }
 
-function buildUrl(page: number, category: string | null) {
+function buildUrl(page: number, category: string | null, search: string | null) {
   const params = new URLSearchParams()
   if (page > 1) params.set('page', String(page))
   if (category) params.set('category', category)
+  if (search)   params.set('search', search)
   const qs = params.toString()
   return `/blog${qs ? `?${qs}` : ''}`
 }
@@ -48,10 +47,10 @@ function HeroCard({ post, large }: { post: Post; large?: boolean }) {
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-contrast to-contrast/70" />
+        <div className="absolute inset-0 bg-linear-to-br from-contrast to-contrast/70" />
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
 
       <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
         {post.categories.length > 0 && (
@@ -103,7 +102,7 @@ function ListCard({ post }: { post: Post }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center">
+          <div className="w-full h-full bg-linear-to-br from-accent/15 to-accent/5 flex items-center justify-center">
             <svg className="w-6 h-6 text-accent/25" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
@@ -142,66 +141,65 @@ interface BlogClientProps {
   page: number
   pageSize: number
   category: string | null
+  search: string | null
   sidebar: ReactNode
 }
 
-export default function BlogClient({ posts, total, page, pageSize, category, sidebar }: BlogClientProps) {
+export default function BlogClient({ posts, total, page, pageSize, category, search, sidebar }: BlogClientProps) {
   const totalPages = Math.ceil(total / pageSize)
-  const hero = page === 1 ? posts.slice(0, 3) : []
+  const hero      = page === 1 && !search ? posts.slice(0, 3) : []
   const hasFullHero = hero.length === 3
+  const listPosts   = hasFullHero ? posts.slice(3) : posts
 
   return (
     <div>
-      {/* Barra de categorias */}
-      <div className="bg-contrast border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-1 h-10 overflow-x-auto">
-            <Link
-              href="/blog"
-              className={`font-body text-[11px] font-bold uppercase tracking-widest whitespace-nowrap px-3 py-1.5 rounded transition-colors ${
-                category === null
-                  ? 'bg-accent text-white'
-                  : 'text-white/50 hover:text-white'
-              }`}
-            >
-              Blog Fitmass
+      {/* Label de resultado de busca */}
+      {search && (
+        <div className="bg-surface border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+            <svg className="w-4 h-4 text-accent shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803a7.5 7.5 0 0010.607 0z" />
+            </svg>
+            <span className="font-body text-sm text-contrast/70">
+              {total > 0
+                ? <>{total} resultado{total !== 1 ? 's' : ''} para <strong className="text-contrast">&quot;{search}&quot;</strong></>
+                : <>Nenhum resultado para <strong className="text-contrast">&quot;{search}&quot;</strong></>
+              }
+            </span>
+            <Link href="/blog" className="ml-auto font-body text-xs text-accent hover:text-accent/70 transition-colors">
+              Limpar busca ×
             </Link>
-
-            <span className="w-px h-4 bg-white/20 shrink-0 mx-1" aria-hidden="true" />
-
-            {PREDEFINED.map((cat) => (
-              <Link
-                key={cat}
-                href={buildUrl(1, cat === category ? null : cat)}
-                className={`font-body text-[11px] font-bold uppercase tracking-widest whitespace-nowrap px-3 py-1.5 rounded transition-colors ${
-                  category === cat
-                    ? 'bg-accent text-white'
-                    : 'text-white/45 hover:text-white'
-                }`}
-              >
-                {cat}
-              </Link>
-            ))}
           </div>
         </div>
-      </div>
+      )}
 
       {posts.length === 0 ? (
         <div className="max-w-7xl mx-auto px-4 py-24 text-center">
-          <p className="font-body text-contrast/40 text-lg">
-            Nenhum post em &quot;{category}&quot; ainda.
-          </p>
-          <Link href="/blog" className="mt-4 inline-block font-body text-sm text-accent underline hover:no-underline">
-            Ver todos os posts
-          </Link>
+          {search ? (
+            <>
+              <p className="font-body text-contrast/40 text-lg">Nenhum resultado encontrado.</p>
+              <Link href="/blog" className="mt-4 inline-block font-body text-sm text-accent underline hover:no-underline">
+                Ver todos os posts
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="font-body text-contrast/40 text-lg">
+                Nenhum post em &quot;{category}&quot; ainda.
+              </p>
+              <Link href="/blog" className="mt-4 inline-block font-body text-sm text-accent underline hover:no-underline">
+                Ver todos os posts
+              </Link>
+            </>
+          )}
         </div>
       ) : (
         <>
-          {/* Hero estilo G1 — apenas na primeira página */}
+          {/* Hero estilo G1 */}
           {hasFullHero && (
             <div className="bg-white border-b border-gray-200">
               <div className="max-w-7xl mx-auto px-4 py-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 h-[340px] md:h-[420px] lg:h-[500px]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 h-85 md:h-105 lg:h-125">
                   <HeroCard post={hero[0]} large />
                   <div className="grid grid-rows-2 gap-2">
                     <HeroCard post={hero[1]} />
@@ -220,22 +218,26 @@ export default function BlogClient({ posts, total, page, pageSize, category, sid
                   <div className="flex items-center gap-3 mb-2">
                     <span className="w-1 h-5 bg-accent rounded-full shrink-0" aria-hidden="true" />
                     <span className="font-body text-xs font-bold uppercase tracking-widest text-contrast/50">
-                      {category ?? 'Todas as Notícias'}
+                      {search ? `Resultados para "${search}"` : (category ?? 'Todas as Notícias')}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                    {posts.map((post) => (
-                      <ListCard key={post.id} post={post} />
-                    ))}
-                  </div>
+                  {listPosts.length === 0 ? (
+                    <p className="font-body text-sm text-contrast/40 py-8">Nenhum post adicional nesta página.</p>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                      {listPosts.map((post) => (
+                        <ListCard key={post.id} post={post} />
+                      ))}
+                    </div>
+                  )}
 
                   {/* Paginação */}
                   {totalPages > 1 && (
                     <div className="flex items-center justify-center gap-2 mt-10 pt-6 border-t border-gray-100">
                       {page > 1 && (
                         <Link
-                          href={buildUrl(page - 1, category)}
+                          href={buildUrl(page - 1, category, search)}
                           className="flex items-center gap-1.5 font-body text-xs font-semibold uppercase tracking-widest text-contrast/50 hover:text-accent transition-colors px-3 py-2"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -259,7 +261,7 @@ export default function BlogClient({ posts, total, page, pageSize, category, sid
                             ) : (
                               <Link
                                 key={p}
-                                href={buildUrl(p as number, category)}
+                                href={buildUrl(p as number, category, search)}
                                 className={`w-8 h-8 flex items-center justify-center rounded font-body text-xs font-bold transition-colors ${
                                   p === page
                                     ? 'bg-accent text-white'
@@ -274,7 +276,7 @@ export default function BlogClient({ posts, total, page, pageSize, category, sid
 
                       {page < totalPages && (
                         <Link
-                          href={buildUrl(page + 1, category)}
+                          href={buildUrl(page + 1, category, search)}
                           className="flex items-center gap-1.5 font-body text-xs font-semibold uppercase tracking-widest text-contrast/50 hover:text-accent transition-colors px-3 py-2"
                         >
                           Próxima
@@ -288,7 +290,7 @@ export default function BlogClient({ posts, total, page, pageSize, category, sid
                 </main>
 
                 <aside className="hidden xl:block w-72 shrink-0" aria-label="Sidebar">
-                  <div className="space-y-5 sticky top-24">{sidebar}</div>
+                  <div className="space-y-5 sticky top-28">{sidebar}</div>
                 </aside>
               </div>
             </div>

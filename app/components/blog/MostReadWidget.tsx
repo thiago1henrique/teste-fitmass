@@ -3,6 +3,7 @@ import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/da
 import { cookies } from 'next/headers'
 import outputs from '@/amplify_outputs.json'
 import type { Schema } from '@/amplify/data/resource'
+import { listAll } from '@/lib/list-all'
 
 export default async function MostReadWidget() {
   const allPosts = await (async () => {
@@ -12,10 +13,9 @@ export default async function MostReadWidget() {
         cookies,
         authMode: 'apiKey',
       })
-      const { data } = await client.models.Post.list({
-        filter: { status: { eq: 'PUBLISHED' } },
-      })
-      return data
+      return await listAll((t) =>
+        client.models.Post.list({ filter: { status: { eq: 'PUBLISHED' } }, nextToken: t, limit: 500 })
+      )
     } catch {
       return []
     }

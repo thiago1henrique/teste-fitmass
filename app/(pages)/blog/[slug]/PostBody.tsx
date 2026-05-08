@@ -1,4 +1,3 @@
-import DOMPurify from 'isomorphic-dompurify'
 import ViewTracker from '@/app/components/blog/ViewTracker'
 
 type Post = {
@@ -54,10 +53,7 @@ export default function PostBody({ post }: { post: Post }) {
       <div
         className="prose-content"
         dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(
-            post.content.replace(/\[\/?\w[\w-]*(?:\s[^\]]*?)?\]/g, ''),
-            { USE_PROFILES: { html: true } }
-          ),
+          __html: post.content.replace(/\[\/?\w[\w-]*(?:\s[^\]]*?)?\]/g, ''),
         }}
       />
 

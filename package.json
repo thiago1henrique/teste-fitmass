@@ -17,14 +17,16 @@
     "@tiptap/pm": "^3.22.3",
     "@tiptap/react": "^3.22.3",
     "@tiptap/starter-kit": "^3.22.3",
+    "@types/dompurify": "^3.0.5",
     "aws-amplify": "^6.16.4",
-    "isomorphic-dompurify": "^3.12.0",
+    "dompurify": "^3.4.2",
     "next": "16.2.3",
     "react": "19.2.4",
     "react-colorful": "^5.6.1",
     "react-dom": "19.2.4",
     "react-is": "^19.2.5",
-    "recharts": "^3.8.1"
+    "recharts": "^3.8.1",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.22.0",
@@ -34,6 +36,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sax": "^1.2.7",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "sax": "^1.6.0",

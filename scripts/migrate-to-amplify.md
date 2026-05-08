@@ -113,9 +113,9 @@ A URL do WordPress (`http://fitmass.com.br/wp-content/uploads/...`) é mapeada p
 ```
 http://fitmass.com.br/wp-content/uploads/2023/10/foto.png
                                ↓
-uploads/wp-foto.png  →  S3 bucket
+site/uploads/wp-foto.png  →  S3 bucket (fitmass-public-imgs)
                                ↓
-https://<bucket>.s3.us-east-1.amazonaws.com/uploads/wp-foto.png
+https://fitmass-public-imgs.s3.us-east-1.amazonaws.com/site/uploads/wp-foto.png
 ```
 
 Se a chave já existir no S3 (`HeadObject` retorna 200), o download é pulado e a URL existente é reusada — garantindo idempotência sem duplicar arquivos.

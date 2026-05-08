@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import outputs from '@/amplify_outputs.json'
 import type { Schema } from '@/amplify/data/resource'
 import { getSession } from '@/lib/session'
+import { listAll } from '@/lib/list-all'
 import PostsTable from './_components/PostsTable'
 
 export const metadata = { title: 'Posts | Admin Fitmass' }
@@ -13,7 +14,9 @@ export default async function PostsPage() {
   if (!session) redirect('/admin/login')
 
   const client = generateServerClientUsingCookies<Schema>({ config: outputs, cookies })
-  const { data: rawPosts } = await client.models.Post.list({ filter: undefined })
+  const rawPosts = await listAll((t) =>
+    client.models.Post.list({ nextToken: t, limit: 500 })
+  )
 
   const posts = rawPosts
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())

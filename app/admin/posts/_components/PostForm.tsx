@@ -1,7 +1,7 @@
 'use client'
 
 import { useTransition, useState, useCallback, useRef } from 'react'
-import DOMPurify from 'isomorphic-dompurify'
+import DOMPurify from 'dompurify'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TiptapImage from '@tiptap/extension-image'
@@ -9,7 +9,7 @@ import TiptapLink from '@tiptap/extension-link'
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 
-const CATEGORIES = ['Saúde', 'Bioimpedância', 'Fitness', 'Tecnologia']
+const CATEGORIES = ['Saúde', 'Bioscan', 'Profissionais', 'System', 'Corporativo', 'Estabelecimentos', 'App', 'Scanner']
 
 type Post = {
   id: string
@@ -314,17 +314,32 @@ function LivePreview({
 
 export default function PostForm({ post, action }: Props) {
   const [isPending, startTransition] = useTransition()
-  const [error, setError]   = useState<string | null>(null)
-  const [title, setTitle]   = useState(post?.title ?? '')
+  const [error, setError]     = useState<string | null>(null)
+  const [title, setTitle]     = useState(post?.title ?? '')
   const [summary, setSummary] = useState(post?.summary ?? '')
   const [coverUrl, setCoverUrl] = useState(post?.coverUrl ?? '')
   const [categories, setCategories] = useState<string[]>(post?.categories ?? [])
+  const [customInput, setCustomInput] = useState('')
+  const customRef = useRef<HTMLInputElement>(null)
 
   function toggleCategory(cat: string) {
     setCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
     )
   }
+
+  function addCustom() {
+    const val = customInput.trim()
+    if (!val || categories.includes(val)) { setCustomInput(''); return }
+    setCategories((prev) => [...prev, val])
+    setCustomInput('')
+    customRef.current?.focus()
+  }
+
+  function removeCategory(cat: string) {
+    setCategories((prev) => prev.filter((c) => c !== cat))
+  }
+
   const [editorHtml, setEditorHtml] = useState(post?.content ?? '')
   const [showImageModal, setShowImageModal] = useState(false)
 
@@ -514,7 +529,9 @@ export default function PostForm({ post, action }: Props) {
               <label className="block font-body text-xs font-semibold text-contrast/50 uppercase tracking-widest mb-2">
                 Categorias
               </label>
-              <div className="flex flex-wrap gap-2">
+
+              {/* Chips predefinidos */}
+              <div className="flex flex-wrap gap-2 mb-3">
                 {CATEGORIES.map((cat) => {
                   const checked = categories.includes(cat)
                   return (
@@ -551,6 +568,55 @@ export default function PostForm({ post, action }: Props) {
                   )
                 })}
               </div>
+
+              {/* Categorias personalizadas (fora da lista predefinida) */}
+              {categories.filter((c) => !CATEGORIES.includes(c)).length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {categories.filter((c) => !CATEGORIES.includes(c)).map((cat) => (
+                    <span
+                      key={cat}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-accent bg-accent/10 text-accent text-sm font-body font-semibold"
+                    >
+                      <input type="hidden" name="categories" value={cat} />
+                      {cat}
+                      <button
+                        type="button"
+                        onClick={() => removeCategory(cat)}
+                        className="text-accent/60 hover:text-accent transition-colors ml-0.5"
+                        aria-label={`Remover ${cat}`}
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2 2l8 8M10 2L2 10" />
+                        </svg>
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Input para nova categoria */}
+              <div className="flex items-center gap-2">
+                <input
+                  ref={customRef}
+                  type="text"
+                  value={customInput}
+                  onChange={(e) => setCustomInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustom() } }}
+                  placeholder="Nova categoria…"
+                  className="flex-1 border border-dashed border-gray-300 rounded-lg px-3 py-1.5 font-body text-sm text-contrast placeholder-contrast/30 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition"
+                />
+                <button
+                  type="button"
+                  onClick={addCustom}
+                  disabled={!customInput.trim()}
+                  className="px-3 py-1.5 rounded-lg border border-gray-200 font-body text-sm font-semibold text-contrast/50 hover:border-accent hover:text-accent transition-colors disabled:opacity-40 shrink-0"
+                >
+                  + Adicionar
+                </button>
+              </div>
+              <p className="font-body text-[11px] text-contrast/30 mt-1.5">
+                Pressione Enter ou clique em + Adicionar para criar uma categoria nova.
+              </p>
             </div>
 
             {/* Editor */}

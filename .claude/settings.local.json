@@ -35,7 +35,11 @@
       "Bash(grep -r \"fetch\\(\" \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\" ! -path \"*/node_modules/*\")",
       "Bash(grep -r \"eval\\\\|innerHTML\\\\|innerHTML\\\\|exec\\\\|new Function\" \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\" ! -path \"*/node_modules/*\" ! -path \"*/.next/*\")",
       "Bash(Remove-Item \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\middleware.ts\")",
-      "Bash(del \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\middleware.ts\")"
+      "Bash(del \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\middleware.ts\")",
+      "Bash(node -e \"const o = require\\('./amplify_outputs.json'\\); console.log\\(JSON.stringify\\({data: o.data, auth: o.auth?.aws_region}, null, 2\\)\\)\")",
+      "Bash(curl -s http://localhost:3000/blog)",
+      "Bash(Get-Content \".next\\\\dev\\\\logs\\\\next-development.log\" -Tail 50)",
+      "Bash(node -e ' *)"
     ]
   }
 }
