@@ -8,7 +8,7 @@ import { listAll } from '@/lib/list-all'
 import PostBody from './PostBody'
 import RelatedPostsSection from '@/app/components/blog/RelatedPostsSection'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 async function getPost(slug: string) {
   try {
@@ -23,22 +23,6 @@ async function getPost(slug: string) {
     return data[0] ?? null
   } catch {
     return null
-  }
-}
-
-export async function generateStaticParams() {
-  try {
-    const client = generateServerClientUsingCookies<Schema>({
-      config: outputs,
-      cookies,
-      authMode: 'apiKey',
-    })
-    const posts = await listAll((t) =>
-      client.models.Post.list({ filter: { status: { eq: 'PUBLISHED' } }, nextToken: t, limit: 500 })
-    )
-    return posts.map(({ slug }) => ({ slug }))
-  } catch {
-    return []
   }
 }
 
