@@ -1,10 +1,10 @@
 'use client'
 
 export default function PostError({
-  reset,
+  unstable_retry,
 }: {
   error: Error & { digest?: string }
-  reset: () => void
+  unstable_retry: () => void
 }) {
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center px-4">
@@ -17,7 +17,7 @@ export default function PostError({
         </p>
         <div className="flex items-center justify-center gap-4">
           <button
-            onClick={reset}
+            onClick={unstable_retry}
             className="inline-flex items-center gap-2 bg-accent text-white font-body font-bold uppercase tracking-widest text-sm px-6 py-3 rounded-xl hover:bg-accent/90 transition-colors"
           >
             Tentar novamente

@@ -39,7 +39,13 @@
       "Bash(node -e \"const o = require\\('./amplify_outputs.json'\\); console.log\\(JSON.stringify\\({data: o.data, auth: o.auth?.aws_region}, null, 2\\)\\)\")",
       "Bash(curl -s http://localhost:3000/blog)",
       "Bash(Get-Content \".next\\\\dev\\\\logs\\\\next-development.log\" -Tail 50)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('next:', p.dependencies.next, '\\\\nreact:', p.dependencies.react\\)\")",
+      "Bash(node -e \"const o = require\\('./amplify_outputs.json'\\); console.log\\('auth region:', o.auth?.aws_region\\); console.log\\('data url:', o.data?.url?.substring\\(0, 60\\)\\); console.log\\('api key present:', !!o.data?.api_key\\)\")",
+      "Bash(node -e \"console.log\\(require\\('@aws-amplify/adapter-nextjs/package.json'\\).version\\)\")",
+      "Bash(node -e \"console.log\\(require\\('aws-amplify/package.json'\\).version\\)\")",
+      "Bash(node -e \"const p = require\\('@aws-amplify/adapter-nextjs/package.json'\\); console.log\\('peerDeps:', JSON.stringify\\(p.peerDependencies, null, 2\\)\\)\")",
+      "Bash(xargs cat)"
     ]
   }
 }
