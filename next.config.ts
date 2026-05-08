@@ -16,6 +16,9 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  // Prevent Next.js from bundling native-addon packages — they must be loaded at runtime
+  // from node_modules so the platform-correct binary (Linux on Lambda) is used.
+  serverExternalPackages: ['sharp'],
   async headers() {
     return [
       {

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import { randomUUID } from 'crypto'
 import path from 'path'
-import sharp from 'sharp'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSession } from '@/lib/session'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -16,12 +15,19 @@ const s3 = s3Configured
   : null
 
 async function toWebP(buffer: Buffer, mimeType: string): Promise<{ data: Buffer; mime: string }> {
-  // SVG and GIF are kept as-is (sharp doesn't handle animated GIF → WebP reliably)
+  // SVG and GIF are kept as-is
   if (mimeType === 'image/svg+xml' || mimeType === 'image/gif') {
     return { data: buffer, mime: mimeType }
   }
-  const data = await sharp(buffer).webp({ quality: 85 }).toBuffer()
-  return { data, mime: 'image/webp' }
+  try {
+    // Dynamic import so a missing/incompatible binary never crashes the module at load time
+    const sharp = (await import('sharp')).default
+    const data = await sharp(buffer).webp({ quality: 85 }).toBuffer()
+    return { data, mime: 'image/webp' }
+  } catch {
+    // sharp unavailable (e.g. binary mismatch on Lambda) — keep original format
+    return { data: buffer, mime: mimeType }
+  }
 }
 
 export async function POST(request: NextRequest) {

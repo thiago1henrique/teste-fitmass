@@ -53,7 +53,7 @@ export default function PostBody({ post }: { post: Post }) {
       <div
         className="prose-content"
         dangerouslySetInnerHTML={{
-          __html: post.content.replace(/\[\/?\w[\w-]*(?:\s[^\]]*?)?\]/g, ''),
+          __html: (post.content ?? '').replace(/\[\/?\w[\w-]*(?:\s[^\]]*?)?\]/g, ''),
         }}
       />
 

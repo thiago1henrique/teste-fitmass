@@ -74,7 +74,8 @@ export default async function PostPage({
 
   const post = {
     ...raw,
-    author:      { name: raw.authorName },
+    content:     raw.content ?? '',
+    author:      { name: raw.authorName ?? '' },
     publishedAt: raw.publishedAt ? new Date(raw.publishedAt) : null,
     createdAt:   new Date(raw.createdAt),
     updatedAt:   new Date(raw.updatedAt),
