@@ -39,6 +39,12 @@ AWS_REGION=us-east-1
 
 If `AWS_S3_BUCKET` is unset, uploads fall back to the local filesystem at `/public/uploads/`.
 
+Google Tag Manager (optional):
+
+```
+NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
+```
+
 ## Architecture
 
 **Stack:** Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind v4 · AWS Amplify Gen 2 (Cognito + AppSync/DynamoDB + S3)
@@ -77,8 +83,9 @@ Server-side Amplify calls go through `lib/amplify-server.ts`, which exports `run
 
 ### Authentication
 
-- **Login:** `app/admin/login/LoginForm.tsx` calls `aws-amplify/auth signIn` client-side, storing Cognito session cookies automatically.
+- **Login:** `app/admin/login/LoginForm.tsx` calls `aws-amplify/auth signIn` client-side, storing Cognito session cookies automatically. `loginAction` in `app/actions/auth.ts` is rate-limited (in-memory, resets on server restart) to block brute-force attempts.
 - **Session reading:** `lib/session.ts` uses `runWithAmplifyServerContext` to call `getCurrentUser`, `fetchUserAttributes`, and `fetchAuthSession`; extracts `cognito:groups` from the access token for the `role` field (defaults to `'EDITOR'` if no group assigned).
+- **Auth guards:** `lib/auth-utils.ts` exports `requireSession()` (EDITOR+), `requireAdmin()` (ADMIN only), and `auditLog()` (logs auth events as JSON to stdout).
 - **Route protection:** `app/admin/layout.tsx` calls `getSession()` and renders children unwrapped (no sidebar) when unauthenticated — this handles the login page without a redirect loop. Individual pages/actions must still call `requireSession()` / `requireAdmin()` for their own guards.
 - **There is no `middleware.ts`** — enforcement is entirely in the admin layout and server actions.
 
@@ -97,12 +104,14 @@ Role distinctions: post CRUD (`posts.ts`) requires a valid session (EDITOR+); us
 
 Server components and actions use `generateServerClientUsingCookies<Schema>` from `@aws-amplify/adapter-nextjs/data`. Public routes (blog pages, view counter) specify `authMode: 'apiKey'`; admin actions default to `userPool` auth.
 
+Amplify list queries are paginated — `lib/list-all.ts` exports `listAll()` to transparently fetch all pages.
+
 ### CMS / Blog
 
 - **Rich editor:** Tiptap v3 (StarterKit + Image + Link). HTML stored as `Text` in DynamoDB and rendered with `dangerouslySetInnerHTML` — only ADMIN/EDITOR users can write content.
 - **Image uploads:** `POST /api/upload` validates auth, MIME type (images + SVG), and 5 MB limit. Writes to S3 if `AWS_S3_BUCKET` is set; falls back to `/public/uploads/` for local dev. Returns the URL for insertion into the editor.
 - **Slug generation:** `lib/slug.ts` normalises the title (NFD, strips diacritics, lowercase). Collision appends `Date.now()`. Uniqueness enforced in app logic, not as a DB constraint.
-- **View counting:** `POST /api/posts/[slug]/view` calls `bufferView()` in `lib/views-buffer.ts`, which updates `Post.views` directly via Amplify apiKey auth. Fails silently without real AWS credentials.
+- **View counting:** `POST /api/posts/[slug]/view` calls `bufferView()` in `lib/views-buffer.ts`. **Currently disabled** — the apiKey no longer has `update` permission on the Post model. Needs a Lambda resolver with IAM auth to re-enable.
 
 ### Rendering strategy
 
@@ -136,7 +145,7 @@ Tailwind v4 has no `tailwind.config.js`. All tokens are declared in `app/globals
 | `font-title` | AeroMatics (local TTF via `@font-face`) |
 | `font-body` | Encode Sans (via `next/font`, injected as `--font-encode-sans`) |
 
-`globals.css` also defines `.prose` styles for blog post HTML content.
+`globals.css` also defines `.prose-content` styles for blog post HTML content.
 
 ### Path alias
 

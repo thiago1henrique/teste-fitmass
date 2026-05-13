@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from 'react'
 
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void
+  }
+}
+
 function readConsent(): string | null {
   if (typeof document === 'undefined') return null
   const m = document.cookie.match(/(?:^|; )fitmass_consent=([^;]*)/)
@@ -17,13 +23,30 @@ export default function CookieConsent() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    if (!readConsent()) setVisible(true)
+    const consent = readConsent()
+    if (!consent) {
+      setVisible(true)
+    } else {
+      // If already consented, send the consent state to GTM
+      updateGTMConsent(consent as 'all' | 'necessary')
+    }
   }, [])
+
+  const updateGTMConsent = (value: 'all' | 'necessary') => {
+    const granted = value === 'all' ? 'granted' : 'denied'
+    window.gtag?.('consent', 'update', {
+      analytics_storage: granted,
+      ad_storage: granted,
+      ad_user_data: granted,
+      ad_personalization: granted,
+    })
+  }
 
   if (!visible) return null
 
   const accept = (value: 'all' | 'necessary') => {
     writeConsent(value)
+    updateGTMConsent(value)
     setVisible(false)
   }
 
