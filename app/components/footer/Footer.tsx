@@ -96,7 +96,7 @@ export default function Footer() {
                 <li key={label}>
                   <a
                     href={href}
-                    className="font-body text-white/65 hover:text-white text-sm transition-colors"
+                    className="font-body text-white/65 hover:text-secondary text-sm transition-colors"
                   >
                     {label}
                   </a>
@@ -118,7 +118,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 hover:bg-white/20 hover:border-white/30 flex items-center justify-center text-white transition-all duration-200"
+                  className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 hover:bg-secondary/20 hover:border-secondary/50 hover:text-secondary flex items-center justify-center text-white transition-all duration-200"
                 >
                   <Icon />
                 </a>

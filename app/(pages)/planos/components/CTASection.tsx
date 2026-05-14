@@ -19,9 +19,18 @@ export default function CTASection() {
         </svg>
       </div>
 
-      {/* Glow central */}
+      {/* Glow central (accent) */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-accent/10 blur-3xl pointer-events-none"
+        aria-hidden="true"
+      />
+      {/* Glows laterais (secondary) */}
+      <div
+        className="absolute -top-16 -left-16 w-87.5 h-87.5 rounded-full bg-secondary/8 blur-3xl pointer-events-none"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -bottom-16 -right-16 w-70 h-70 rounded-full bg-secondary/6 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 

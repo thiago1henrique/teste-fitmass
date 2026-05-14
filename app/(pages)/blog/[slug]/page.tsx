@@ -8,7 +8,7 @@ import { listAll } from '@/lib/list-all'
 import PostBody from './PostBody'
 import RelatedPostsSection from '@/app/components/blog/RelatedPostsSection'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 async function getPost(slug: string) {
   try {
@@ -65,8 +65,35 @@ export default async function PostPage({
     updatedAt:   new Date(raw.updatedAt),
   }
 
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: raw.summary ?? '',
+    image: raw.coverUrl ? [raw.coverUrl] : undefined,
+    datePublished: post.publishedAt?.toISOString() ?? post.createdAt.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
+    author: {
+      '@type': 'Person',
+      name: post.author.name,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Fitmass',
+      url: 'https://fitmass.com.br',
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://fitmass.com.br/blog/${post.slug}`,
+    },
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <div className="pt-24 bg-surface">
         <PostBody post={post} />
       </div>

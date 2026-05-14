@@ -5,8 +5,23 @@ export const metadata: Metadata = {
   title: 'Fitmass | Bioimpedância de Precisão para Academias',
   description:
     'Eleve o nível da sua academia com a balança líder em tecnologia e o único software White Label do mercado.',
+  keywords: [
+    'bioimpedância profissional',
+    'bioimpedância academia',
+    'software white label academia',
+    'avaliação corporal academia',
+    'balança bioimpedância',
+    'fitmass',
+  ],
   alternates: {
     canonical: 'https://fitmass.com.br/',
+  },
+  openGraph: {
+    title: 'Fitmass | Bioimpedância de Precisão para Academias',
+    description:
+      'Eleve o nível da sua academia com a balança líder em tecnologia e o único software White Label do mercado.',
+    url: 'https://fitmass.com.br/',
+    type: 'website',
   },
   robots: { index: true, follow: true },
 }

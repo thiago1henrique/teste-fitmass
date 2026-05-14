@@ -29,9 +29,10 @@
    ===================================================== */
 
 @theme {
-  --color-accent:   #88BD23;
-  --color-contrast: #333333;
-  --color-surface:  #F8F8F8;
+  --color-accent:     #88BD23;
+  --color-secondary:  #25B6EB;
+  --color-contrast:   #333333;
+  --color-surface:    #F8F8F8;
 
   --font-title: 'AeroMatics', 'Impact', 'Arial Black', sans-serif;
 
@@ -50,6 +51,11 @@
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+
+@keyframes price-fade-in {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* =====================================================
@@ -121,6 +127,11 @@ body {
   color: #88BD23;
   text-decoration: underline;
   text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.prose-content a:hover {
+  color: #25B6EB;
 }
 
 .prose-content strong { font-weight: 700; }
@@ -181,11 +192,6 @@ body {
   margin: 1.5rem 0;
 }
 
-.prose-content a {
-  color: #88BD23;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 
 /* Tiptap selected image ring */
 .ProseMirror img.ProseMirror-selectednode {

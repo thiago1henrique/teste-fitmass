@@ -6,7 +6,7 @@ import outputs from '@/amplify_outputs.json'
 import type { Schema } from '@/amplify/data/resource'
 import { getSession } from '@/lib/session'
 import { listAll } from '@/lib/list-all'
-import { PostsByMonthChart, PostsByStatusChart } from './_components/DashboardCharts'
+import { PostsByMonthChart, PostsByStatusChart, PostsByWeekdayChart, TopAuthorsChart } from './_components/DashboardCharts'
 
 export const metadata = { title: 'Dashboard | Admin Fitmass' }
 
@@ -50,7 +50,7 @@ export default async function AdminDashboard() {
 
   const cognito    = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION ?? 'us-east-1' })
   const { Users }  = await cognito.send(new ListUsersCommand({
-    UserPoolId: process.env.AMPLIFY_USERPOOL_ID ?? '',
+    UserPoolId: process.env.AMPLIFY_USERPOOL_ID ?? outputs.auth.user_pool_id,
   })).catch(() => ({ Users: [] }))
 
   const publishedPosts = allPosts.filter((p) => p.status === 'PUBLISHED').length
@@ -80,6 +80,22 @@ export default async function AdminDashboard() {
   const monthDiff = thisMonth - lastMonth
   const monthSign = monthDiff > 0 ? `+${monthDiff}` : `${monthDiff}`
 
+  const WEEKDAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+  const weekdayData = WEEKDAYS.map((day, i) => ({
+    day,
+    posts: allPosts.filter((p) => new Date(p.createdAt).getDay() === i).length,
+  }))
+
+  const authorMap: Record<string, number> = {}
+  for (const p of allPosts) {
+    const name = p.authorName ?? 'Desconhecido'
+    authorMap[name] = (authorMap[name] ?? 0) + 1
+  }
+  const authorData = Object.entries(authorMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([name, posts]) => ({ name, posts }))
+
   return (
     <div className="p-4 sm:p-8 space-y-6 sm:space-y-8">
       <div>
@@ -99,6 +115,11 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
         <PostsByMonthChart data={monthlyData} />
         <PostsByStatusChart data={statusData} />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PostsByWeekdayChart data={weekdayData} />
+        <TopAuthorsChart data={authorData} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

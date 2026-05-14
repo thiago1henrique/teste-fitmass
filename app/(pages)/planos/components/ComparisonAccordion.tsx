@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import data from '@/public/json-precos.json'
+import { ImageTooltip } from './ImageTooltip'
 
 /* ─── Formatters ─────────────────────────────────────────────────────────── */
 
@@ -20,10 +21,20 @@ const SPECIAL: Record<string, string> = {
 }
 
 function formatKey(key: string): string {
-  return key
+  const words = key
     .split('_')
     .map((w) => SPECIAL[w.toLowerCase()] ?? (w.charAt(0).toUpperCase() + w.slice(1)))
-    .join(' ')
+
+  // Merge consecutive digit-only tokens with '.' — e.g. "3" "0" → "3.0"
+  const merged: string[] = []
+  for (const word of words) {
+    if (merged.length > 0 && /^\d+$/.test(word) && /^\d+(\.\d+)*$/.test(merged[merged.length - 1])) {
+      merged[merged.length - 1] += '.' + word
+    } else {
+      merged.push(word)
+    }
+  }
+  return merged.join(' ')
 }
 
 /* ─── Data ───────────────────────────────────────────────────────────────── */
@@ -50,6 +61,36 @@ const categories: Category[] = Object.entries(data.planos_fitmass).map(
 )
 
 const prices = data.metadata.precos as Record<PlanKey, string>
+
+/* ─── Tooltip images ─────────────────────────────────────────────────────── */
+
+const personalizacaoImages = [1, 2, 3, 4, 5].map((n) => ({
+  src: `/pages/planos/cardsSection/recursos/personalizacao-0${n}.png`,
+  alt: `Personalização ${n}`,
+}))
+
+const FEATURE_TOOLTIPS: Record<string, { images: { src: string; alt: string }[]; ariaLabel: string }> = {
+  'Criar Cards Personalizados Timeline App': {
+    images: personalizacaoImages,
+    ariaLabel: 'Ver exemplos de cards personalizados para timeline',
+  },
+  'Personalizacao Cores App': {
+    images: personalizacaoImages,
+    ariaLabel: 'Ver exemplos de personalização de cores do App',
+  },
+  'Telas Descanso Customizadas Bioscan 3.0': {
+    images: [{ src: '/pages/planos/cardsSection/recursos/tela-descanso-custom-01.png', alt: 'Tela de descanso customizada' }],
+    ariaLabel: 'Ver exemplo de tela de descanso customizada',
+  },
+  'Telas Descanso Anuncios Clicaveis Bioscan 3.0': {
+    images: [{ src: '/pages/planos/cardsSection/recursos/tela-descanso-01.png', alt: 'Tela de descanso com anúncio' }],
+    ariaLabel: 'Ver exemplo de tela de descanso com anúncio clicável',
+  },
+  'Personalizacao Cores Telas Bioscan 3.0': {
+    images: personalizacaoImages,
+    ariaLabel: 'Ver exemplos de personalização de cores das telas do Bioscan',
+  },
+}
 
 /* ─── Icons ──────────────────────────────────────────────────────────────── */
 
@@ -252,15 +293,23 @@ export default function ComparisonAccordion() {
                     {category.features.map((feature) => (
                       <div
                         key={feature.name}
-                        className="grid grid-cols-[2fr_1fr_1fr_1fr] items-center px-4 md:px-6 py-3 hover:bg-surface/60 transition-colors"
+                        className="grid grid-cols-[2fr_1fr_1fr_1fr] items-start px-4 md:px-6 py-3 hover:bg-surface/60 transition-colors"
                       >
-                        <span className="font-body text-sm text-contrast pr-4">
-                          {feature.name}
+                        <span className="font-body text-sm text-contrast pr-4 flex items-start gap-1.5">
+                          <span className="leading-snug">{feature.name}</span>
+                          {FEATURE_TOOLTIPS[feature.name] && (
+                            <span className="shrink-0 mt-0.5">
+                              <ImageTooltip
+                                images={FEATURE_TOOLTIPS[feature.name].images}
+                                ariaLabel={FEATURE_TOOLTIPS[feature.name].ariaLabel}
+                              />
+                            </span>
+                          )}
                         </span>
                         {feature.availability.map((available, i) => (
                           <div
                             key={i}
-                            className={`flex justify-center py-1 ${
+                            className={`flex justify-center pt-0.5 pb-1 ${
                               i === ULTRA_IDX ? 'bg-accent/5 mx-0.5 rounded-md' : ''
                             }`}
                           >
