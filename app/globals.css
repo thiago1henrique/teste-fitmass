@@ -79,6 +79,13 @@
   animation-play-state: paused;
 }
 
+@media (max-width: 1023px) {
+  .img-3d-tilt {
+    transform: none;
+    animation: none;
+  }
+}
+
 /* =====================================================
    BASE
    ===================================================== */

@@ -56,7 +56,7 @@ Defined in `amplify/data/resource.ts`:
 - **Post:** title, slug, summary, content, coverUrl, status (`DRAFT|PUBLISHED`), publishedAt, views (default 0), categories (string[]), authorId, authorName
   - ADMIN + EDITOR groups: full read/write (userPool auth)
   - Guests: read-only
-  - API key: read + update (used for public blog pages and view counting)
+  - API key: **read-only** (update permission was removed; view counting is disabled)
 
 Auth groups and user attributes (email login, required `givenName`) are defined in `amplify/auth/resource.ts`. S3 storage bucket access rules are in `amplify/storage/resource.ts`.
 
@@ -111,7 +111,7 @@ Amplify list queries are paginated — `lib/list-all.ts` exports `listAll()` to 
 
 ### CMS / Blog
 
-- **Rich editor:** Tiptap v3 (StarterKit + Image + Link). HTML stored as `Text` in DynamoDB and rendered with `dangerouslySetInnerHTML` — only ADMIN/EDITOR users can write content.
+- **Rich editor:** Tiptap v3 (StarterKit + Image + Link). HTML stored as `Text` in DynamoDB. On render, `DOMPurify` sanitizes the stored HTML before it is passed to `dangerouslySetInnerHTML` — only ADMIN/EDITOR users can write content.
 - **Image uploads:** `POST /api/upload` validates auth, MIME type (images + SVG), and 5 MB limit. Writes to S3 if `AWS_S3_BUCKET` is set; falls back to `/public/uploads/` for local dev. Returns the URL for insertion into the editor.
 - **Slug generation:** `lib/slug.ts` normalises the title (NFD, strips diacritics, lowercase). Collision appends `Date.now()`. Uniqueness enforced in app logic, not as a DB constraint.
 - **View counting:** `POST /api/posts/[slug]/view` calls `bufferView()` in `lib/views-buffer.ts`. **Currently disabled** — the apiKey no longer has `update` permission on the Post model. Needs a Lambda resolver with IAM auth to re-enable.
@@ -128,7 +128,15 @@ Blog data is fetched from AppSync (Amplify Data API), not a local database.
 
 ### Header / Footer split
 
-`<Footer>` is in `app/layout.tsx`, suppressed on `/admin/*` by reading the `x-pathname` request header (requires a middleware to set it — currently no `middleware.ts` exists, so this check may not work as intended). `<Header>` is **not** in the root layout — each page-level file renders it directly with its own `navLinks` and `cta` props.
+`<Footer>` is in `app/layout.tsx`, suppressed on `/admin/*` by reading the `x-pathname` request header (requires a middleware to set it — currently no `middleware.ts` exists, so this check may not work as intended).
+
+`<Header>` is shared across all public pages via `app/(pages)/PagesLayoutClient.tsx`, a `'use client'` component rendered by `app/(pages)/layout.tsx`. It sets `forceDark={true}` on the header when the current pathname starts with `/blog`, or is `/privacidade` or `/contato`. Admin pages have their own layout with a sidebar; they do not use `PagesLayoutClient`.
+
+### Admin dashboard
+
+`app/admin/page.tsx` renders `DashboardCharts.tsx`, a `'use client'` component that uses **Recharts** (`BarChart`, `PieChart`) to visualise post statistics: monthly cadence, status distribution (DRAFT/PUBLISHED), weekday breakdown, and per-author totals.
+
+`app/admin/social-export/` has its own Tiptap-based rich-text editor (`RichTextField.tsx`) separate from the main post editor — used to compose social media copy.
 
 ### Shared components
 

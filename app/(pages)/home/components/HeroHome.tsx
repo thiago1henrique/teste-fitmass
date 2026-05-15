@@ -40,10 +40,10 @@ export default function HeroHome() {
       />
 
       {/* Conteúdo */}
-      <div className="relative max-w-6xl mx-auto w-full px-4 pt-32 pb-36 grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-12 items-center">
+      <div className="relative max-w-6xl mx-auto w-full px-4 pt-32 pb-24 grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-8 lg:gap-16 items-center">
 
         {/* Copy */}
-        <div>
+        <div className="lg:max-w-120">
           <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-8">
             <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
             Agende uma demonstração
@@ -62,7 +62,7 @@ export default function HeroHome() {
           <div className="flex flex-col sm:flex-row gap-4">
             <a
               href="/planos"
-              className="inline-flex items-center justify-center gap-2 bg-accent text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-accent/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-accent text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-accent/90 transition-colors whitespace-nowrap"
             >
               Conhecer Planos
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -71,32 +71,32 @@ export default function HeroHome() {
             </a>
             <a
               href="#diferenciais"
-              className="inline-flex items-center justify-center border border-secondary/40 text-secondary font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-secondary hover:bg-secondary/10 transition-colors"
+              className="inline-flex items-center justify-center border border-secondary/40 text-secondary font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-secondary hover:bg-secondary/10 transition-colors whitespace-nowrap"
             >
               Ver Diferenciais
             </a>
           </div>
         </div>
 
-        {/* Biosan — efeito 3D */}
+        {/* Biosan — efeito 3D, coluna dominante */}
         <div
-          className="flex justify-center lg:justify-end"
+          className="flex justify-center lg:justify-end items-center"
           role="img"
           aria-label="Balança de bioimpedância Biosan"
         >
           <div className="relative" style={{ perspective: '1000px' }}>
             {/* Glow ambiente */}
             <div
-              className="absolute inset-0 -z-10 blur-3xl opacity-25 scale-90 translate-y-8"
+              className="absolute inset-0 -z-10 blur-3xl opacity-35 scale-100 translate-y-6"
               style={{ background: 'radial-gradient(ellipse, #88BD23 0%, transparent 70%)' }}
               aria-hidden="true"
             />
             {/* Sombra projetada */}
             <div
-              className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-6 -z-10"
+              className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-4/5 h-8 -z-10"
               style={{
-                background: 'radial-gradient(ellipse, rgba(0,0,0,0.7) 0%, transparent 70%)',
-                filter: 'blur(16px)',
+                background: 'radial-gradient(ellipse, rgba(0,0,0,0.8) 0%, transparent 70%)',
+                filter: 'blur(20px)',
               }}
               aria-hidden="true"
             />
@@ -105,25 +105,14 @@ export default function HeroHome() {
               <Image
                 src="/pages/landingpage/bioscan-2.png"
                 alt="Balança de bioimpedância Biosan"
-                width={400}
-                height={560}
-                className="object-contain w-full max-w-100 drop-shadow-[0_24px_60px_rgba(0,0,0,0.65)]"
+                width={560}
+                height={784}
+                className="object-contain w-full sm:max-w-[420px] lg:max-w-full max-h-[78vh] drop-shadow-[0_32px_80px_rgba(0,0,0,0.72)]"
                 priority
               />
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div
-        className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 opacity-30 pointer-events-none select-none"
-        aria-hidden="true"
-      >
-        <span className="font-body text-white text-[10px] uppercase tracking-[0.25em]">Desça a página</span>
-        <svg className="w-4 h-4 text-white animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
       </div>
 
       {/* Diagonal → PainPointsSection (bg-surface) */}
