@@ -42,3 +42,6 @@ next-env.d.ts
 
 # amplify local build cache
 .amplify/
+
+# amplify generated outputs (contains Cognito/AppSync endpoints — regenerate with: npx ampx generate outputs)
+amplify_outputs.json
