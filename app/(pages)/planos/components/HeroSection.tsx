@@ -1,9 +1,4 @@
-const stats = [
-  { value: '+2.000', label: 'Academias atendidas' },
-  { value: '98%',   label: 'Índice de satisfação' },
-  { value: '12 meses', label: 'de garantia' },
-  { value: 'Plug & Play', label: 'Sem instalação' },
-]
+import Image from 'next/image'
 
 export default function HeroSection() {
   return (
@@ -40,7 +35,7 @@ export default function HeroSection() {
       />
 
       {/* Conteúdo */}
-      <div className="relative max-w-6xl mx-auto w-full px-4 pt-32 pb-36 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-16 items-center">
+      <div className="relative max-w-6xl mx-auto w-full px-4 pt-32 pb-36 grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-12 items-center">
         {/* Copy */}
         <div>
           <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-8">
@@ -48,7 +43,7 @@ export default function HeroSection() {
             Sistema de Bioimpedância Profissional
           </span>
 
-          <h1 className="font-title text-5xl md:text-6xl lg:text-7xl uppercase text-white tracking-wide leading-[1.05] mb-8">
+          <h1 className="font-title text-4xl md:text-5xl lg:text-[3.25rem] uppercase text-white tracking-wide leading-[1.08] mb-6">
             AVALIAÇÃO QUE FIDELIZA.{' '}
             <span className="text-accent">RESULTADO QUE VENDE.</span>
           </h1>
@@ -79,21 +74,40 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Stats grid */}
-        <div className="grid grid-cols-2 gap-4">
-          {stats.map(({ value, label }) => (
+        {/* Biosan — efeito 3D */}
+        <div
+          className="flex justify-center lg:justify-end"
+          role="img"
+          aria-label="Balança de bioimpedância Biosan"
+        >
+          <div className="relative" style={{ perspective: '1000px' }}>
+            {/* Glow ambiente */}
             <div
-              key={label}
-              className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-2 hover:bg-secondary/[0.07] hover:border-secondary/35 transition-all duration-300"
-            >
-              <span className="font-title text-accent text-2xl uppercase tracking-wide leading-none">
-                {value}
-              </span>
-              <span className="font-body text-white/50 text-xs leading-snug">
-                {label}
-              </span>
+              className="absolute inset-0 -z-10 blur-3xl opacity-25 scale-90 translate-y-8"
+              style={{ background: 'radial-gradient(ellipse, #88BD23 0%, transparent 70%)' }}
+              aria-hidden="true"
+            />
+            {/* Sombra projetada */}
+            <div
+              className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-6 -z-10"
+              style={{
+                background: 'radial-gradient(ellipse, rgba(0,0,0,0.7) 0%, transparent 70%)',
+                filter: 'blur(16px)',
+              }}
+              aria-hidden="true"
+            />
+            {/* Imagem com classe 3D */}
+            <div className="img-3d-tilt">
+              <Image
+                src="/pages/landingpage/bioscan-2.png"
+                alt="Balança de bioimpedância Biosan"
+                width={400}
+                height={560}
+                className="object-contain w-full max-w-100 drop-shadow-[0_24px_60px_rgba(0,0,0,0.65)]"
+                priority
+              />
             </div>
-          ))}
+          </div>
         </div>
       </div>
 

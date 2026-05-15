@@ -68,9 +68,12 @@ Auth groups and user attributes (email login, required `givenName`) are defined 
 | `/planos` | `app/(pages)/planos/Planos.tsx` |
 | `/blog` | `app/(pages)/blog/Blog.tsx` |
 | `/blog/[slug]` | `app/(pages)/blog/[slug]/PostBody.tsx` |
+| `/contato` | `app/(pages)/contato/` |
+| `/privacidade` | `app/(pages)/privacidade/` |
 | `/admin` | `app/admin/page.tsx` (dashboard) |
 | `/admin/posts` | Post CRUD |
 | `/admin/team` | User management (ADMIN role only) |
+| `/admin/social-export` | Social media export tool |
 | `/admin/login` | Unauthenticated entry point |
 
 `app/(pages)/` is invisible in URLs. Each `page.tsx` is a thin Server Component for `metadata` + data fetching; content lives in sibling files.
@@ -140,6 +143,7 @@ Tailwind v4 has no `tailwind.config.js`. All tokens are declared in `app/globals
 | Token | Value |
 |---|---|
 | `--color-accent` | `#88BD23` (brand green) |
+| `--color-secondary` | `#25B6EB` (secondary blue) |
 | `--color-contrast` | `#333333` (dark backgrounds) |
 | `--color-surface` | `#F8F8F8` (light sections) |
 | `font-title` | AeroMatics (local TTF via `@font-face`) |
@@ -153,7 +157,9 @@ Tailwind v4 has no `tailwind.config.js`. All tokens are declared in `app/globals
 
 ### Images
 
-`next.config.ts` whitelists `fitmass.com.br/wp-content/uploads/**`, S3 (`*.s3.*.amazonaws.com`), and all HTTPS hosts.
+`next.config.ts` whitelists `fitmass.com.br/wp-content/uploads/**` and S3 (`*.s3.*.amazonaws.com`) for `next/image`. `GET /api/proxy-image` fetches and re-serves arbitrary external images (bypasses the whitelist for inline editor images).
+
+Security headers (`X-Frame-Options: DENY`, `Strict-Transport-Security`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) are applied globally via `next.config.ts`.
 
 ### Legacy files (non-functional)
 

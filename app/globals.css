@@ -58,6 +58,27 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes float-tilt {
+  0%, 100% { transform: perspective(1000px) rotateY(-12deg) rotateX(5deg) translateY(0px); }
+  50%       { transform: perspective(1000px) rotateY(-10deg) rotateX(4deg) translateY(-12px); }
+}
+
+/* =====================================================
+   HERO IMAGE — efeito 3D com flutuação
+   ===================================================== */
+
+.img-3d-tilt {
+  transform: perspective(1000px) rotateY(-12deg) rotateX(5deg);
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: float-tilt 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.img-3d-tilt:hover {
+  transform: perspective(1000px) rotateY(-4deg) rotateX(1.5deg) scale(1.03);
+  animation-play-state: paused;
+}
+
 /* =====================================================
    BASE
    ===================================================== */

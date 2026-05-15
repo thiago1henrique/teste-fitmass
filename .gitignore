@@ -45,3 +45,7 @@ next-env.d.ts
 
 # amplify generated outputs (contains Cognito/AppSync endpoints — regenerate with: npx ampx generate outputs)
 amplify_outputs.json
+
+# Claude Code skills (managed by skills-lock.json, like node_modules)
+.agents/
+.claude/skills/
