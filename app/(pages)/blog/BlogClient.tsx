@@ -121,7 +121,7 @@ function ListCard({ post }: { post: Post }) {
               ))}
             </div>
           )}
-          <h3 className="font-body text-sm font-semibold text-contrast leading-snug line-clamp-2 group-hover:text-accent transition-colors">
+          <h3 className="font-body text-sm font-semibold text-contrast leading-snug line-clamp-2 group-hover:text-secondary transition-colors">
             {post.title}
           </h3>
         </div>
@@ -143,9 +143,10 @@ interface BlogClientProps {
   category: string | null
   search: string | null
   sidebar: ReactNode
+  extraContent?: ReactNode
 }
 
-export default function BlogClient({ posts, total, page, pageSize, category, search, sidebar }: BlogClientProps) {
+export default function BlogClient({ posts, total, page, pageSize, category, search, sidebar, extraContent }: BlogClientProps) {
   const totalPages = Math.ceil(total / pageSize)
   const hero      = page === 1 && !search ? posts.slice(0, 3) : []
   const hasFullHero = hero.length === 3
@@ -213,8 +214,9 @@ export default function BlogClient({ posts, total, page, pageSize, category, sea
           {/* Listagem + Sidebar */}
           <div className="bg-white border-t border-gray-100">
             <div className="max-w-7xl mx-auto px-4 py-8">
-              <div className="flex gap-10 items-start">
-                <main className="flex-1 min-w-0">
+              <div className="flex gap-10">
+                <div className="flex-1 min-w-0">
+                <main>
                   <div className="flex items-center gap-3 mb-2">
                     <span className="w-1 h-5 bg-accent rounded-full shrink-0" aria-hidden="true" />
                     <span className="font-body text-xs font-bold uppercase tracking-widest text-contrast/50">
@@ -238,7 +240,7 @@ export default function BlogClient({ posts, total, page, pageSize, category, sea
                       {page > 1 && (
                         <Link
                           href={buildUrl(page - 1, category, search)}
-                          className="flex items-center gap-1.5 font-body text-xs font-semibold uppercase tracking-widest text-contrast/50 hover:text-accent transition-colors px-3 py-2"
+                          className="flex items-center gap-1.5 font-body text-xs font-semibold uppercase tracking-widest text-contrast/50 hover:text-secondary transition-colors px-3 py-2"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -277,7 +279,7 @@ export default function BlogClient({ posts, total, page, pageSize, category, sea
                       {page < totalPages && (
                         <Link
                           href={buildUrl(page + 1, category, search)}
-                          className="flex items-center gap-1.5 font-body text-xs font-semibold uppercase tracking-widest text-contrast/50 hover:text-accent transition-colors px-3 py-2"
+                          className="flex items-center gap-1.5 font-body text-xs font-semibold uppercase tracking-widest text-contrast/50 hover:text-secondary transition-colors px-3 py-2"
                         >
                           Próxima
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -288,6 +290,8 @@ export default function BlogClient({ posts, total, page, pageSize, category, sea
                     </div>
                   )}
                 </main>
+                {extraContent}
+                </div>
 
                 <aside className="hidden xl:block w-72 shrink-0" aria-label="Sidebar">
                   <div className="space-y-5 sticky top-28">{sidebar}</div>

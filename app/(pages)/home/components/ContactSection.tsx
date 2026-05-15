@@ -41,7 +41,7 @@ const INFO = [
 ]
 
 const INPUT_CLASS =
-  'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-sm text-white placeholder:text-white/30 focus:border-accent/60 focus:ring-1 focus:ring-accent/30 outline-none transition-colors duration-200'
+  'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-body text-sm text-white placeholder:text-white/30 focus:border-secondary/60 focus:ring-1 focus:ring-secondary/30 outline-none transition-colors duration-200'
 
 export default function ContactSection() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
@@ -73,7 +73,7 @@ export default function ContactSection() {
 
       {/* Glows decorativos */}
       <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-accent/5 blur-3xl pointer-events-none" aria-hidden="true" />
+      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-secondary/8 blur-3xl pointer-events-none" aria-hidden="true" />
 
       {/* Grid sutil */}
       <div
@@ -118,7 +118,7 @@ export default function ContactSection() {
                   {href ? (
                     <a
                       href={href}
-                      className="font-body text-white/70 hover:text-accent transition-colors duration-200 text-sm leading-relaxed pt-2"
+                      className="font-body text-white/70 hover:text-secondary transition-colors duration-200 text-sm leading-relaxed pt-2"
                     >
                       {label}
                     </a>

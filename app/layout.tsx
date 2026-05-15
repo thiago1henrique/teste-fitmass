@@ -16,8 +16,22 @@ const encodeSans = Encode_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Fitmass | Bioimpedância Profissional',
+  title: {
+    default: 'Fitmass | Bioimpedância Profissional',
+    template: '%s | Fitmass',
+  },
   description: 'Sistema de bioimpedância profissional para academias e profissionais de saúde.',
+  metadataBase: new URL('https://fitmass.com.br'),
+  openGraph: {
+    siteName: 'Fitmass',
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@fitmass',
+  },
+  robots: { index: true, follow: true },
 }
 
 export default async function RootLayout({
@@ -43,6 +57,42 @@ export default async function RootLayout({
             `}</Script>
             <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
           </>
+        )}
+        {!isAdmin && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify([
+                {
+                  '@context': 'https://schema.org',
+                  '@type': 'Organization',
+                  name: 'Fitmass',
+                  url: 'https://fitmass.com.br',
+                  logo: 'https://fitmass.com.br/logo.png',
+                  contactPoint: {
+                    '@type': 'ContactPoint',
+                    contactType: 'customer support',
+                    availableLanguage: 'Portuguese',
+                  },
+                  sameAs: ['https://www.instagram.com/fitmass.app'],
+                },
+                {
+                  '@context': 'https://schema.org',
+                  '@type': 'WebSite',
+                  name: 'Fitmass',
+                  url: 'https://fitmass.com.br',
+                  potentialAction: {
+                    '@type': 'SearchAction',
+                    target: {
+                      '@type': 'EntryPoint',
+                      urlTemplate: 'https://fitmass.com.br/blog?search={search_term_string}',
+                    },
+                    'query-input': 'required name=search_term_string',
+                  },
+                },
+              ]),
+            }}
+          />
         )}
         <ConfigureAmplify />
         <div className="flex-1">

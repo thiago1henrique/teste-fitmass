@@ -94,7 +94,7 @@ export default function BenefitsSection() {
           {benefits.map(({ Icon, title, description }) => (
             <div
               key={title}
-              className="group bg-white border border-gray-100 rounded-2xl p-7 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300"
+              className="group bg-white border border-gray-100 rounded-2xl p-7 hover:border-secondary/30 hover:shadow-lg hover:shadow-secondary/8 transition-all duration-300"
             >
               <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-colors duration-300">
                 <Icon />

@@ -16,9 +16,9 @@ export default function HeroSection() {
         className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-accent/10 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
-      {/* Glow radial esquerda-baixo */}
+      {/* Glow radial esquerda-baixo (secondary) */}
       <div
-        className="absolute -bottom-20 -left-20 w-[500px] h-[500px] rounded-full bg-accent/5 blur-3xl pointer-events-none"
+        className="absolute -bottom-20 -left-20 w-[500px] h-[500px] rounded-full bg-secondary/10 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 
@@ -72,7 +72,7 @@ export default function HeroSection() {
               href="https://wa.me/5541984810567?text=Desejo%20conhecer%20mais%20sobre%20a%20Fitmass"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center border border-white/20 text-white/80 font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-white/40 hover:text-white transition-colors"
+              className="inline-flex items-center justify-center border border-white/20 text-white/80 font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-secondary/60 hover:text-secondary transition-colors"
             >
               Falar com Especialista
             </a>
@@ -84,7 +84,7 @@ export default function HeroSection() {
           {stats.map(({ value, label }) => (
             <div
               key={label}
-              className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-2 hover:bg-white/10 hover:border-accent/30 transition-all duration-300"
+              className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-2 hover:bg-secondary/[0.07] hover:border-secondary/35 transition-all duration-300"
             >
               <span className="font-title text-accent text-2xl uppercase tracking-wide leading-none">
                 {value}

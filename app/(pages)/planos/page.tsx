@@ -14,7 +14,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://fitmass.com.br/planos',
   },
-  robots: 'index, follow',
+  openGraph: {
+    title: 'Planos Fitmass | Bioimpedância para Academias',
+    description:
+      'Aumente o ticket médio da sua academia com os planos Fitmass. Conheça a versão ULTRA: Bioimpedância Profissional + App White Label.',
+    url: 'https://fitmass.com.br/planos',
+    type: 'website',
+  },
+  robots: { index: true, follow: true },
 }
 
 export default function PlanosPage() {

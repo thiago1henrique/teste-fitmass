@@ -195,6 +195,13 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3 justify-end">
                           <a
+                            href={`/admin/social-export?postId=${post.id}`}
+                            className="font-body text-sm text-contrast/40 hover:text-accent transition-colors"
+                            title="Exportar para redes sociais"
+                          >
+                            Exportar
+                          </a>
+                          <a
                             href={`/admin/posts/${post.id}/edit`}
                             className="font-body text-sm text-accent hover:text-accent/80 transition-colors"
                           >

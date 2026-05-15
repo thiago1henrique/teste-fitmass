@@ -5,6 +5,7 @@ import {
   ListUsersInGroupCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
 import { getSession } from '@/lib/session'
+import outputs from '@/amplify_outputs.json'
 import TeamManager from './TeamManager'
 
 // Cognito hard cap per request is 60; paginate if you expect more users
@@ -12,7 +13,7 @@ const LIST_LIMIT = 60
 
 export const metadata = { title: 'Equipe | Admin Fitmass' }
 
-const USER_POOL = process.env.AMPLIFY_USERPOOL_ID ?? ''
+const USER_POOL = process.env.AMPLIFY_USERPOOL_ID ?? outputs.auth.user_pool_id
 
 function attr(attributes: { Name?: string; Value?: string }[] | undefined, name: string) {
   return attributes?.find((a) => a.Name === name)?.Value ?? ''
@@ -38,6 +39,7 @@ export default async function TeamPage() {
     email:     attr(u.Attributes, 'email'),
     role:      (adminSubs.has(attr(u.Attributes, 'sub')) ? 'ADMIN' : 'EDITOR') as 'ADMIN' | 'EDITOR',
     createdAt: new Date(u.UserCreateDate ?? 0),
+    photo:     attr(u.Attributes, 'picture') || null,
   }))
 
   return (

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import WeatherWidget from '@/app/components/blog/WeatherWidget'
 import MostReadWidget from '@/app/components/blog/MostReadWidget'
 import BlogClient, { type Post } from './BlogClient'
+import CategorySection from './CategorySection'
 
 export const BLOG_CATEGORIES = [
   'Saúde', 'Bioscan', 'Profissionais', 'System',
@@ -18,6 +19,7 @@ function buildUrl(category: string | null, search: string | null) {
 
 interface BlogProps {
   posts: Post[]
+  allPosts: Post[]
   total: number
   page: number
   pageSize: number
@@ -25,7 +27,11 @@ interface BlogProps {
   search: string | null
 }
 
-export default function Blog({ posts, total, page, pageSize, category, search }: BlogProps) {
+export default function Blog({ posts, allPosts, total, page, pageSize, category, search }: BlogProps) {
+  // Group allPosts by category for the sections below (only used when allPosts is non-empty)
+  const categorySections = BLOG_CATEGORIES
+    .map((cat) => ({ name: cat, posts: allPosts.filter((p) => p.categories.includes(cat)) }))
+    .filter((s) => s.posts.length > 0)
   return (
     <div className="pt-20">
       {/* Barra de categorias — sticky diretamente no wrapper pt-20, z-40 fica acima do conteúdo mas abaixo do header (z-50) */}
@@ -37,7 +43,7 @@ export default function Blog({ posts, total, page, pageSize, category, search }:
               className={`font-body text-[11px] font-bold uppercase tracking-widest whitespace-nowrap px-3 py-1.5 rounded transition-colors ${
                 category === null && !search
                   ? 'bg-accent text-white'
-                  : 'text-white/50 hover:text-white'
+                  : 'text-white/50 hover:text-secondary'
               }`}
             >
               Blog Fitmass
@@ -52,7 +58,7 @@ export default function Blog({ posts, total, page, pageSize, category, search }:
                 className={`font-body text-[11px] font-bold uppercase tracking-widest whitespace-nowrap px-3 py-1.5 rounded transition-colors ${
                   category === cat
                     ? 'bg-accent text-white'
-                    : 'text-white/45 hover:text-white'
+                    : 'text-white/45 hover:text-secondary'
                 }`}
               >
                 {cat}
@@ -109,7 +115,7 @@ export default function Blog({ posts, total, page, pageSize, category, search }:
           </div>
           <button
             type="submit"
-            className="font-body text-[11px] font-bold uppercase tracking-widest text-accent px-3 py-1.5 rounded transition-colors"
+            className="font-body text-[11px] font-bold uppercase tracking-widest text-secondary px-3 py-1.5 rounded transition-colors"
           >
             Buscar
           </button>
@@ -123,20 +129,39 @@ export default function Blog({ posts, total, page, pageSize, category, search }:
           <p className="font-body text-contrast/30 text-sm mt-1">Volte em breve!</p>
         </div>
       ) : (
-        <BlogClient
-          posts={posts}
-          total={total}
-          page={page}
-          pageSize={pageSize}
-          category={category}
-          search={search}
-          sidebar={
-            <>
-              <WeatherWidget />
-              <MostReadWidget />
-            </>
-          }
-        />
+        <>
+          <BlogClient
+            posts={posts}
+            total={total}
+            page={page}
+            pageSize={pageSize}
+            category={category}
+            search={search}
+            sidebar={
+              <>
+                <WeatherWidget />
+                <MostReadWidget />
+              </>
+            }
+            extraContent={
+              categorySections.length > 0 ? (
+                <div className="pb-12">
+                  <div className="flex items-center gap-3 pt-10 mb-2">
+                    <span className="w-1 h-5 bg-secondary rounded-full shrink-0" aria-hidden="true" />
+                    <span className="font-body text-xs font-bold uppercase tracking-widest text-contrast/50">
+                      Explorar por Categoria
+                    </span>
+                  </div>
+                  <div className="max-w-2xl">
+                    {categorySections.map((s) => (
+                      <CategorySection key={s.name} name={s.name} posts={s.posts} />
+                    ))}
+                  </div>
+                </div>
+              ) : undefined
+            }
+          />
+        </>
       )}
     </div>
   )

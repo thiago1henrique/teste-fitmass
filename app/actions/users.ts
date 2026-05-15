@@ -7,13 +7,15 @@ import {
   AdminSetUserPasswordCommand,
   AdminAddUserToGroupCommand,
   AdminDeleteUserCommand,
+  AdminUpdateUserAttributesCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
 import { requireAdmin, auditLog } from '@/lib/auth-utils'
+import outputs from '@/amplify_outputs.json'
 
 const cognito = new CognitoIdentityProviderClient({
   region: process.env.AWS_REGION ?? 'us-east-1',
 })
-const USER_POOL_ID = process.env.AMPLIFY_USERPOOL_ID ?? ''
+const USER_POOL_ID = process.env.AMPLIFY_USERPOOL_ID ?? outputs.auth.user_pool_id
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -23,6 +25,8 @@ export async function createUser(formData: FormData) {
   const email    = (formData.get('email') as string)?.trim().toLowerCase()
   const password = formData.get('password') as string
   const role     = (formData.get('role') as 'ADMIN' | 'EDITOR') ?? 'EDITOR'
+
+  const photoUrl = (formData.get('photoUrl') as string | null)?.trim() || null
 
   if (!name || !email || !password) {
     return { error: 'Preencha todos os campos.' }
@@ -58,13 +62,21 @@ export async function createUser(formData: FormData) {
       Username: email,
       GroupName: role,
     }))
+
+    if (photoUrl) {
+      await cognito.send(new AdminUpdateUserAttributesCommand({
+        UserPoolId: USER_POOL_ID,
+        Username: email,
+        UserAttributes: [{ Name: 'picture', Value: photoUrl }],
+      })).catch(() => {})
+    }
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : ''
-    // Generic message for all cases to prevent user enumeration
+    console.error('[createUser] Cognito error:', err)
+    const msg = err instanceof Error ? err.message : String(err)
     if (msg.includes('UsernameExistsException')) {
       return { error: 'Não foi possível criar o usuário. Verifique os dados e tente novamente.' }
     }
-    return { error: 'Erro ao criar usuário. Tente novamente.' }
+    return { error: `Erro ao criar usuário: ${msg}` }
   }
 
   auditLog('user_created', session.userId, { email, role })

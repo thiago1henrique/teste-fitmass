@@ -32,14 +32,14 @@ export default function HeroHome() {
       className="relative min-h-screen flex flex-col justify-center bg-contrast overflow-hidden"
       aria-label="Apresentação Fitmass"
     >
-      {/* Radial glow — topo direita */}
+      {/* Radial glow — topo direita (accent) */}
       <div
         className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-accent/10 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
-      {/* Radial glow — baixo esquerda */}
+      {/* Radial glow — baixo esquerda (secondary) */}
       <div
-        className="absolute -bottom-20 -left-20 w-[500px] h-[500px] rounded-full bg-accent/5 blur-3xl pointer-events-none"
+        className="absolute -bottom-20 -left-20 w-[500px] h-[500px] rounded-full bg-secondary/10 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 
@@ -54,9 +54,14 @@ export default function HeroHome() {
         aria-hidden="true"
       />
 
-      {/* Barra vertical accent */}
+      {/* Barra vertical accent — direita */}
       <div
         className="absolute top-0 right-32 w-px h-full bg-gradient-to-b from-transparent via-accent/20 to-transparent pointer-events-none"
+        aria-hidden="true"
+      />
+      {/* Barra vertical secondary — esquerda */}
+      <div
+        className="absolute top-0 left-32 w-px h-full bg-linear-to-b from-transparent via-secondary/15 to-transparent pointer-events-none"
         aria-hidden="true"
       />
 
@@ -92,7 +97,7 @@ export default function HeroHome() {
             </a>
             <a
               href="#diferenciais"
-              className="inline-flex items-center justify-center border border-white/20 text-white/80 font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-white/40 hover:text-white transition-colors"
+              className="inline-flex items-center justify-center border border-secondary/40 text-secondary font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-secondary hover:bg-secondary/10 transition-colors"
             >
               Ver Diferenciais
             </a>

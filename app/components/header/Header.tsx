@@ -65,9 +65,9 @@ export default function Header({
           : 'bg-transparent backdrop-blur-sm'
       }`}
     >
-      {/* Linha accent — visível apenas sem scroll */}
+      {/* Linha decorativa bicolor — visível apenas sem scroll */}
       <div
-        className={`absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent
+        className={`absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-secondary/30 via-accent/50 to-secondary/30
           transition-opacity duration-300 ${scrolled ? 'opacity-0' : 'opacity-100'}`}
         aria-hidden="true"
       />
@@ -106,7 +106,7 @@ export default function Header({
                 className={`font-body text-[0.9375rem] tracking-wide transition-colors duration-200 ${
                   isActive
                     ? 'text-accent font-bold'
-                    : 'text-white/65 hover:text-white'
+                    : 'text-white/65 hover:text-secondary'
                 }`}
               >
                 {label}
@@ -164,7 +164,7 @@ export default function Header({
                 className={`flex items-center gap-3 font-body text-sm py-3 px-3 rounded-lg transition-colors duration-200 ${
                   isActive
                     ? 'text-accent font-bold bg-white/5'
-                    : 'text-white/80 hover:text-white hover:bg-white/5'
+                    : 'text-white/80 hover:text-secondary hover:bg-white/5'
                 }`}
               >
                 <span className={`w-1 h-1 rounded-full flex-shrink-0 ${isActive ? 'bg-accent' : 'bg-accent'}`} aria-hidden="true" />
