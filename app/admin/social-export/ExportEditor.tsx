@@ -275,21 +275,24 @@ export default function ExportEditor({ initialPost }: { initialPost: InitialPost
   // ─── Smart color defaults per template ─────────────────────────────────────
 
   useEffect(() => {
-    const lightBg = ['branco_minimal', 'dica_dia', 'depoimento', 'polaroid', 'citacao', 'tira_noticia', 'magazine']
-    const brandBg = ['verde_fitmass', 'cta_card', 'degradê']
-    if (lightBg.includes(templateId)) {
-      setSubtitleColor('#88BD23')
-      setTitleColor('#333333')
-      setDescColor('#555555')
-    } else if (brandBg.includes(templateId)) {
-      setSubtitleColor('#ffffff')
-      setTitleColor('#ffffff')
-      setDescColor('rgba(255,255,255,0.85)')
-    } else {
-      setSubtitleColor('#88BD23')
-      setTitleColor('#ffffff')
-      setDescColor('rgba(255,255,255,0.75)')
+    const applyColors = () => {
+      const lightBg = ['branco_minimal', 'dica_dia', 'depoimento', 'polaroid', 'citacao', 'tira_noticia', 'magazine']
+      const brandBg = ['verde_fitmass', 'cta_card', 'degradê']
+      if (lightBg.includes(templateId)) {
+        setSubtitleColor('#88BD23')
+        setTitleColor('#333333')
+        setDescColor('#555555')
+      } else if (brandBg.includes(templateId)) {
+        setSubtitleColor('#ffffff')
+        setTitleColor('#ffffff')
+        setDescColor('rgba(255,255,255,0.85)')
+      } else {
+        setSubtitleColor('#88BD23')
+        setTitleColor('#ffffff')
+        setDescColor('rgba(255,255,255,0.75)')
+      }
     }
+    applyColors()
   }, [templateId])
 
   // ─── Filtered templates ─────────────────────────────────────────────────────

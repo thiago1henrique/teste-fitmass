@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 export default function PostError({
   unstable_retry,
 }: {
@@ -22,12 +24,12 @@ export default function PostError({
           >
             Tentar novamente
           </button>
-          <a
+          <Link
             href="/blog"
             className="inline-flex items-center gap-2 border-2 border-accent/50 text-accent font-body font-bold uppercase tracking-widest text-sm px-6 py-3 rounded-xl hover:border-accent transition-colors"
           >
             Ver todos os artigos
-          </a>
+          </Link>
         </div>
       </div>
     </div>

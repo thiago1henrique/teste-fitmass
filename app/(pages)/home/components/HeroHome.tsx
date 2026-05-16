@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import HeroBadges from './HeroBadges'
 
 export default function HeroHome() {
   return (
@@ -100,14 +101,17 @@ export default function HeroHome() {
               }}
               aria-hidden="true"
             />
+
+            <HeroBadges />
+
             {/* Imagem com classe 3D */}
             <div className="img-3d-tilt">
               <Image
                 src="/pages/landingpage/bioscan-2.png"
                 alt="Balança de bioimpedância Biosan"
-                width={560}
-                height={784}
-                className="object-contain w-full sm:max-w-[420px] lg:max-w-full max-h-[78vh] drop-shadow-[0_32px_80px_rgba(0,0,0,0.72)]"
+                width={700}
+                height={980}
+                className="object-contain w-full sm:max-w-125 lg:max-w-full max-h-[92vh] drop-shadow-[0_32px_80px_rgba(0,0,0,0.72)] mb-10"
                 priority
               />
             </div>

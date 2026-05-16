@@ -23,7 +23,6 @@ const F = {
   body:  '"Encode Sans", Arial, sans-serif',
 }
 
-const GAP_S = 8   // subtitle → title gap
 const GAP_L = 18  // title → description gap
 
 // ─── Overlay ─────────────────────────────────────────────────────────────────
@@ -434,6 +433,7 @@ function drawCover(
   ctx.restore()
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -458,6 +458,7 @@ function wrapText(
   return cy
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function estimateTextHeight(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -739,6 +740,7 @@ function renderVerdeFitmass(ctx: CanvasRenderingContext2D, d: RenderData) {
   }
 
   if (d.title?.trim()) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const tLineH = d.titleSize * 1.2
     // First pass to measure — then redo from textStartY to handle alignment properly
     ctx.clearRect(0, textStartY - 10, W, H)
@@ -772,6 +774,7 @@ function renderVerdeFitmass(ctx: CanvasRenderingContext2D, d: RenderData) {
   drawLogo(ctx, d, 'br')
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function wrapTextCenter(
   ctx: CanvasRenderingContext2D,
   text: string,

@@ -22,17 +22,7 @@ function writeConsent(value: string) {
 export default function CookieConsent() {
   const [visible, setVisible] = useState(false)
 
-  useEffect(() => {
-    const consent = readConsent()
-    if (!consent) {
-      setVisible(true)
-    } else {
-      // If already consented, send the consent state to GTM
-      updateGTMConsent(consent as 'all' | 'necessary')
-    }
-  }, [])
-
-  const updateGTMConsent = (value: 'all' | 'necessary') => {
+  function updateGTMConsent(value: 'all' | 'necessary') {
     const granted = value === 'all' ? 'granted' : 'denied'
     window.gtag?.('consent', 'update', {
       analytics_storage: granted,
@@ -41,6 +31,16 @@ export default function CookieConsent() {
       ad_personalization: granted,
     })
   }
+
+  useEffect(() => {
+    const consent = readConsent()
+    const show = () => setVisible(true)
+    if (!consent) {
+      show()
+    } else {
+      updateGTMConsent(consent as 'all' | 'necessary')
+    }
+  }, [])
 
   if (!visible) return null
 

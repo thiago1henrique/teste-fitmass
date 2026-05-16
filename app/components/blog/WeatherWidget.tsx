@@ -39,7 +39,8 @@ export default function WeatherWidget() {
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setState({ status: 'error' })
+      const setError = () => setState({ status: 'error' })
+      setError()
       return
     }
 
