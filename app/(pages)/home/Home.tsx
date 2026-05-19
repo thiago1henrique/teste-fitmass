@@ -5,8 +5,10 @@ import BioscanSection from './components/BioscanSection'
 import BioscanOutro from './components/BioscanOutro'
 import PainPointsSection from './components/PainPointsSection'
 import BenefitsSection from './components/BenefitsSection'
+import TestimonialsSection from './components/TestimonialsSection'
 import PartnersTicker from './components/PartnersTicker'
 import PersonalizationSection from '../../components/personalization/PersonalizationSection'
+import HowItWorksSection from './components/HowItWorksSection'
 import AiFitSimulator from './components/AiFitSimulator'
 import FAQHome from './components/FAQHome'
 import BlogPreviewSection from '../../components/blog/BlogPreviewSection'
@@ -30,8 +32,10 @@ export default function Home() {
       />
       <PainPointsSection />
       <BenefitsSection />
+      <TestimonialsSection />
       <PartnersTicker />
       <PersonalizationSection />
+      <HowItWorksSection />
       <AiFitSimulator />
       <FAQHome />
       <BlogPreviewSection />

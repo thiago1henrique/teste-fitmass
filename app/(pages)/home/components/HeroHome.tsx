@@ -51,13 +51,13 @@ export default function HeroHome() {
           </span>
 
           <h1 className="font-title text-4xl md:text-5xl lg:text-[3.25rem] uppercase text-white tracking-wide leading-[1.08] mb-6">
-            Transformando dados em{' '}
-            <span className="text-accent">bem-estar</span>
+            A balança que faz sua academia{' '}
+            <span className="text-accent">reter alunos</span>
           </h1>
 
           <p className="font-body text-white/65 text-lg md:text-xl leading-relaxed mb-10 max-w-xl">
-            Bioimpedância de precisão aliada a um software de gestão completo
-            para elevar o nível do seu negócio.
+            A Bioscan realiza avaliação corporal completa em menos de 1 minuto —
+            resultados direto no app do aluno, sem papel, sem burocracia.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">

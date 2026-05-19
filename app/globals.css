@@ -153,6 +153,8 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-color: #88BD23 transparent;
+  scrollbar-width: thin;
 }
 
 /* Offset para anchors com header fixo (~80px) */
@@ -170,6 +172,35 @@ body {
   color: #333333;
   background: #ffffff;
   overflow-x: hidden;
+}
+
+/* =====================================================
+   SCROLLBAR — brand colors
+   ===================================================== */
+
+/* WebKit (Chrome, Safari, Edge) — global */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #88BD23;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9dcc38;
+}
+
+/* Firefox — inner scrollable elements */
+.scrollbar-brand {
+  scrollbar-color: #88BD23 transparent;
+  scrollbar-width: thin;
 }
 
 /* Hide scrollbar while keeping scroll functionality */

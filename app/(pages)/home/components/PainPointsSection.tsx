@@ -39,8 +39,8 @@ export default function PainPointsSection() {
             <span className="text-accent">ALUNOS À SUA ACADEMIA</span>
           </h2>
           <p className="font-body text-contrast/55 max-w-xl mx-auto">
-            Academias sem ferramenta de acompanhamento perdem alunos silenciosamente.
-            Veja o que muda com o Fitmass.
+            Academias sem a Bioscan perdem alunos silenciosamente.
+            Veja o que muda quando você investe em avaliação corporal profissional.
           </p>
         </div>
 

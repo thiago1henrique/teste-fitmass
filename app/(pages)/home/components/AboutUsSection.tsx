@@ -53,17 +53,16 @@ export default function AboutUsSection() {
             {/* Body */}
             <div className="space-y-4">
               <p className="font-body text-contrast/65 text-base leading-relaxed">
-                O Fitmass é uma plataforma de produtos e serviços que traz o conhecimento
-                e consciência da saúde do corpo ao dia a dia das pessoas, <b>entregando
-                avaliações físicas e medições corporais em academias, consultórios médicos,
-                empresas e até mesmo em casa</b> com acessibilidade, constância,
-                monitoramento, inteligência de dados e resultados instantâneos.
+                A Fitmass fabrica e comercializa a <b>Bioscan</b>, balança de
+                bioimpedância profissional que realiza avaliações físicas completas em
+                academias, consultórios médicos, empresas e até mesmo em casa —
+                com precisão clínica, em menos de 1 minuto.
               </p>
               <p className="font-body text-contrast/65 text-base leading-relaxed">
-                Os produtos Fitmass permitem medições precisas e autônomas, acompanhando
-                peso, gordura, massa muscular, força e circunferências corporais, com
-                dashboards de monitoramento e software web de gerenciamento online —
-                contribuindo para decisões informadas sobre o bem-estar dos indivíduos.
+                A Bioscan acompanha peso, gordura, massa muscular, hidratação e
+                circunferências corporais. O ecossistema digital completo — app para o
+                aluno, software de gestão e relatórios com a marca da sua academia —
+                potencializa cada medição e transforma dados em retenção.
               </p>
             </div>
 
