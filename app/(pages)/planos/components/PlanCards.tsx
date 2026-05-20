@@ -151,7 +151,7 @@ const plans: Plan[] = [
     id: 'enterprise',
     name: 'Enterprise',
     subtitle: 'Soluções customizadas para grandes redes.',
-    description: 'Para redes de academias e operações com múltiplas unidades que precisam de integração avançada e suporte dedicado.​',
+    description: 'Para redes de academias e operações com múltiplas unidades que precisam de integração avançada e suporte dedicado.',
     badge: null,
     cta: 'Fale Conosco',
     ctaHref: 'https://wa.me/5541984810567?text=Desejo%20conhecer%20o%20plano%20Enterprise',

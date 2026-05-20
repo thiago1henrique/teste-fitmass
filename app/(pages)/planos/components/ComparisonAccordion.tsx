@@ -18,6 +18,42 @@ const SPECIAL: Record<string, string> = {
   pocket: 'Pocket',
   scanner: 'Scanner',
   timeline: 'Timeline',
+  // Palavras portuguesas com acento
+  visualizacao: 'Visualização',
+  avaliacoes: 'Avaliações',
+  historico: 'Histórico',
+  edicao: 'Edição',
+  credito: 'Crédito',
+  creditos: 'Créditos',
+  integracao: 'Integração',
+  automacao: 'Automação',
+  personalizacao: 'Personalização',
+  anuncios: 'Anúncios',
+  clicaveis: 'Clicáveis',
+  criacao: 'Criação',
+  pos: 'Pós',
+  medicao: 'Medição',
+  medicoes: 'Medições',
+  importacao: 'Importação',
+  automatica: 'Automática',
+  exportacao: 'Exportação',
+  relatorios: 'Relatórios',
+  pagina: 'Página',
+  graficos: 'Gráficos',
+  comparacao: 'Comparação',
+  politicas: 'Políticas',
+  midia: 'Mídia',
+  instagramavel: 'Instagramável',
+  avaliacao: 'Avaliação',
+  composicao: 'Composição',
+  circunferencias: 'Circunferências',
+  ingestao: 'Ingestão',
+  diaria: 'Diária',
+  referencia: 'Referência',
+  periodo: 'Período',
+  vinculo: 'Vínculo',
+  usuario: 'Usuário',
+  codigo: 'Código',
 }
 
 function formatKey(key: string): string {
@@ -74,7 +110,7 @@ const FEATURE_TOOLTIPS: Record<string, { images: { src: string; alt: string }[];
     images: personalizacaoImages,
     ariaLabel: 'Ver exemplos de cards personalizados para timeline',
   },
-  'Personalizacao Cores App': {
+  'Personalização Cores App': {
     images: personalizacaoImages,
     ariaLabel: 'Ver exemplos de personalização de cores do App',
   },
@@ -82,11 +118,11 @@ const FEATURE_TOOLTIPS: Record<string, { images: { src: string; alt: string }[];
     images: [{ src: '/pages/planos/cardsSection/recursos/tela-descanso-custom-01.png', alt: 'Tela de descanso customizada' }],
     ariaLabel: 'Ver exemplo de tela de descanso customizada',
   },
-  'Telas Descanso Anuncios Clicaveis Bioscan 3.0': {
+  'Telas Descanso Anúncios Clicáveis Bioscan 3.0': {
     images: [{ src: '/pages/planos/cardsSection/recursos/tela-descanso-01.png', alt: 'Tela de descanso com anúncio' }],
     ariaLabel: 'Ver exemplo de tela de descanso com anúncio clicável',
   },
-  'Personalizacao Cores Telas Bioscan 3.0': {
+  'Personalização Cores Telas Bioscan 3.0': {
     images: personalizacaoImages,
     ariaLabel: 'Ver exemplos de personalização de cores das telas do Bioscan',
   },

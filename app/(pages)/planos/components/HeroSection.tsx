@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import HeroBadges from '@/app/(pages)/home/components/HeroBadges'
 
 export default function HeroSection() {
   return (
@@ -28,14 +29,19 @@ export default function HeroSection() {
         aria-hidden="true"
       />
 
-      {/* Barra vertical accent */}
+      {/* Barra vertical accent — direita */}
       <div
-        className="absolute top-0 right-32 w-px h-full bg-gradient-to-b from-transparent via-accent/25 to-transparent pointer-events-none"
+        className="absolute top-0 right-32 w-px h-full bg-gradient-to-b from-transparent via-accent/20 to-transparent pointer-events-none"
+        aria-hidden="true"
+      />
+      {/* Barra vertical secondary — esquerda */}
+      <div
+        className="absolute top-0 left-32 w-px h-full bg-linear-to-b from-transparent via-secondary/15 to-transparent pointer-events-none"
         aria-hidden="true"
       />
 
       {/* Conteúdo */}
-      <div className="relative max-w-6xl mx-auto w-full px-4 pt-32 pb-36 grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-12 items-center">
+      <div className="relative max-w-6xl mx-auto w-full px-4 pt-32 pb-36 grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-8 lg:gap-16 items-center">
         {/* Copy */}
         <div>
           <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-8">
@@ -74,37 +80,40 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Biosan — efeito 3D */}
+        {/* Biosan — efeito 3D, coluna dominante */}
         <div
-          className="flex justify-center lg:justify-end"
+          className="flex justify-center lg:justify-end items-center"
           role="img"
           aria-label="Balança de bioimpedância Biosan"
         >
           <div className="relative" style={{ perspective: '1000px' }}>
             {/* Glow ambiente */}
             <div
-              className="absolute inset-0 -z-10 blur-3xl opacity-25 scale-90 translate-y-8"
+              className="absolute inset-0 -z-10 blur-3xl opacity-35 scale-100 translate-y-6"
               style={{ background: 'radial-gradient(ellipse, #88BD23 0%, transparent 70%)' }}
               aria-hidden="true"
             />
             {/* Sombra projetada */}
             <div
-              className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-6 -z-10"
+              className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-4/5 h-8 -z-10"
               style={{
-                background: 'radial-gradient(ellipse, rgba(0,0,0,0.7) 0%, transparent 70%)',
-                filter: 'blur(16px)',
+                background: 'radial-gradient(ellipse, rgba(0,0,0,0.8) 0%, transparent 70%)',
+                filter: 'blur(20px)',
               }}
               aria-hidden="true"
             />
+
+            <HeroBadges />
+
             {/* Imagem com classe 3D */}
             <div className="img-3d-tilt">
               <Image
                 src="/pages/landingpage/bioscan-2.png"
                 alt="Balança de bioimpedância Biosan"
-                width={400}
-                height={560}
-                sizes="(max-width: 1024px) 100vw, 440px"
-                className="object-contain w-full max-w-100 drop-shadow-[0_24px_60px_rgba(0,0,0,0.65)]"
+                width={700}
+                height={980}
+                sizes="(max-width: 1024px) 100vw, 560px"
+                className="object-contain w-full sm:max-w-125 lg:max-w-full max-h-[92vh] drop-shadow-[0_32px_80px_rgba(0,0,0,0.72)] mb-10"
                 priority
               />
             </div>
