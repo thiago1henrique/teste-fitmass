@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { getPost } from '@/lib/posts'
 import PostBody from './PostBody'
 import RelatedPostsSection from '@/app/components/blog/RelatedPostsSection'
+import { Suspense } from 'react'
 
 export async function generateMetadata({
   params,
@@ -25,11 +26,7 @@ export async function generateMetadata({
   }
 }
 
-export default async function PostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
+async function PostPageContent({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const raw = await getPost(slug)
   if (!raw) notFound()
@@ -77,5 +74,13 @@ export default async function PostPage({
       </div>
       <RelatedPostsSection excludeSlug={post.slug} />
     </>
+  )
+}
+
+export default function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  return (
+    <Suspense>
+      <PostPageContent params={params} />
+    </Suspense>
   )
 }

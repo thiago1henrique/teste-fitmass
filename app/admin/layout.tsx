@@ -1,15 +1,11 @@
 import { getSession } from '@/lib/session'
 import AdminSidebar from './_components/AdminSidebar'
+import { Suspense } from 'react'
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+async function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const session = await getSession()
-  const isLoginPage = !session
 
-  if (isLoginPage) {
+  if (!session) {
     return <>{children}</>
   }
 
@@ -20,5 +16,13 @@ export default async function AdminLayout({
         {children}
       </main>
     </div>
+  )
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense>
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </Suspense>
   )
 }
