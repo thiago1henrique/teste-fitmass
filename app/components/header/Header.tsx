@@ -65,6 +65,15 @@ export default function Header({
           : 'bg-transparent backdrop-blur-sm'
       }`}
     >
+      {/* Backdrop overlay para menu mobile */}
+      <div
+        className={`fixed inset-0 z-49 bg-black/50 backdrop-blur-sm md:hidden transition-opacity duration-300 ${
+          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setMenuOpen(false)}
+        aria-hidden="true"
+      />
+
       {/* Linha decorativa bicolor — visível apenas sem scroll */}
       <div
         className={`absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-secondary/30 via-accent/50 to-secondary/30
@@ -82,14 +91,14 @@ export default function Header({
         <Link
           href="/"
           aria-label="Ir para a página inicial Fitmass"
-          className="flex-shrink-0"
+          className="shrink-0"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://fitmass.com.br/wp-content/uploads/2020/08/Logo-Fitmass-colorida.svg"
+            src="/logo-colorida.svg"
             alt="Fitmass"
             className={`h-10 w-auto origin-left transition-transform duration-300 ease-in-out ${
-              scrolled ? 'scale-[0.72]' : 'scale-100'
+              scrolled ? 'scale-72' : 'scale-100'
             }`}
           />
         </Link>
@@ -167,7 +176,7 @@ export default function Header({
                     : 'text-white/80 hover:text-secondary hover:bg-white/5'
                 }`}
               >
-                <span className={`w-1 h-1 rounded-full flex-shrink-0 ${isActive ? 'bg-accent' : 'bg-accent'}`} aria-hidden="true" />
+                <span className={`w-1 h-1 rounded-full shrink-0 ${isActive ? 'bg-accent' : 'bg-accent'}`} aria-hidden="true" />
                 {label}
               </a>
             )

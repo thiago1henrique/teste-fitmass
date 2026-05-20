@@ -1,12 +1,7 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
-import { cookies } from 'next/headers'
-import outputs from '@/amplify_outputs.json'
-import type { Schema } from '@/amplify/data/resource'
-import { listAll } from '@/lib/list-all'
+import { getPublishedPosts } from '@/lib/posts'
 import Blog from './Blog'
-
-export const revalidate = 60
 
 export const PAGE_SIZE = 15
 
@@ -22,7 +17,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function BlogPage({
+async function BlogContent({
   searchParams,
 }: {
   searchParams: Promise<{ page?: string; category?: string; search?: string }>
@@ -30,20 +25,7 @@ export default async function BlogPage({
   const { page: pageParam, category, search } = await searchParams
   const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1)
 
-  const allPosts = await (async () => {
-    try {
-      const client = generateServerClientUsingCookies<Schema>({
-        config: outputs,
-        cookies,
-        authMode: 'apiKey',
-      })
-      return await listAll((t) =>
-        client.models.Post.list({ filter: { status: { eq: 'PUBLISHED' } }, nextToken: t, limit: 500 })
-      )
-    } catch {
-      return []
-    }
-  })()
+  const allPosts = await getPublishedPosts()
 
   const q = search?.trim().toLowerCase() ?? ''
 
@@ -93,5 +75,17 @@ export default async function BlogPage({
       category={category ?? null}
       search={q || null}
     />
+  )
+}
+
+export default function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; category?: string; search?: string }>
+}) {
+  return (
+    <Suspense>
+      <BlogContent searchParams={searchParams} />
+    </Suspense>
   )
 }

@@ -9,12 +9,12 @@ export default function HeroHome() {
     >
       {/* Radial glow — topo direita (accent) */}
       <div
-        className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-accent/10 blur-3xl pointer-events-none"
+        className="absolute -top-40 -right-40 w-175 h-175 rounded-full bg-accent/10 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
       {/* Radial glow — baixo esquerda (secondary) */}
       <div
-        className="absolute -bottom-20 -left-20 w-[500px] h-[500px] rounded-full bg-secondary/10 blur-3xl pointer-events-none"
+        className="absolute -bottom-20 -left-20 w-125 h-125 rounded-full bg-secondary/10 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 

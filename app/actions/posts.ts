@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
 import { cookies } from 'next/headers'
@@ -56,6 +56,7 @@ export async function createPost(formData: FormData) {
 
   auditLog('post_created', session.userId, { slug, status })
 
+  revalidateTag('posts', 'default')
   revalidatePath('/blog')
   revalidatePath('/admin/posts')
   redirect('/admin/posts')
@@ -104,6 +105,8 @@ export async function updatePost(id: string, formData: FormData) {
 
   auditLog('post_updated', session.userId, { id, status })
 
+  revalidateTag('posts', 'default')
+  revalidateTag(`post-${post.slug}`, 'default')
   revalidatePath('/blog')
   revalidatePath(`/blog/${post.slug}`)
   revalidatePath('/admin/posts')
@@ -125,6 +128,8 @@ export async function deletePost(id: string) {
 
   auditLog('post_deleted', session.userId, { id, slug: post.slug })
 
+  revalidateTag('posts', 'default')
+  revalidateTag(`post-${post.slug}`, 'default')
   revalidatePath('/blog')
   revalidatePath('/admin/posts')
 }

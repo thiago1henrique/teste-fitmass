@@ -50,7 +50,7 @@ export default function PainPointsSection() {
           {/* Cabeçalho */}
           <div className="grid grid-cols-2 divide-x divide-gray-200">
             <div className="flex items-center gap-2 px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <span className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0" aria-hidden="true">
+              <span className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center shrink-0" aria-hidden="true">
                 <svg className="w-3 h-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -60,7 +60,7 @@ export default function PainPointsSection() {
               </span>
             </div>
             <div className="flex items-center gap-2 px-6 py-4 bg-accent/5 border-b border-accent/20">
-              <span className="w-5 h-5 rounded-full bg-accent flex items-center justify-center flex-shrink-0" aria-hidden="true">
+              <span className="w-5 h-5 rounded-full bg-accent flex items-center justify-center shrink-0" aria-hidden="true">
                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
@@ -78,15 +78,15 @@ export default function PainPointsSection() {
               className="grid grid-cols-2 divide-x divide-gray-200 border-b border-gray-200 last:border-b-0"
             >
               <div className="flex items-start gap-3 px-6 py-5">
-                <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-red-50 flex items-center justify-center" aria-hidden="true">
+                <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-red-50 flex items-center justify-center" aria-hidden="true">
                   <svg className="w-2.5 h-2.5 text-red-400" fill="currentColor" viewBox="0 0 8 8">
                     <circle cx="4" cy="4" r="4" />
                   </svg>
                 </span>
                 <p className="font-body text-contrast/50 text-sm leading-relaxed">{problem}</p>
               </div>
-              <div className="flex items-start gap-3 px-6 py-5 bg-accent/[0.03]">
-                <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center" aria-hidden="true">
+              <div className="flex items-start gap-3 px-6 py-5 bg-accent/3">
+                <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center" aria-hidden="true">
                   <svg className="w-2.5 h-2.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>

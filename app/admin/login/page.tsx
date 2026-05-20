@@ -12,7 +12,7 @@ export default async function LoginPage() {
     <div className="min-h-screen bg-contrast flex items-center justify-center p-4">
       {/* Glow */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/10 blur-3xl pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 rounded-full bg-accent/10 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 

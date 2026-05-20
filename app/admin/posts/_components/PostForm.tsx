@@ -354,7 +354,7 @@ export default function PostForm({ post, action }: Props) {
     onUpdate: ({ editor }) => setEditorHtml(editor.getHTML()),
     editorProps: {
       attributes: {
-        class: 'prose-content min-h-[360px] px-6 py-5 focus:outline-none text-sm',
+        class: 'prose-content min-h-90 px-6 py-5 focus:outline-none text-sm',
       },
     },
   })

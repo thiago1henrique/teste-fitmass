@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { ReactNode } from 'react'
 
 export type Post = {
@@ -39,12 +40,13 @@ function HeroCard({ post, large }: { post: Post; large?: boolean }) {
       aria-label={`Ler: ${post.title}`}
     >
       {post.coverUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={post.coverUrl}
           alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          aria-hidden={true}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       ) : (
         <div className="absolute inset-0 bg-linear-to-br from-contrast to-contrast/70" />
@@ -95,11 +97,12 @@ function ListCard({ post }: { post: Post }) {
     >
       <div className="relative w-28 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0">
         {post.coverUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={post.coverUrl}
             alt={post.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="112px"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full bg-linear-to-br from-accent/15 to-accent/5 flex items-center justify-center">

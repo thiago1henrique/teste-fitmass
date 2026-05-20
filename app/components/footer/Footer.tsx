@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 /* ─── Social icons ────────────────────────────────────────────────────────── */
 
 function YouTubeIcon() {
@@ -67,11 +69,12 @@ export default function Footer() {
 
           {/* Col 1 — Marca */}
           <div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="https://fitmass.com.br/wp-content/uploads/2023/05/Logo-Fitmass-branca.svg"
               alt="Fitmass"
-              className="h-10 w-auto mb-6"
+              width={160}
+              height={40}
+              className="mb-6 h-10 w-auto"
             />
             <p className="font-title text-white/75 text-sm uppercase tracking-wider leading-relaxed mb-7 max-w-xs">
               TRANSFORMANDO DADOS EM BEM-ESTAR:

@@ -17,6 +17,6 @@ const cta = {
 
 export default function PagesLayoutClient() {
   const pathname = usePathname()
-  const forceDark = pathname.startsWith('/blog') || pathname === '/privacidade' || pathname === '/contato'
+  const forceDark = pathname.startsWith('/blog') || pathname === '/privacidade' || pathname === '/contato' || pathname === '/checkout'
   return <Header navLinks={navLinks} cta={cta} forceDark={forceDark} />
 }

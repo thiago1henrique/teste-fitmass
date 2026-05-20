@@ -64,8 +64,8 @@ export default function Contato() {
       aria-label="Entre em contato com a Fitmass"
     >
       {/* Glows decorativos */}
-      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-accent/5 blur-3xl pointer-events-none" aria-hidden="true" />
+      <div className="absolute -top-40 -right-40 w-150 h-150 rounded-full bg-accent/8 blur-3xl pointer-events-none" aria-hidden="true" />
+      <div className="absolute -bottom-20 -left-20 w-100 h-100 rounded-full bg-accent/5 blur-3xl pointer-events-none" aria-hidden="true" />
 
       {/* Grid sutil */}
       <div
@@ -130,7 +130,7 @@ export default function Contato() {
           {/* Coluna direita — formulário */}
           <form
             onSubmit={handleSubmit}
-            className="bg-white/[0.03] border border-white/8 rounded-2xl p-8 space-y-4"
+            className="bg-white/3 border border-white/8 rounded-2xl p-8 space-y-4"
           >
             <div>
               <label htmlFor="contact-name" className="block font-body text-xs font-semibold uppercase tracking-widest text-white/40 mb-2">

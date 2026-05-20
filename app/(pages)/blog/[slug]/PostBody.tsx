@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import ViewTracker from '@/app/components/blog/ViewTracker'
 
 type Post = {
@@ -41,11 +42,13 @@ export default function PostBody({ post }: { post: Post }) {
 
       {/* Cover image */}
       {post.coverUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={post.coverUrl}
           alt={post.title}
-          className="w-full rounded-2xl mb-10 object-cover max-h-[420px]"
+          width={1200}
+          height={420}
+          sizes="(max-width: 672px) 100vw, 672px"
+          className="w-full rounded-2xl mb-10 object-cover max-h-105"
         />
       )}
 

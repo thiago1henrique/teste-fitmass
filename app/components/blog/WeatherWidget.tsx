@@ -8,25 +8,25 @@ type WeatherState =
   | { status: 'ok'; temp: number; code: number; city: string; time: string; date: string }
 
 const WMO: Record<number, { label: string; emoji: string }> = {
-  0:  { label: 'Céu limpo',           emoji: '☀️'  },
-  1:  { label: 'Principalmente limpo', emoji: '🌤️' },
-  2:  { label: 'Parcialmente nublado', emoji: '⛅'  },
-  3:  { label: 'Nublado',             emoji: '☁️'  },
-  45: { label: 'Neblina',             emoji: '🌫️' },
-  48: { label: 'Neblina com gelo',    emoji: '🌫️' },
-  51: { label: 'Garoa fraca',         emoji: '🌦️' },
-  53: { label: 'Garoa moderada',      emoji: '🌦️' },
-  55: { label: 'Garoa intensa',       emoji: '🌧️' },
-  61: { label: 'Chuva fraca',         emoji: '🌧️' },
-  63: { label: 'Chuva moderada',      emoji: '🌧️' },
-  65: { label: 'Chuva forte',         emoji: '🌧️' },
-  71: { label: 'Neve fraca',          emoji: '🌨️' },
-  73: { label: 'Neve moderada',       emoji: '❄️'  },
-  75: { label: 'Neve forte',          emoji: '❄️'  },
-  80: { label: 'Chuva passageira',    emoji: '🌦️' },
-  81: { label: 'Chuva moderada',      emoji: '🌧️' },
-  82: { label: 'Chuva intensa',       emoji: '⛈️' },
-  95: { label: 'Tempestade',          emoji: '⛈️' },
+  0:  { label: 'Céu limpo',             emoji: '☀️'  },
+  1:  { label: 'Principalmente limpo',  emoji: '🌤️' },
+  2:  { label: 'Parcialmente nublado',  emoji: '⛅'  },
+  3:  { label: 'Nublado',               emoji: '☁️'  },
+  45: { label: 'Neblina',               emoji: '🌫️' },
+  48: { label: 'Neblina com gelo',      emoji: '🌫️' },
+  51: { label: 'Garoa fraca',           emoji: '🌦️' },
+  53: { label: 'Garoa moderada',        emoji: '🌦️' },
+  55: { label: 'Garoa intensa',         emoji: '🌧️' },
+  61: { label: 'Chuva fraca',           emoji: '🌧️' },
+  63: { label: 'Chuva moderada',        emoji: '🌧️' },
+  65: { label: 'Chuva forte',           emoji: '🌧️' },
+  71: { label: 'Neve fraca',            emoji: '🌨️' },
+  73: { label: 'Neve moderada',         emoji: '❄️'  },
+  75: { label: 'Neve forte',            emoji: '❄️'  },
+  80: { label: 'Chuva passageira',      emoji: '🌦️' },
+  81: { label: 'Chuva moderada',        emoji: '🌧️' },
+  82: { label: 'Chuva intensa',         emoji: '⛈️' },
+  95: { label: 'Tempestade',            emoji: '⛈️' },
   99: { label: 'Tempestade c/ granizo', emoji: '⛈️' },
 }
 
@@ -34,52 +34,91 @@ function getWmo(code: number) {
   return WMO[code] ?? { label: 'Variável', emoji: '🌡️' }
 }
 
+async function fetchWeather(lat: number, lon: number, city: string): Promise<WeatherState> {
+  const res = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`,
+  )
+  const w = await res.json()
+  const now = new Date()
+  return {
+    status: 'ok',
+    temp: Math.round(w.current.temperature_2m),
+    code: w.current.weather_code,
+    city,
+    time: now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    date: now.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }),
+  }
+}
+
+async function resolveCity(lat: number, lon: number): Promise<string> {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
+      { headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'Fitmass/1.0 (fitmass.com.br)' } },
+    )
+    const g = await res.json()
+    return g.address?.city ?? g.address?.town ?? g.address?.village ?? g.address?.state ?? 'Sua região'
+  } catch {
+    return 'Sua região'
+  }
+}
+
+async function locationFromIp(): Promise<{ lat: number; lon: number; city: string }> {
+  const res = await fetch('https://ipapi.co/json/')
+  const d = await res.json()
+  return {
+    lat: d.latitude,
+    lon: d.longitude,
+    city: d.city ?? d.region ?? 'Sua região',
+  }
+}
+
 export default function WeatherWidget() {
   const [state, setState] = useState<WeatherState>({ status: 'loading' })
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      const setError = () => setState({ status: 'error' })
-      setError()
-      return
+    let cancelled = false
+
+    async function load() {
+      let resolved = false
+
+      // Try browser geolocation first
+      if (navigator.geolocation) {
+        await new Promise<void>((resolve) => {
+          navigator.geolocation.getCurrentPosition(
+            async ({ coords }) => {
+              try {
+                const { latitude: lat, longitude: lon } = coords
+                const city = await resolveCity(lat, lon)
+                const next = await fetchWeather(lat, lon, city)
+                if (!cancelled) setState(next)
+                resolved = true
+              } catch {
+                // fall through to IP fallback
+              }
+              resolve()
+            },
+            () => resolve(), // denied or unavailable — fall through
+            { timeout: 6000 },
+          )
+        })
+
+        if (resolved) return
+      }
+
+      // Fallback: IP-based location
+      try {
+        const { lat, lon, city } = await locationFromIp()
+        const next = await fetchWeather(lat, lon, city)
+        if (!cancelled) setState(next)
+      } catch {
+        if (!cancelled) setState({ status: 'error' })
+      }
     }
 
-    navigator.geolocation.getCurrentPosition(
-      async ({ coords }) => {
-        const { latitude: lat, longitude: lon } = coords
-        try {
-          const [wRes, gRes] = await Promise.all([
-            fetch(
-              `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`,
-            ),
-            fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
-              { headers: { 'Accept-Language': 'pt-BR' } },
-            ),
-          ])
-
-          const w = await wRes.json()
-          const g = await gRes.json()
-
-          const city =
-            g.address?.city ?? g.address?.town ?? g.address?.village ?? g.address?.state ?? 'Sua região'
-
-          const now = new Date()
-          setState({
-            status: 'ok',
-            temp: Math.round(w.current.temperature_2m),
-            code: w.current.weather_code,
-            city,
-            time: now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-            date: now.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }),
-          })
-        } catch {
-          setState({ status: 'error' })
-        }
-      },
-      () => setState({ status: 'error' }),
-      { timeout: 8000 },
-    )
+    load()
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (state.status === 'error') return null

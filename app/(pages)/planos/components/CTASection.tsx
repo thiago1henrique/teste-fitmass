@@ -79,7 +79,7 @@ export default function CTASection() {
         <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3">
           {trustIndicators.map((label) => (
             <div key={label} className="flex items-center gap-2 text-white/35 font-body text-sm">
-              <svg className="w-3.5 h-3.5 text-accent/70 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+              <svg className="w-3.5 h-3.5 text-accent/70 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>

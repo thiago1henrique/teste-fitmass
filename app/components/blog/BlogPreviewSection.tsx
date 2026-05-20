@@ -1,25 +1,9 @@
 import Link from 'next/link'
-import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
-import { cookies } from 'next/headers'
-import outputs from '@/amplify_outputs.json'
-import type { Schema } from '@/amplify/data/resource'
-import { listAll } from '@/lib/list-all'
+import Image from 'next/image'
+import { getPublishedPosts } from '@/lib/posts'
 
 export default async function BlogPreviewSection() {
-  const allPosts = await (async () => {
-    try {
-      const client = generateServerClientUsingCookies<Schema>({
-        config: outputs,
-        cookies,
-        authMode: 'apiKey',
-      })
-      return await listAll((t) =>
-        client.models.Post.list({ filter: { status: { eq: 'PUBLISHED' } }, nextToken: t, limit: 500 })
-      )
-    } catch {
-      return []
-    }
-  })()
+  const allPosts = await getPublishedPosts()
 
   const posts = allPosts
     .sort((a, b) => {
@@ -61,14 +45,16 @@ export default async function BlogPreviewSection() {
                 aria-label={`Ler: ${post.title}`}
               >
                 {post.coverUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={post.coverUrl}
                     alt={post.title}
+                    width={800}
+                    height={352}
+                    sizes="(max-width: 768px) 100vw, 33vw"
                     className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  <div className="w-full h-44 bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+                  <div className="w-full h-44 bg-linear-to-br from-accent/20 to-accent/5 flex items-center justify-center">
                     <svg className="w-10 h-10 text-accent/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>

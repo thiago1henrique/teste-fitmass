@@ -8,12 +8,12 @@ export default function HeroSection() {
     >
       {/* Glow radial topo-direita */}
       <div
-        className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-accent/10 blur-3xl pointer-events-none"
+        className="absolute -top-40 -right-40 w-175 h-175 rounded-full bg-accent/10 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
       {/* Glow radial esquerda-baixo (secondary) */}
       <div
-        className="absolute -bottom-20 -left-20 w-[500px] h-[500px] rounded-full bg-secondary/10 blur-3xl pointer-events-none"
+        className="absolute -bottom-20 -left-20 w-125 h-125 rounded-full bg-secondary/10 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 
@@ -103,6 +103,7 @@ export default function HeroSection() {
                 alt="Balança de bioimpedância Biosan"
                 width={400}
                 height={560}
+                sizes="(max-width: 1024px) 100vw, 440px"
                 className="object-contain w-full max-w-100 drop-shadow-[0_24px_60px_rgba(0,0,0,0.65)]"
                 priority
               />

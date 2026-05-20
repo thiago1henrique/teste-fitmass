@@ -57,15 +57,15 @@ function MockPhone() {
   return (
     <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-contrast/5 to-contrast/10 border border-contrast/10 flex flex-col items-center justify-center gap-3">
       {/* mini phone mockup */}
-      <div className="relative w-[64px] h-[108px] rounded-[14px] bg-contrast border border-contrast/20 overflow-hidden shadow-lg">
-        <div className="absolute inset-[2px] rounded-[12px] bg-[#0d0d13] flex flex-col">
+      <div className="relative w-16 h-27 rounded-[14px] bg-contrast border border-contrast/20 overflow-hidden shadow-lg">
+        <div className="absolute inset-0.5 rounded-xl bg-[#0d0d13] flex flex-col">
           <div className="h-5 bg-accent flex items-center justify-center">
             <span className="text-white text-[6px] font-bold uppercase tracking-wider">Fitmass</span>
           </div>
           <div className="flex-1 px-1.5 pt-1.5 flex flex-col gap-1">
             {[72, 45, 80].map((pct, i) => (
               <div key={i}>
-                <div className="h-[2px] rounded-full bg-white/8 overflow-hidden">
+                <div className="h-0.5 rounded-full bg-white/8 overflow-hidden">
                   <div className="h-full rounded-full bg-accent" style={{ width: `${pct}%` }} />
                 </div>
               </div>
@@ -169,7 +169,7 @@ export default function HowItWorksSection() {
     >
       {/* Subtle background accent */}
       <div
-        className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl pointer-events-none opacity-[0.04]"
+        className="absolute top-0 right-0 w-150 h-150 rounded-full blur-3xl pointer-events-none opacity-[0.04]"
         style={{ backgroundColor: '#88BD23', transform: 'translate(30%, -30%)' }}
         aria-hidden="true"
       />

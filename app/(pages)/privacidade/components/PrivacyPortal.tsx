@@ -261,7 +261,7 @@ export default function PrivacyPortal() {
 
             {/* DPO info badge */}
             <div className="flex items-center gap-3 bg-accent/10 rounded-xl px-4 py-3 mb-6">
-              <div className="w-8 h-8 rounded-full bg-accent/15 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-accent/15 flex items-center justify-center shrink-0">
                 <svg
                   className="w-4 h-4 text-accent"
                   fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
@@ -451,7 +451,7 @@ export default function PrivacyPortal() {
                         aria-controls={`lgpd-answer-${i}`}
                       >
                         <span
-                          className={`w-7 h-7 rounded-full flex items-center justify-center font-title text-xs flex-shrink-0 transition-colors ${
+                          className={`w-7 h-7 rounded-full flex items-center justify-center font-title text-xs shrink-0 transition-colors ${
                             isOpen ? 'bg-accent text-white' : 'bg-accent/10 text-accent'
                           }`}
                           aria-hidden="true"
@@ -462,7 +462,7 @@ export default function PrivacyPortal() {
                           {faq.question}
                         </span>
                         <svg
-                          className={`w-4 h-4 text-accent flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
+                          className={`w-4 h-4 text-accent shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
                           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
                           aria-hidden="true"
                         >
@@ -512,7 +512,7 @@ export default function PrivacyPortal() {
                   <dl className="space-y-2 mt-1">
                     {section.items.map(({ term, definition }) => (
                       <div key={term} className="flex gap-2 text-sm">
-                        <dt className="font-body font-semibold text-contrast flex-shrink-0">{term}:</dt>
+                        <dt className="font-body font-semibold text-contrast shrink-0">{term}:</dt>
                         <dd className="font-body text-contrast/65">{definition}</dd>
                       </div>
                     ))}
@@ -550,7 +550,7 @@ export default function PrivacyPortal() {
 
                 {section.contact && (
                   <div className="mt-4 flex items-center gap-3 bg-accent/10 rounded-xl px-4 py-3">
-                    <div className="w-8 h-8 rounded-full bg-accent/15 flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-accent/15 flex items-center justify-center shrink-0">
                       <svg
                         className="w-4 h-4 text-accent"
                         fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
@@ -607,7 +607,7 @@ export default function PrivacyPortal() {
             {cookieCategories.map((cat) => (
               <div key={cat.title} className="bg-white rounded-2xl border border-gray-200 p-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-accent flex-shrink-0" aria-hidden="true" />
+                  <span className="w-2 h-2 rounded-full bg-accent shrink-0" aria-hidden="true" />
                   <h3 className="font-body font-semibold text-contrast">{cat.title}</h3>
                 </div>
                 <p className="font-body text-contrast/65 text-sm leading-relaxed pl-5">
@@ -635,7 +635,7 @@ export default function PrivacyPortal() {
                     className="flex items-center gap-2 font-body text-sm text-accent hover:text-accent/80 hover:underline transition-colors"
                   >
                     <svg
-                      className="w-3.5 h-3.5 flex-shrink-0"
+                      className="w-3.5 h-3.5 shrink-0"
                       fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
                       aria-hidden="true"
                     >

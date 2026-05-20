@@ -76,9 +76,9 @@ export default function BioscanSection() {
 
       {/* ── Ambient background blobs ──────────────────────────────────── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute top-1/4 -left-40 w-[480px] h-[480px] rounded-full bg-accent opacity-[0.07] blur-[80px] animate-blob-1 motion-reduce:animate-none" />
-        <div className="absolute bottom-1/3 -right-32 w-[400px] h-[400px] rounded-full bg-secondary opacity-[0.05] blur-[80px] animate-blob-2 motion-reduce:animate-none" />
-        <div className="absolute top-2/3 left-1/3 w-[320px] h-[320px] rounded-full bg-accent opacity-[0.04] blur-[60px] animate-blob-3 motion-reduce:animate-none" />
+        <div className="absolute top-1/4 -left-40 w-120 h-120 rounded-full bg-accent opacity-7 blur-[80px] animate-blob-1 motion-reduce:animate-none" />
+        <div className="absolute bottom-1/3 -right-32 w-100 h-100 rounded-full bg-secondary opacity-5 blur-[80px] animate-blob-2 motion-reduce:animate-none" />
+        <div className="absolute top-2/3 left-1/3 w-80 h-80 rounded-full bg-accent opacity-4 blur-[60px] animate-blob-3 motion-reduce:animate-none" />
       </div>
 
       <div className="relative px-4 lg:px-16 py-24 lg:py-32">
@@ -98,7 +98,7 @@ export default function BioscanSection() {
                     key={s.image}
                     onClick={() => handleSelect(idx)}
                     aria-label={`Ver: ${s.title}`}
-                    className="group relative flex-shrink-0 w-16 lg:w-[68px] aspect-4/5 rounded-xl overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                    className="group relative shrink-0 w-16 lg:w-17 aspect-4/5 rounded-xl overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
                     <Image
                       src={s.image}
@@ -167,7 +167,7 @@ export default function BioscanSection() {
           >
             {/* Tag chip */}
             <span className="inline-flex w-fit items-center gap-2 border border-accent/30 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" aria-hidden="true" />
+              <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" aria-hidden="true" />
               {current.tag}
             </span>
 
@@ -205,7 +205,7 @@ export default function BioscanSection() {
                   aria-selected={i === active}
                   aria-label={`Slide ${i + 1}: ${s.title}`}
                   onClick={() => handleSelect(i)}
-                  className="h-0.5 rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                  className="h-0.5 rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
                   style={{
                     width: i === active ? '2rem' : '1rem',
                     background: i === active ? 'rgb(136,189,35)' : 'rgba(255,255,255,0.2)',

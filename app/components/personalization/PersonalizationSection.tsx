@@ -366,7 +366,7 @@ export default function PersonalizationSection() {
               <div className="absolute inset-[5px] rounded-[2.3rem] overflow-hidden flex flex-col bg-[#0d0d13]">
 
                 {/* Status bar */}
-                <div className="relative flex items-center justify-between px-5 pt-3.5 pb-0.5 flex-shrink-0">
+                <div className="relative flex items-center justify-between px-5 pt-3.5 pb-0.5 shrink-0">
                   <span suppressHydrationWarning className="text-white/55 text-[9px] font-semibold tabular-nums">
                     {time || '–:–'}
                   </span>
@@ -386,18 +386,18 @@ export default function PersonalizationSection() {
 
                 {/* App header */}
                 <div
-                  className="px-3 py-2.5 flex items-center justify-between flex-shrink-0 transition-colors duration-300"
+                  className="px-3 py-2.5 flex items-center justify-between shrink-0 transition-colors duration-300"
                   style={{ backgroundColor: color }}
                 >
                   <span className="text-white text-[10px] font-bold tracking-wider uppercase truncate flex-1 mr-2">
                     {displayName}
                   </span>
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/50 flex-shrink-0" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/50 shrink-0" />
                 </div>
 
                 {/* Domain badge */}
                 <div
-                  className="flex justify-center py-[3px] flex-shrink-0 transition-colors duration-300"
+                  className="flex justify-center py-[3px] shrink-0 transition-colors duration-300"
                   style={{ backgroundColor: color + '28' }}
                 >
                   <span className="text-[7px] font-mono transition-colors duration-300" style={{ color }}>
@@ -406,9 +406,9 @@ export default function PersonalizationSection() {
                 </div>
 
                 {/* Profile row */}
-                <div className="px-3 py-2 border-b border-white/[0.06] flex items-center gap-2 flex-shrink-0">
+                <div className="px-3 py-2 border-b border-white/[0.06] flex items-center gap-2 shrink-0">
                   <div
-                    className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300"
+                    className="w-[26px] h-[26px] rounded-full flex items-center justify-center shrink-0 transition-colors duration-300"
                     style={{ backgroundColor: color + '30', border: `1px solid ${color}60` }}
                   >
                     <span className="text-[9px] font-bold transition-colors duration-300" style={{ color }}>JD</span>
@@ -420,7 +420,7 @@ export default function PersonalizationSection() {
                 </div>
 
                 {/* Logo area */}
-                <div className="px-3 pt-2.5 flex-shrink-0">
+                <div className="px-3 pt-2.5 shrink-0">
                   <div
                     className="h-[50px] rounded-xl flex items-center justify-center transition-all duration-300"
                     style={{ backgroundColor: color + '20', border: `1px solid ${color}40` }}
@@ -468,7 +468,7 @@ export default function PersonalizationSection() {
                 </div>
 
                 {/* CTA */}
-                <div className="px-3 pb-2 pt-2 flex-shrink-0">
+                <div className="px-3 pb-2 pt-2 shrink-0">
                   <div
                     className="h-7 rounded-lg flex items-center justify-center transition-colors duration-300"
                     style={{ backgroundColor: color }}
@@ -480,7 +480,7 @@ export default function PersonalizationSection() {
                 </div>
 
                 {/* Home indicator */}
-                <div className="flex justify-center pb-2 pt-0.5 flex-shrink-0">
+                <div className="flex justify-center pb-2 pt-0.5 shrink-0">
                   <div className="w-[60px] h-1 rounded-full bg-white/20" />
                 </div>
               </div>

@@ -16,6 +16,7 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  cacheComponents: true,
   // Prevent Next.js from bundling native-addon packages — they must be loaded at runtime
   // from node_modules so the platform-correct binary (Linux on Lambda) is used.
   serverExternalPackages: ['sharp'],
@@ -29,11 +30,6 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'fitmass.com.br',
-        pathname: '/wp-content/uploads/**',
-      },
       {
         protocol: 'https',
         hostname: '*.s3.*.amazonaws.com',

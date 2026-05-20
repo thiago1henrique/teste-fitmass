@@ -13,7 +13,7 @@ export default function PersonalizationSection() {
     >
       {/* Glow decorativo */}
       <div
-        className="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-accent/8 blur-3xl pointer-events-none"
+        className="absolute top-1/2 right-0 -translate-y-1/2 w-125 h-125 rounded-full bg-accent/8 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 
@@ -60,7 +60,7 @@ export default function PersonalizationSection() {
         {/* Mockup */}
         <div className="relative flex justify-center lg:justify-end">
           <div
-            className="relative w-56 h-[400px] rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col overflow-hidden shadow-2xl"
+            className="relative w-56 h-100 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col overflow-hidden shadow-2xl"
             aria-label="Mockup do app personalizado com marca da academia"
             role="img"
           >

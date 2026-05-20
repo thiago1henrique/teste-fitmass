@@ -133,7 +133,7 @@ function Bubble({ msg, meals }: { msg: Msg; meals: Meal[] }) {
         }`}
       >
         {msg.content.split('\n').map((line, i) => (
-          <span key={i} className={`block ${line === '' ? 'h-[4px]' : ''}`}>{line}</span>
+          <span key={i} className={`block ${line === '' ? 'h-1' : ''}`}>{line}</span>
         ))}
       </div>
     </div>
@@ -252,7 +252,7 @@ export default function AiFitSimulator() {
             ].map(feat => (
               <li key={feat} className="flex items-center gap-3 font-body text-contrast/70 text-sm">
                 <span
-                  className="w-5 h-5 rounded-full bg-accent/15 text-accent flex items-center justify-center flex-shrink-0"
+                  className="w-5 h-5 rounded-full bg-accent/15 text-accent flex items-center justify-center shrink-0"
                   aria-hidden="true"
                 >
                   <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
@@ -281,9 +281,9 @@ export default function AiFitSimulator() {
               style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.1), 0 32px 80px rgba(0,0,0,0.85)' }}
             >
               {/* Side buttons */}
-              <div className="absolute -left-[2px]  top-[96px]  w-[3px] h-[28px] bg-[#111] rounded-l-full" aria-hidden="true" />
-              <div className="absolute -left-[2px]  top-[136px] w-[3px] h-[28px] bg-[#111] rounded-l-full" aria-hidden="true" />
-              <div className="absolute -right-[2px] top-[116px] w-[3px] h-[44px] bg-[#111] rounded-r-full" aria-hidden="true" />
+              <div className="absolute -left-0.5  top-24   w-0.75 h-7  bg-[#111] rounded-l-full" aria-hidden="true" />
+              <div className="absolute -left-0.5  top-34   w-0.75 h-7  bg-[#111] rounded-l-full" aria-hidden="true" />
+              <div className="absolute -right-0.5 top-29   w-0.75 h-11 bg-[#111] rounded-r-full" aria-hidden="true" />
 
               {/* Screen */}
               <div
@@ -292,7 +292,7 @@ export default function AiFitSimulator() {
               >
                 {/* Status bar */}
                 <div
-                  className="relative flex items-center justify-between px-5 pt-3 pb-0 flex-shrink-0"
+                  className="relative flex items-center justify-between px-5 pt-3 pb-0 shrink-0"
                   style={{ backgroundColor: '#075E54' }}
                 >
                   <div
@@ -309,10 +309,10 @@ export default function AiFitSimulator() {
 
                 {/* Chat header */}
                 <div
-                  className="px-3 py-2 flex items-center gap-2 flex-shrink-0"
+                  className="px-3 py-2 flex items-center gap-2 shrink-0"
                   style={{ backgroundColor: '#075E54' }}
                 >
-                  <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center shrink-0">
                     <span className="text-white text-[10px] font-bold">IA</span>
                   </div>
                   <div>
@@ -334,7 +334,7 @@ export default function AiFitSimulator() {
 
                 {/* Input area */}
                 <div
-                  className="flex-shrink-0"
+                  className="shrink-0"
                   style={{ backgroundColor: '#f0f0f0', borderTop: '1px solid rgba(0,0,0,0.08)' }}
                 >
                   {simState === 'IDLE' && (
@@ -393,10 +393,10 @@ export default function AiFitSimulator() {
 
                 {/* Home indicator */}
                 <div
-                  className="flex justify-center pb-2 pt-0.5 flex-shrink-0"
+                  className="flex justify-center pb-2 pt-0.5 shrink-0"
                   style={{ backgroundColor: '#f0f0f0' }}
                 >
-                  <div className="w-[48px] h-[3px] rounded-full bg-black/20" />
+                  <div className="w-12 h-0.75 rounded-full bg-black/20" />
                 </div>
               </div>
             </div>

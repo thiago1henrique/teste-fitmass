@@ -50,7 +50,7 @@ export default function PartnersTicker() {
                   key={i}
                   className="inline-flex items-center gap-3 font-title text-xl uppercase tracking-widest text-white/30 select-none list-none"
                 >
-                  <span className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-accent shrink-0" />
                   {name}
                 </li>
               ))}

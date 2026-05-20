@@ -92,7 +92,7 @@ export default function FAQHome() {
                     aria-controls={`faq-home-answer-${index}`}
                   >
                     <span
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-title text-sm flex-shrink-0 transition-colors ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center font-title text-sm shrink-0 transition-colors ${
                         isOpen ? 'bg-accent text-white' : 'bg-accent/10 text-accent'
                       }`}
                       aria-hidden="true"
@@ -103,7 +103,7 @@ export default function FAQHome() {
                       {faq.question}
                     </span>
                     <svg
-                      className={`w-5 h-5 text-accent flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
+                      className={`w-5 h-5 text-accent shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
                       fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />

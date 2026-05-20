@@ -72,12 +72,12 @@ export default function ContactSection() {
       </div>
 
       {/* Glows decorativos */}
-      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-secondary/8 blur-3xl pointer-events-none" aria-hidden="true" />
+      <div className="absolute -top-40 -right-40 w-150 h-150 rounded-full bg-accent/8 blur-3xl pointer-events-none" aria-hidden="true" />
+      <div className="absolute -bottom-20 -left-20 w-100 h-100 rounded-full bg-secondary/8 blur-3xl pointer-events-none" aria-hidden="true" />
 
       {/* Grid sutil */}
       <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 opacity-3 pointer-events-none"
         style={{
           backgroundImage:
             'linear-gradient(rgba(136,189,35,1) 1px, transparent 1px), linear-gradient(90deg, rgba(136,189,35,1) 1px, transparent 1px)',
@@ -112,7 +112,7 @@ export default function ContactSection() {
             <ul className="space-y-6">
               {INFO.map(({ icon, label, href }, i) => (
                 <li key={i} className="flex items-start gap-4">
-                  <span className="flex-shrink-0 w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
+                  <span className="shrink-0 w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
                     {icon}
                   </span>
                   {href ? (
@@ -135,7 +135,7 @@ export default function ContactSection() {
           {/* Coluna direita — formulário */}
           <form
             onSubmit={handleSubmit}
-            className="bg-white/[0.03] border border-white/8 rounded-2xl p-8 space-y-4"
+            className="bg-white/3 border border-white/8 rounded-2xl p-8 space-y-4"
           >
             <div>
               <label htmlFor="contact-name" className="block font-body text-xs font-semibold uppercase tracking-widest text-white/40 mb-2">

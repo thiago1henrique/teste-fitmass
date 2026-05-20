@@ -1,30 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
-import { cookies } from 'next/headers'
-import outputs from '@/amplify_outputs.json'
-import type { Schema } from '@/amplify/data/resource'
-import { listAll } from '@/lib/list-all'
+import { getPost } from '@/lib/posts'
 import PostBody from './PostBody'
 import RelatedPostsSection from '@/app/components/blog/RelatedPostsSection'
-
-export const revalidate = 3600
-
-async function getPost(slug: string) {
-  try {
-    const client = generateServerClientUsingCookies<Schema>({
-      config: outputs,
-      cookies,
-      authMode: 'apiKey',
-    })
-    const data = await listAll((t) =>
-      client.models.Post.list({ filter: { slug: { eq: slug }, status: { eq: 'PUBLISHED' } }, nextToken: t })
-    )
-    return data[0] ?? null
-  } catch {
-    return null
-  }
-}
 
 export async function generateMetadata({
   params,

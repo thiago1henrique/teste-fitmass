@@ -1,25 +1,9 @@
 import Link from 'next/link'
-import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
-import { cookies } from 'next/headers'
-import outputs from '@/amplify_outputs.json'
-import type { Schema } from '@/amplify/data/resource'
-import { listAll } from '@/lib/list-all'
+import Image from 'next/image'
+import { getPublishedPosts } from '@/lib/posts'
 
 export default async function MostReadWidget() {
-  const allPosts = await (async () => {
-    try {
-      const client = generateServerClientUsingCookies<Schema>({
-        config: outputs,
-        cookies,
-        authMode: 'apiKey',
-      })
-      return await listAll((t) =>
-        client.models.Post.list({ filter: { status: { eq: 'PUBLISHED' } }, nextToken: t, limit: 500 })
-      )
-    } catch {
-      return []
-    }
-  })()
+  const allPosts = await getPublishedPosts()
 
   const posts = allPosts
     .sort((a, b) => (b.views ?? 0) - (a.views ?? 0))
@@ -47,11 +31,13 @@ export default async function MostReadWidget() {
                 {i + 1}
               </span>
               {post.coverUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={post.coverUrl}
                   alt=""
-                  aria-hidden="true"
+                  aria-hidden={true}
+                  width={56}
+                  height={56}
+                  sizes="56px"
                   className="w-14 h-14 object-cover rounded shrink-0"
                 />
               )}

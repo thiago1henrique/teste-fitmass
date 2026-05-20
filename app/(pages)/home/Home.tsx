@@ -10,6 +10,7 @@ import PartnersTicker from './components/PartnersTicker'
 import PersonalizationSection from '../../components/personalization/PersonalizationSection'
 import HowItWorksSection from './components/HowItWorksSection'
 import AiFitSimulator from './components/AiFitSimulator'
+import BrazilMapSection from './components/BrazilMapSection'
 import FAQHome from './components/FAQHome'
 import BlogPreviewSection from '../../components/blog/BlogPreviewSection'
 import ContactSection from './components/ContactSection'
@@ -37,6 +38,7 @@ export default function Home() {
       <PersonalizationSection />
       <HowItWorksSection />
       <AiFitSimulator />
+      <BrazilMapSection />
       <FAQHome />
       <BlogPreviewSection />
       <ContactSection />
