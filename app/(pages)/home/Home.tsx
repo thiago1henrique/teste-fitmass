@@ -11,7 +11,6 @@ import BeforeAfterSection from './components/BeforeAfterSection'
 import PartnersTicker from './components/PartnersTicker'
 import PersonalizationSection from '../../components/personalization/PersonalizationSection'
 import HowItWorksSection from './components/HowItWorksSection'
-import AiFitSimulator from './components/AiFitSimulator'
 import BrazilMapSection from './components/BrazilMapSection'
 import FAQHome from './components/FAQHome'
 import BlogPreviewSection from '../../components/blog/BlogPreviewSection'
@@ -30,7 +29,6 @@ export default function Home() {
       <BenefitsSection />
       <PartnersTicker />
       {/* <PersonalizationSection /> */}
-      <AiFitSimulator />
       {/* <BrazilMapSection /> */}
       <FAQHome />
       <BlogPreviewSection />

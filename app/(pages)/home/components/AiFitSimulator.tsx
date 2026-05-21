@@ -112,7 +112,7 @@ function BotAvatar() {
 
 function TypingDots() {
   return (
-    <div className="self-start flex items-end gap-1 mb-0.5">
+    <div className="self-start flex items-start gap-1 mb-0.5">
       <BotAvatar />
       <div className="bg-white rounded-2xl rounded-tl-none px-3 py-2 shadow-sm inline-flex">
         <div className="flex items-center gap-1">
@@ -150,8 +150,8 @@ function Bubble({ msg }: { msg: Msg }) {
               className="w-27.5 h-27.5 object-cover block"
             />
             {/* Timestamp overlay */}
-            <div className="absolute bottom-1 right-1.5 bg-black/40 rounded px-1 py-px">
-              <span className="text-white text-[7px] leading-none">11:23</span>
+            <div className="absolute bottom-1 right-1.5 px-1 py-px">
+              <span className="text-white text-[7px] leading-none drop-shadow">11:23</span>
             </div>
           </div>
         </div>
@@ -162,7 +162,7 @@ function Bubble({ msg }: { msg: Msg }) {
   const isUser = msg.sender === 'user'
   return (
     <div
-      className={`max-w-[82%] ${isUser ? 'self-end mr-1' : 'self-start ml-0 flex items-end gap-1'}`}
+      className={`max-w-[82%] ${isUser ? 'self-end mr-1' : 'self-start ml-0 flex items-start gap-1'}`}
     >
       {!isUser && <BotAvatar />}
       <div className="relative">
@@ -185,9 +185,17 @@ function Bubble({ msg }: { msg: Msg }) {
           }`}
           style={{ backgroundColor: isUser ? '#dcf8c6' : '#ffffff', color: '#111' }}
         >
+          {!isUser && (
+            <span className="block font-bold text-[9px] mb-1" style={{ color: '#FF6A00' }}>MyDay</span>
+          )}
           {msg.content.split('\n').map((line, i) => (
             <span key={i} className={`block ${line === '' ? 'h-1' : ''}`}>{line}</span>
           ))}
+          <div className="text-right mt-0.5 -mb-0.5">
+            <span className="text-[6.5px] text-black/30 leading-none">
+              {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -288,11 +296,12 @@ export default function AiFitSimulator() {
             id="ia-fit-heading"
             className="font-title text-4xl md:text-5xl uppercase text-contrast tracking-wide leading-tight mb-6"
           >
-            REGISTRE REFEIÇÕES<br />COM UMA FOTO.
+            REGISTRE REFEIÇÕES<br />COM UMA FOTO NO{' '}
+            <span style={{ color: '#FF6A00' }}>MyDay.</span>
           </h2>
 
           <p className="font-body text-contrast/70 text-lg leading-relaxed mb-8">
-            A IA Fit analisa a foto da refeição e retorna macronutrientes detalhados — proteína, carboidrato, gordura e calorias — em segundos, diretamente no app com a sua marca.
+            O <strong style={{ color: '#FF6A00' }}>MyDay</strong> analisa a foto da refeição e retorna macronutrientes detalhados — proteína, carboidrato, gordura e calorias — em segundos, diretamente no app com a sua marca.
           </p>
 
           <ul className="space-y-3">
@@ -358,8 +367,8 @@ export default function AiFitSimulator() {
                     ))}
                   </div>
                   {/* Direita: hora com fundo claro */}
-                  <div className="z-10 bg-white/90 rounded px-1.5 py-0.5">
-                    <span className="text-[7.5px] font-bold text-gray-700 leading-none">9:41</span>
+                  <div className="z-10 rounded px-1.5 py-0.5">
+                    <span className="text-[7.5px] font-bold text-white leading-none">9:41</span>
                   </div>
                 </div>
 
@@ -378,7 +387,13 @@ export default function AiFitSimulator() {
                     <path d="M15 18l-6-6 6-6" />
                   </svg>
 
-                  {/* Name + subtitle */}
+                  {/* Avatar + Name + subtitle */}
+                  <img
+                    src={MYDAY_AVATAR}
+                    alt=""
+                    aria-hidden="true"
+                    className="w-7 h-7 rounded-full shrink-0 object-contain bg-white p-0.5"
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="text-white text-[10px] font-bold leading-tight truncate">MyDay</div>
                     <div className="text-white/60 text-[7.5px] leading-tight">Assistente de Nutrição</div>
@@ -474,7 +489,8 @@ export default function AiFitSimulator() {
                     <div className="p-2">
                       <button
                         onClick={reset}
-                        className="w-full py-2.5 rounded-xl text-[10px] font-bold text-white uppercase tracking-wider transition-transform active:scale-95 bg-accent"
+                        className="w-full py-2.5 rounded-xl text-[10px] font-bold text-white uppercase tracking-wider transition-transform active:scale-95"
+        style={{ backgroundColor: '#075E54' }}
                       >
                         ↺ Recomeçar
                       </button>
@@ -487,7 +503,7 @@ export default function AiFitSimulator() {
                   className="flex justify-center pb-2 pt-0.5 shrink-0"
                   style={{ backgroundColor: '#f0f0f0' }}
                 >
-                  <div className="w-12 h-0.75 rounded-full bg-black/20" />
+                  <div className="w-12 h-0.75 rounded-full" />
                 </div>
               </div>
             </div>

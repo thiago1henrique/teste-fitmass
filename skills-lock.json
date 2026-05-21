@@ -51,6 +51,11 @@
       "sourceType": "autoskills-registry",
       "computedHash": "502eb06700e2c3cb1bd7f710860528f72281320bd5171a2087b05a090b573dc1"
     },
+    "react-hook-form": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "autoskills-registry",
+      "computedHash": "5cac0a77035b36714c95df1f0ccc9955713fbfc87734f189a16f5aac903eccda"
+    },
     "seo": {
       "source": "addyosmani/web-quality-skills",
       "sourceType": "autoskills-registry",
@@ -88,6 +93,11 @@
       "sourceType": "github",
       "skillPath": "skills/web-design-guidelines/SKILL.md",
       "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474"
+    },
+    "zod": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "autoskills-registry",
+      "computedHash": "aa8a97195b07763d37494b511f48be90979fd6826c031956c831cfc58f6a24b8"
     }
   }
 }

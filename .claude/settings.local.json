@@ -45,7 +45,17 @@
       "Bash(node -e \"console.log\\(require\\('@aws-amplify/adapter-nextjs/package.json'\\).version\\)\")",
       "Bash(node -e \"console.log\\(require\\('aws-amplify/package.json'\\).version\\)\")",
       "Bash(node -e \"const p = require\\('@aws-amplify/adapter-nextjs/package.json'\\); console.log\\('peerDeps:', JSON.stringify\\(p.peerDependencies, null, 2\\)\\)\")",
-      "Bash(xargs cat)"
+      "Bash(xargs cat)",
+      "Bash(npx autoskills *)",
+      "Bash(gh api *)",
+      "mcp__claude_ai_ClickUp__clickup_resolve_assignees",
+      "mcp__claude_ai_ClickUp__clickup_filter_tasks",
+      "mcp__claude_ai_ClickUp__clickup_update_task",
+      "mcp__claude_ai_ClickUp__clickup_create_task_comment",
+      "Bash(xargs ls -lh)",
+      "Bash(Get-ChildItem \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\public\\\\pages\\\\landingpage\\\\como_funciona\")",
+      "Bash(Select-Object Name, Length)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"fitness health card photo editorial dark modern\" --domain style -n 3)"
     ]
   }
 }
