@@ -57,22 +57,26 @@ export default function Header({
   }, [])
 
   return (
+    <>
+      {/* Overlay com blur — visível apenas no mobile com menu aberto */}
+      <div
+        aria-hidden="true"
+        onClick={() => setMenuOpen(false)}
+        className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
+          menuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+        }`}
+      />
+
     <header
       suppressHydrationWarning
       className={`fixed w-full top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-300 ease-in-out ${
-        scrolled || menuOpen || forceDark
+        menuOpen
+          ? 'bg-contrast shadow-lg shadow-black/25'
+          : scrolled || forceDark
           ? 'bg-contrast/97 backdrop-blur-md shadow-lg shadow-black/25'
           : 'bg-transparent backdrop-blur-sm'
       }`}
     >
-      {/* Backdrop overlay para menu mobile */}
-      <div
-        className={`fixed inset-0 z-49 bg-black/50 backdrop-blur-sm md:hidden transition-opacity duration-300 ${
-          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={() => setMenuOpen(false)}
-        aria-hidden="true"
-      />
 
       {/* Linha decorativa bicolor — visível apenas sem scroll */}
       <div
@@ -83,7 +87,7 @@ export default function Header({
 
       {/* Inner row */}
       <div
-        className={`max-w-6xl mx-auto px-4 flex items-center justify-between transition-[padding] duration-300 ease-in-out ${
+        className={`relative z-50 max-w-6xl mx-auto px-4 flex items-center justify-between transition-[padding] duration-300 ease-in-out ${
           scrolled ? 'py-3' : 'py-5'
         }`}
       >
@@ -158,7 +162,7 @@ export default function Header({
       <nav
         id="mobile-menu"
         aria-label="Navegação mobile"
-        className={`md:hidden bg-contrast overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
+        className={`relative z-50 md:hidden bg-contrast overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
           menuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
         }`}
       >
@@ -194,5 +198,6 @@ export default function Header({
         </div>
       </nav>
     </header>
+    </>
   )
 }

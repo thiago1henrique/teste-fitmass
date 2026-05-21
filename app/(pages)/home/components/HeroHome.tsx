@@ -50,31 +50,30 @@ export default function HeroHome() {
             Agende uma demonstração
           </span>
 
-          <h1 className="font-title text-4xl md:text-5xl lg:text-[3.25rem] uppercase text-white tracking-wide leading-[1.08] mb-6">
-            A balança que faz sua academia{' '}
-            <span className="text-accent">reter alunos</span>
+          <h1 className="font-title text-3xl md:text-4xl lg:text-[2.5rem] uppercase text-white tracking-wide leading-[1.1] mb-6">
+            Mais resultados para seus alunos. {' '}
+            <span className="text-accent">Mais crescimento para sua academia.</span>
           </h1>
 
           <p className="font-body text-white/65 text-lg md:text-xl leading-relaxed mb-10 max-w-xl">
-            A Bioscan realiza avaliação corporal completa em menos de 1 minuto —
-            resultados direto no app do aluno, sem papel, sem burocracia.
+            Tecnologia de avaliação física completa: a balança Bioscan, o app para o aluno e o sistema de gestão. Tudo em um só ecossistema, pensado para academias que querem crescer.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
             <a
-              href="/planos"
+              href="#produtos"
               className="inline-flex items-center justify-center gap-2 bg-accent text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-accent/90 transition-colors whitespace-nowrap"
             >
-              Conhecer Planos
+              Conheça nossos produtos
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </a>
             <a
-              href="#diferenciais"
+              href="https://wa.me/5541984810567?text=Desejo%20conhecer%20mais%20sobre%20a%20Fitmass"
               className="inline-flex items-center justify-center border border-secondary/40 text-secondary font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-secondary hover:bg-secondary/10 transition-colors whitespace-nowrap"
             >
-              Ver Diferenciais
+              Falar com um consultor 
             </a>
           </div>
         </div>
@@ -107,7 +106,7 @@ export default function HeroHome() {
             {/* Imagem com classe 3D */}
             <div className="img-3d-tilt">
               <Image
-                src="/pages/landingpage/bioscan-2.png"
+                src="/pages/landingpage/bioscan-3.png"
                 alt="Balança de bioimpedância Biosan"
                 width={700}
                 height={980}
@@ -119,12 +118,6 @@ export default function HeroHome() {
         </div>
       </div>
 
-      {/* Diagonal → PainPointsSection (bg-surface) */}
-      <div className="absolute bottom-0 left-0 right-0 pointer-events-none" aria-hidden="true">
-        <svg viewBox="0 0 1440 72" preserveAspectRatio="none" className="w-full" style={{ height: 72, display: 'block' }}>
-          <polygon fill="#F8F8F8" points="1440,0 1440,72 0,72" />
-        </svg>
-      </div>
     </section>
   )
 }

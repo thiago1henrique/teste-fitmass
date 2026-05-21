@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { ImageTooltip } from './ImageTooltip'
 
 /* ─── Icons ──────────────────────────────────────────────────────────────── */
@@ -352,6 +353,8 @@ export default function PlanCards() {
             const isUltra = plan.id === 'ultra'
             const isEnterprise = plan.id === 'enterprise'
             const isDark = isUltra || isEnterprise
+            const isCheckoutPlan = plan.id === 'premium' || plan.id === 'ultra'
+            const checkoutHref = `/checkout?plan=${plan.id}&billing=${isAnnual ? 'annual' : 'monthly'}`
 
             return (
               <article
@@ -439,20 +442,31 @@ export default function PlanCards() {
                   </ul>
 
                   {/* CTA */}
-                  <a
-                    href={plan.ctaHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`mt-8 block text-center font-body font-semibold text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                      isUltra
-                        ? 'bg-accent text-white hover:bg-accent/90 shadow-lg shadow-accent/30'
-                        : isEnterprise
-                        ? 'bg-white/10 text-white/80 border border-white/20 hover:bg-secondary/15 hover:border-secondary/40 hover:text-secondary'
-                        : 'border-2 border-accent/50 text-accent hover:border-accent hover:bg-accent hover:text-white'
-                    }`}
-                  >
-                    {plan.cta}
-                  </a>
+                  {isCheckoutPlan ? (
+                    <Link
+                      href={checkoutHref}
+                      className={`mt-8 block text-center font-body font-semibold text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                        isUltra
+                          ? 'bg-accent text-white hover:bg-accent/90 shadow-lg shadow-accent/30'
+                          : 'border-2 border-accent/50 text-accent hover:border-accent hover:bg-accent hover:text-white'
+                      }`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  ) : (
+                    <a
+                      href={plan.ctaHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`mt-8 block text-center font-body font-semibold text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                        isEnterprise
+                          ? 'bg-white/10 text-white/80 border border-white/20 hover:bg-secondary/15 hover:border-secondary/40 hover:text-secondary'
+                          : 'border-2 border-accent/50 text-accent hover:border-accent hover:bg-accent hover:text-white'
+                      }`}
+                    >
+                      {plan.cta}
+                    </a>
+                  )}
                 </div>
               </article>
             )

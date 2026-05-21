@@ -41,6 +41,7 @@
   --animate-blob-1: blob-drift-1 14s ease-in-out infinite;
   --animate-blob-2: blob-drift-2 18s ease-in-out infinite;
   --animate-blob-3: blob-drift-3 22s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
 }
 
 /* Font body referencia a CSS var injetada pelo next/font */
@@ -92,9 +93,19 @@
   50%       { transform: translateY(-8px); }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-20px); }
+}
+
 @keyframes number-in {
   from { opacity: 0; transform: translateY(5px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes products-progress {
+  from { width: 0%; }
+  to   { width: 100%; }
 }
 
 /* =====================================================

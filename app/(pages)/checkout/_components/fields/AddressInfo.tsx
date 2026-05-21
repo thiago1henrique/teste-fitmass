@@ -53,7 +53,7 @@ export default function AddressInfo({ form }: Props) {
       } else {
         // shouldDirty: true garante que o valor entra no store interno
         // independente do modo de renderização do React
-        const opts = { shouldDirty: true, shouldTouch: true, shouldValidate: false } as const
+        const opts = { shouldDirty: true, shouldTouch: true, shouldValidate: true } as const
         setValue('street', data.logradouro ?? '', opts)
         setValue('neighborhood', data.bairro ?? '', opts)
         setValue('city', data.localidade ?? '', opts)

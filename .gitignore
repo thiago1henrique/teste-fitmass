@@ -46,3 +46,6 @@ next-env.d.ts
 # Claude Code skills (managed by skills-lock.json, like node_modules)
 .agents/
 .claude/skills/
+
+#temp folder
+temp

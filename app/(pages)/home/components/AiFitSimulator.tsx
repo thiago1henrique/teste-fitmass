@@ -13,14 +13,15 @@ interface TextMsg {
   content: string
 }
 
-interface MealMsg {
+interface PhotoMsg {
   id: string
   sender: 'user'
-  type: 'meal'
+  type: 'photo'
+  photoSrc: string
   mealId: string
 }
 
-type Msg = TextMsg | MealMsg
+type Msg = TextMsg | PhotoMsg
 
 interface AnalysisItem {
   item: string
@@ -33,9 +34,8 @@ interface AnalysisItem {
 
 interface Meal {
   id: string
-  emoji: string
+  photoSrc: string
   label: string
-  gradient: string
   identifiedItems: string[]
   analysis: AnalysisItem[]
 }
@@ -45,9 +45,8 @@ interface Meal {
 const MEALS: Meal[] = [
   {
     id: 'meal_1',
-    emoji: '🍗',
+    photoSrc: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=200&q=80&auto=format&fit=crop',
     label: 'Frango & Arroz',
-    gradient: 'linear-gradient(145deg,#78350f,#b45309)',
     identifiedItems: ['Frango grelhado', 'Arroz branco', 'Brócolis cozido'],
     analysis: [
       { item: 'Frango grelhado', qty: '150g', prot: 46.5, carb: 0,    fat: 5.4, kcal: 248 },
@@ -57,9 +56,8 @@ const MEALS: Meal[] = [
   },
   {
     id: 'meal_2',
-    emoji: '🥚',
-    label: 'Ovos & Pão',
-    gradient: 'linear-gradient(145deg,#92400e,#d97706)',
+    photoSrc: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=200&q=80&auto=format&fit=crop',
+    label: 'Ovos & Café',
     identifiedItems: ['Ovos mexidos', 'Pão integral'],
     analysis: [
       { item: 'Ovos mexidos', qty: '100g', prot: 10,  carb: 2,  fat: 11,  kcal: 148 },
@@ -68,9 +66,8 @@ const MEALS: Meal[] = [
   },
   {
     id: 'meal_3',
-    emoji: '🥗',
+    photoSrc: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&q=80&auto=format&fit=crop',
     label: 'Salada Fitness',
-    gradient: 'linear-gradient(145deg,#14532d,#16a34a)',
     identifiedItems: ['Atum ao natural', 'Alface', 'Tomate cereja', 'Azeite'],
     analysis: [
       { item: 'Atum ao natural', qty: '120g', prot: 31.2, carb: 0,   fat: 1.2, kcal: 138 },
@@ -81,42 +78,82 @@ const MEALS: Meal[] = [
   },
 ]
 
-const INIT_MSG: TextMsg = {
-  id: 'init',
-  sender: 'bot',
-  type: 'text',
-  content: 'Olá! 👋 Envie uma foto da sua refeição e eu calculo os macros na hora.',
-}
+const INIT_MSGS: TextMsg[] = [
+  {
+    id: 'init_1',
+    sender: 'bot',
+    type: 'text',
+    content:
+      'Parabéns! Seu trial de 10 dias no Fitmass MyDay foi ativado com sucesso!\n\nAgora você pode usar o assistente de nutrição, registrar refeições, água e muito mais durante esse período.\n\nPara começar, preciso te conhecer melhor',
+  },
+  {
+    id: 'init_2',
+    sender: 'bot',
+    type: 'text',
+    content:
+      'Sou sua assistente de nutrição aqui no MyDay 😁\n\nA partir de agora, é só me contar o que você comeu, bebeu ou treinou - pode falar do seu jeito mesmo\n\nPor exemplo:\n- "almocei arroz, feijão e frango"\n- "bebi um copo de água agora"\n- "fiz 40 min de esteira"',
+  },
+]
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+const MYDAY_AVATAR = '/pages/landingpage/aiSection/MyDay-icone.svg'
+
+function BotAvatar() {
+  return (
+    <img
+      src={MYDAY_AVATAR}
+      alt=""
+      aria-hidden="true"
+      className="w-7 h-7 rounded-full shrink-0 flex-none object-contain bg-white p-0.5"
+    />
+  )
+}
+
 function TypingDots() {
   return (
-    <div className="self-start bg-white rounded-2xl rounded-tl-none px-3 py-2 shadow-sm inline-flex">
-      <div className="flex items-center gap-1">
-        {[0, 1, 2].map(i => (
-          <span
-            key={i}
-            className="w-[5px] h-[5px] rounded-full bg-gray-400 animate-bounce"
-            style={{ animationDelay: `${i * 120}ms` }}
-          />
-        ))}
+    <div className="self-start flex items-end gap-1 mb-0.5">
+      <BotAvatar />
+      <div className="bg-white rounded-2xl rounded-tl-none px-3 py-2 shadow-sm inline-flex">
+        <div className="flex items-center gap-1">
+          {[0, 1, 2].map(i => (
+            <span
+              key={i}
+              className="w-1.25 h-1.25 rounded-full bg-gray-400 animate-bounce"
+              style={{ animationDelay: `${i * 120}ms` }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
 }
 
-function Bubble({ msg, meals }: { msg: Msg; meals: Meal[] }) {
-  if (msg.type === 'meal') {
-    const meal = meals.find(m => m.id === msg.mealId)!
+function Bubble({ msg }: { msg: Msg }) {
+  if (msg.type === 'photo') {
     return (
-      <div className="self-end">
+      <div className="self-end relative mr-1">
+        {/* Tail */}
         <div
-          className="w-[86px] h-[86px] rounded-2xl rounded-tr-none flex flex-col items-center justify-center gap-1 shadow-sm overflow-hidden"
-          style={{ background: meal.gradient }}
+          className="absolute top-0 -right-1.75 w-0 h-0"
+          style={{ borderTop: '7px solid #dcf8c6', borderRight: '7px solid transparent' }}
+        />
+        {/* Green bubble wrapper */}
+        <div
+          className="rounded-2xl rounded-tr-none overflow-hidden shadow-md"
+          style={{ backgroundColor: '#dcf8c6', padding: '2px' }}
         >
-          <span className="text-[26px] leading-none">{meal.emoji}</span>
-          <span className="text-white text-[7px] font-semibold text-center px-1 leading-tight">{meal.label}</span>
+          <div className="relative rounded-xl overflow-hidden">
+            <img
+              src={msg.photoSrc}
+              alt="Refeição"
+              className="w-27.5 h-27.5 object-cover block"
+            />
+            {/* Timestamp overlay */}
+            <div className="absolute bottom-1 right-1.5 bg-black/40 rounded px-1 py-px">
+              <span className="text-white text-[7px] leading-none">11:23</span>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -124,17 +161,34 @@ function Bubble({ msg, meals }: { msg: Msg; meals: Meal[] }) {
 
   const isUser = msg.sender === 'user'
   return (
-    <div className={`max-w-[80%] ${isUser ? 'self-end' : 'self-start'}`}>
-      <div
-        className={`rounded-2xl px-2.5 py-2 text-[9px] leading-relaxed shadow-sm ${
-          isUser
-            ? 'bg-[#88BD23] text-white rounded-tr-none'
-            : 'bg-white text-gray-800 rounded-tl-none'
-        }`}
-      >
-        {msg.content.split('\n').map((line, i) => (
-          <span key={i} className={`block ${line === '' ? 'h-1' : ''}`}>{line}</span>
-        ))}
+    <div
+      className={`max-w-[82%] ${isUser ? 'self-end mr-1' : 'self-start ml-0 flex items-end gap-1'}`}
+    >
+      {!isUser && <BotAvatar />}
+      <div className="relative">
+        {/* Bubble tail */}
+        {!isUser && (
+          <div
+            className="absolute top-0 -left-1.75 w-0 h-0"
+            style={{ borderTop: '7px solid #ffffff', borderLeft: '7px solid transparent' }}
+          />
+        )}
+        {isUser && (
+          <div
+            className="absolute top-0 -right-1.75 w-0 h-0"
+            style={{ borderTop: '7px solid #dcf8c6', borderRight: '7px solid transparent' }}
+          />
+        )}
+        <div
+          className={`rounded-2xl px-2.5 py-2 text-[9px] leading-relaxed shadow-sm ${
+            isUser ? 'rounded-tr-none' : 'rounded-tl-none'
+          }`}
+          style={{ backgroundColor: isUser ? '#dcf8c6' : '#ffffff', color: '#111' }}
+        >
+          {msg.content.split('\n').map((line, i) => (
+            <span key={i} className={`block ${line === '' ? 'h-1' : ''}`}>{line}</span>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -144,7 +198,7 @@ function Bubble({ msg, meals }: { msg: Msg; meals: Meal[] }) {
 
 export default function AiFitSimulator() {
   const [simState, setSimState] = useState<SimState>('IDLE')
-  const [messages, setMessages] = useState<Msg[]>([INIT_MSG])
+  const [messages, setMessages] = useState<Msg[]>([])
   const [isTyping, setIsTyping] = useState(false)
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null)
 
@@ -152,13 +206,11 @@ export default function AiFitSimulator() {
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
   const msgCounter = useRef(0)
 
-  // Auto-scroll to newest message
   useEffect(() => {
     const el = listRef.current
     if (el) el.scrollTop = el.scrollHeight
   }, [messages, isTyping])
 
-  // Cleanup on unmount
   useEffect(() => () => { timers.current.forEach(clearTimeout) }, [])
 
   const delay = (fn: () => void, ms: number) => {
@@ -173,7 +225,7 @@ export default function AiFitSimulator() {
     if (simState !== 'IDLE') return
     setSelectedMeal(meal)
     setSimState('PROCESSING')
-    push({ id: nextId(), sender: 'user', type: 'meal', mealId: meal.id })
+    push({ id: nextId(), sender: 'user', type: 'photo', photoSrc: meal.photoSrc, mealId: meal.id })
     delay(() => setIsTyping(true), 500)
     delay(() => {
       setIsTyping(false)
@@ -190,7 +242,7 @@ export default function AiFitSimulator() {
   const confirmNo = () => {
     if (simState !== 'ASKING' || !selectedMeal) return
     setSimState('PROCESSING')
-    push({ id: nextId(), sender: 'user', type: 'text', content: 'Não' })
+    push({ id: nextId(), sender: 'user', type: 'text', content: 'Não, pode calcular!' })
     delay(() => setIsTyping(true), 400)
     delay(() => {
       setIsTyping(false)
@@ -215,7 +267,7 @@ export default function AiFitSimulator() {
   const reset = () => {
     timers.current.forEach(clearTimeout)
     timers.current = []
-    setMessages([INIT_MSG])
+    setMessages([])
     setSimState('IDLE')
     setSelectedMeal(null)
     setIsTyping(false)
@@ -270,10 +322,7 @@ export default function AiFitSimulator() {
           <div className="relative" style={{ width: 260, height: 548 }}>
 
             {/* Ambient glow */}
-            <div
-              className="absolute -inset-8 rounded-full blur-3xl -z-10 opacity-15 bg-accent"
-              aria-hidden="true"
-            />
+            <div className="absolute -inset-8 rounded-full blur-3xl -z-10 opacity-15 bg-accent" aria-hidden="true" />
 
             {/* Phone shell */}
             <div
@@ -286,38 +335,69 @@ export default function AiFitSimulator() {
               <div className="absolute -right-0.5 top-29   w-0.75 h-11 bg-[#111] rounded-r-full" aria-hidden="true" />
 
               {/* Screen */}
-              <div
-                className="absolute inset-[5px] rounded-[2.3rem] overflow-hidden flex flex-col"
-                style={{ backgroundColor: '#e5ddd5' }}
-              >
+              <div className="absolute inset-1.25 rounded-[2.3rem] overflow-hidden flex flex-col">
+
                 {/* Status bar */}
                 <div
-                  className="relative flex items-center justify-between px-5 pt-3 pb-0 shrink-0"
+                  className="relative flex items-center justify-between px-4 pt-2.5 pb-1 shrink-0"
                   style={{ backgroundColor: '#075E54' }}
                 >
+                  {/* Dynamic island menor */}
                   <div
-                    className="absolute top-1.5 left-1/2 -translate-x-1/2 w-[58px] h-[15px] bg-black rounded-full"
+                    className="absolute top-1.5 left-1/2 -translate-x-1/2 w-10 h-2.75 bg-black rounded-full"
                     aria-hidden="true"
                   />
-                  <span className="text-white/70 text-[9px] font-semibold z-10">9:41</span>
-                  <svg viewBox="0 0 22 11" fill="none" className="w-[15px] h-[8px] z-10" aria-hidden="true">
-                    <rect x=".5" y=".5" width="18" height="10" rx="2" stroke="white" strokeOpacity=".6" />
-                    <rect x="1.5" y="1.5" width="12" height="8" rx="1.2" fill="white" fillOpacity=".6" />
-                    <path d="M20 3.5v4" stroke="white" strokeOpacity=".6" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
+                  {/* Esquerda: barras de sinal */}
+                  <div className="flex items-end gap-px z-10" aria-hidden="true">
+                    {[2, 3, 4, 5, 6].map((h, i) => (
+                      <div
+                        key={i}
+                        className="w-0.5 rounded-sm bg-white"
+                        style={{ height: h, opacity: i < 4 ? 1 : 0.35 }}
+                      />
+                    ))}
+                  </div>
+                  {/* Direita: hora com fundo claro */}
+                  <div className="z-10 bg-white/90 rounded px-1.5 py-0.5">
+                    <span className="text-[7.5px] font-bold text-gray-700 leading-none">9:41</span>
+                  </div>
                 </div>
 
-                {/* Chat header */}
+                {/* Chat header – WhatsApp style */}
                 <div
-                  className="px-3 py-2 flex items-center gap-2 shrink-0"
+                  className="px-2 py-1.5 flex items-center gap-1.5 shrink-0"
                   style={{ backgroundColor: '#075E54' }}
                 >
-                  <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center shrink-0">
-                    <span className="text-white text-[10px] font-bold">IA</span>
+                  {/* Back arrow */}
+                  <svg
+                    viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    className="w-3.5 h-3.5 shrink-0 opacity-90"
+                    aria-hidden="true"
+                  >
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+
+                  {/* Name + subtitle */}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-white text-[10px] font-bold leading-tight truncate">MyDay</div>
+                    <div className="text-white/60 text-[7.5px] leading-tight">Assistente de Nutrição</div>
                   </div>
-                  <div>
-                    <div className="text-white text-[10px] font-bold">IA Fit</div>
-                    <div className="text-white/55 text-[8px]">online</div>
+
+                  {/* Action icons */}
+                  <div className="flex items-center gap-2 shrink-0 opacity-90">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5" aria-hidden="true">
+                      <path d="M23 7l-7 5 7 5V7z" />
+                      <rect x="1" y="5" width="15" height="14" rx="2" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5" aria-hidden="true">
+                      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.09 10.73 19.79 19.79 0 01.22 2.18 2 2 0 012.18 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="white" className="w-3 h-3" aria-hidden="true">
+                      <circle cx="12" cy="5" r="1.5" />
+                      <circle cx="12" cy="12" r="1.5" />
+                      <circle cx="12" cy="19" r="1.5" />
+                    </svg>
                   </div>
                 </div>
 
@@ -325,9 +405,14 @@ export default function AiFitSimulator() {
                 <div
                   ref={listRef}
                   className="flex-1 overflow-y-auto px-2 py-2 flex flex-col gap-1.5"
+                  style={{
+                    backgroundImage: 'url(/pages/landingpage/aiSection/whatsapp-bg.png)',
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'repeat',
+                  }}
                 >
                   {messages.map(msg => (
-                    <Bubble key={msg.id} msg={msg} meals={MEALS} />
+                    <Bubble key={msg.id} msg={msg} />
                   ))}
                   {isTyping && <TypingDots />}
                 </div>
@@ -338,23 +423,29 @@ export default function AiFitSimulator() {
                   style={{ backgroundColor: '#f0f0f0', borderTop: '1px solid rgba(0,0,0,0.08)' }}
                 >
                   {simState === 'IDLE' && (
-                    <div className="p-2">
-                      <p className="text-[7.5px] text-gray-400 text-center mb-1.5 font-semibold uppercase tracking-wide">
-                        Escolha uma refeição
+                    <div className="p-1.5">
+                      <p className="text-[7px] text-gray-400 text-center mb-1 font-semibold uppercase tracking-wide">
+                        Toque em uma foto para enviar
                       </p>
-                      <div className="grid grid-cols-3 gap-1.5">
+                      <div className="grid grid-cols-3 gap-1">
                         {MEALS.map(meal => (
                           <button
                             key={meal.id}
                             onClick={() => selectMeal(meal)}
                             aria-label={meal.label}
-                            className="flex flex-col items-center justify-center gap-0.5 rounded-xl py-2.5 transition-transform active:scale-95"
-                            style={{ background: meal.gradient }}
+                            className="relative rounded-lg overflow-hidden transition-transform active:scale-95"
+                            style={{ aspectRatio: '1 / 1' }}
                           >
-                            <span className="text-[22px] leading-none">{meal.emoji}</span>
-                            <span className="text-white text-[7px] font-semibold text-center leading-tight px-0.5 mt-0.5">
-                              {meal.label}
-                            </span>
+                            <img
+                              src={meal.photoSrc}
+                              alt={meal.label}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/25 flex items-end justify-center pb-1">
+                              <span className="text-white text-[6.5px] font-semibold drop-shadow text-center leading-tight px-0.5">
+                                {meal.label}
+                              </span>
+                            </div>
                           </button>
                         ))}
                       </div>
@@ -374,7 +465,7 @@ export default function AiFitSimulator() {
                         className="w-full py-2.5 rounded-xl text-[10px] font-bold text-white uppercase tracking-wider transition-transform active:scale-95"
                         style={{ backgroundColor: '#075E54' }}
                       >
-                        Não
+                        Não, pode calcular!
                       </button>
                     </div>
                   )}

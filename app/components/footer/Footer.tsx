@@ -34,15 +34,43 @@ function FacebookIcon() {
   )
 }
 
+/* ─── Contact icons ───────────────────────────────────────────────────────── */
+
+function EmailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden="true">
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m2 7 10 7 10-7" />
+    </svg>
+  )
+}
+
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden="true">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  )
+}
+
+function LocationIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  )
+}
+
 /* ─── Data ───────────────────────────────────────────────────────────────── */
 
 const navLinks = [
-  { label: 'O Fitmass',       href: 'https://fitmass.com.br'          },
-  { label: 'Nossos produtos', href: 'https://fitmass.com.br/produtos'  },
-  { label: 'Planos',          href: '/planos'                          },
-  { label: 'Dúvidas',         href: '/planos#faq'                     },
-  { label: 'Contato',         href: '/planos#contato'                 },
-  { label: 'Blog',            href: '/blog'                           },
+  { label: 'Home',      href: '/'          },
+  { label: 'Produtos',  href: '/#produtos' },
+  { label: 'Planos',    href: '/planos'    },
+  { label: 'Sobre Nós', href: '/#sobre'    },
+  { label: 'Blog',      href: '/blog'      },
+  { label: 'Contato',   href: '/contato'   },
 ]
 
 const socialLinks = [
@@ -52,12 +80,33 @@ const socialLinks = [
   { label: 'Facebook',  href: 'https://www.facebook.com/fitmass.tech/',                                                                                           Icon: FacebookIcon  },
 ]
 
+const contactItems = [
+  {
+    Icon: EmailIcon,
+    label: 'E-mail',
+    text: 'comercial@fitmass.com.br',
+    href: 'mailto:comercial@fitmass.com.br',
+  },
+  {
+    Icon: PhoneIcon,
+    label: 'Telefone',
+    text: '(41) 98481-0567',
+    href: 'tel:+5541984810567',
+  },
+  {
+    Icon: LocationIcon,
+    label: 'Endereço',
+    text: 'Curitiba, PR – Brasil',
+    href: undefined,
+  },
+]
+
 /* ─── Component ──────────────────────────────────────────────────────────── */
 
 export default function Footer() {
   return (
     <footer>
-      {/* Corpo principal — gradiente verde */}
+      {/* Corpo principal */}
       <div
         className="px-4 py-14"
         style={{
@@ -65,28 +114,36 @@ export default function Footer() {
             'linear-gradient(105deg, #72a71c 0%, #2d8060 45%, #0e3d2c 100%)',
         }}
       >
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-[2fr_1.4fr_1.4fr] gap-12">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16">
 
-          {/* Col 1 — Marca */}
+          {/* Col 1 — Marca + Social */}
           <div>
             <Image
               src="https://fitmass.com.br/wp-content/uploads/2023/05/Logo-Fitmass-branca.svg"
               alt="Fitmass"
               width={160}
               height={40}
-              className="mb-6 h-10 w-auto"
+              className="mb-5 h-10 w-auto"
             />
-            <p className="font-title text-white/75 text-sm uppercase tracking-wider leading-relaxed mb-7 max-w-xs">
-              TRANSFORMANDO DADOS EM BEM-ESTAR:
-              <br />
-              SUA SAÚDE, NOSSA TECNOLOGIA.
+            <p className="font-title text-white/80 text-sm uppercase tracking-wider leading-relaxed mb-7 max-w-xs">
+              Tecnologia que retém alunos.
             </p>
-            <a
-              href="/privacidade"
-              className="inline-block font-body font-semibold text-xs uppercase tracking-widest text-white border border-white/40 px-4 py-2.5 rounded-lg hover:bg-white/15 hover:border-white/60 transition-all"
-            >
-              PORTAL DE PRIVACIDADE
-            </a>
+
+            {/* Redes sociais */}
+            <div className="flex items-center gap-3 flex-wrap">
+              {socialLinks.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 hover:bg-secondary/20 hover:border-secondary/50 hover:text-secondary flex items-center justify-center text-white transition-all duration-200"
+                >
+                  <Icon />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Col 2 — Navegação */}
@@ -108,38 +165,55 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3 — Redes sociais */}
+          {/* Col 3 — Contato */}
           <div>
             <h3 className="font-title text-accent text-xs uppercase tracking-[0.2em] mb-5">
-              NOS SIGA NAS REDES
+              Contato
             </h3>
-            <div className="flex items-center gap-3 flex-wrap">
-              {socialLinks.map(({ label, href, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 hover:bg-secondary/20 hover:border-secondary/50 hover:text-secondary flex items-center justify-center text-white transition-all duration-200"
-                >
-                  <Icon />
-                </a>
+            <ul className="space-y-4">
+              {contactItems.map(({ Icon, label, text, href }) => (
+                <li key={label} className="flex items-start gap-3 text-white/65">
+                  <span className="text-accent mt-0.5">
+                    <Icon />
+                  </span>
+                  {href ? (
+                    <a
+                      href={href}
+                      className="font-body text-sm hover:text-secondary transition-colors leading-snug"
+                    >
+                      {text}
+                    </a>
+                  ) : (
+                    <span className="font-body text-sm leading-snug">{text}</span>
+                  )}
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
+
         </div>
       </div>
 
-      {/* Barra de copyright */}
+      {/* Barra inferior */}
       <div
         className="px-4 py-4 border-t border-white/5"
         style={{ background: '#081c13' }}
       >
-        <div className="max-w-6xl mx-auto text-center">
-          <p className="font-body text-white/35 text-xs">
-            Todos os direitos reservados Fitmass S/A © CNPJ 39.867.600/0001-97
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="font-body text-white/35 text-xs text-center sm:text-left">
+            Fitmass S/A &nbsp;|&nbsp; CNPJ: 39.867.600/0001-97
           </p>
+          <div className="flex items-center gap-4">
+            <p className="font-body text-white/35 text-xs">
+              © 2026 Fitmass. Todos os direitos reservados.
+            </p>
+            <a href="/privacidade" className="font-body text-white/40 hover:text-white/70 text-xs transition-colors whitespace-nowrap">
+              Política de Privacidade
+            </a>
+            <a href="/termos" className="font-body text-white/40 hover:text-white/70 text-xs transition-colors whitespace-nowrap">
+              Termos de Uso
+            </a>
+          </div>
         </div>
       </div>
     </footer>

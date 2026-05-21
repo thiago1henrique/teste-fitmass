@@ -3,10 +3,13 @@
 import { useState, useTransition } from 'react'
 import { useForm, useWatch, type FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ChevronLeft, ShieldCheck, Lock, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react'
+import {
+  ChevronLeft, ShieldCheck, Lock, AlertCircle, Loader2,
+  CheckCircle2, Copy, Check, ExternalLink, QrCode,
+} from 'lucide-react'
 import Link from 'next/link'
 import { checkoutSchema, type CheckoutFormData } from '../schema'
-import { processCheckout } from '../actions'
+import { processCheckout, type CheckoutResult } from '../actions'
 import PersonalInfo from './fields/PersonalInfo'
 import AddressInfo from './fields/AddressInfo'
 import PaymentSelector from './fields/PaymentSelector'
@@ -15,7 +18,6 @@ import OrderSummary, { type PlanDetails } from './OrderSummary'
 
 type Props = { plan: PlanDetails }
 
-// Campos do formulário mapeados para seus IDs no DOM
 const FIELD_TO_ID: Partial<Record<keyof CheckoutFormData, string>> = {
   name: 'checkout-name',
   email: 'checkout-email',
@@ -46,9 +48,164 @@ function scrollToFirstError(errors: FieldErrors<CheckoutFormData>) {
   }
 }
 
+function CopyButton({ text, label }: { text: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch { /* ignore */ }
+  }
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      className="inline-flex items-center gap-2 font-body font-semibold text-sm px-5 py-2.5 rounded-xl border-2 border-accent text-accent hover:bg-accent hover:text-white transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+    >
+      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+      {copied ? 'Copiado!' : label}
+    </button>
+  )
+}
+
+function SuccessWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="min-h-screen bg-surface flex items-center justify-center p-6">
+      <div className="w-full max-w-md animate-[price-fade-in_0.4s_ease-out]">
+        {children}
+        <div className="text-center mt-8">
+          <Link
+            href="/planos"
+            className="inline-flex items-center gap-2 font-body text-sm text-contrast/40 hover:text-accent transition-colors duration-200"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Voltar aos Planos
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CreditCardSuccess({ message }: { message: string }) {
+  return (
+    <SuccessWrapper>
+      <div className="text-center">
+        <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle2 className="w-10 h-10 text-accent" />
+        </div>
+        <h2 className="font-title text-4xl text-contrast uppercase tracking-wide mb-3">
+          Pedido Recebido!
+        </h2>
+        <p className="font-body text-contrast/60 leading-relaxed">{message}</p>
+      </div>
+    </SuccessWrapper>
+  )
+}
+
+function PixSuccess({ qrCode, qrCodeUrl }: { qrCode: string; qrCodeUrl: string }) {
+  const isImageUrl = qrCodeUrl.startsWith('http')
+  return (
+    <SuccessWrapper>
+      <div className="text-center">
+        <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <QrCode className="w-10 h-10 text-accent" />
+        </div>
+        <h2 className="font-title text-4xl text-contrast uppercase tracking-wide mb-2">
+          Pague com Pix
+        </h2>
+        <p className="font-body text-contrast/55 text-sm mb-6">
+          Escaneie o QR Code no app do seu banco ou copie o código abaixo.
+        </p>
+
+        {isImageUrl && (
+          <div className="flex justify-center mb-6">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={qrCodeUrl}
+              alt="QR Code Pix"
+              width={220}
+              height={220}
+              className="rounded-2xl border border-gray-100 shadow-sm"
+            />
+          </div>
+        )}
+
+        {qrCode && (
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-5 text-left">
+            <p className="font-body text-[10px] font-semibold uppercase tracking-widest text-contrast/35 mb-2">
+              Pix Copia e Cola
+            </p>
+            <p className="font-mono text-xs text-contrast/60 break-all leading-relaxed line-clamp-3">
+              {qrCode}
+            </p>
+          </div>
+        )}
+
+        <div className="flex justify-center">
+          <CopyButton text={qrCode} label="Copiar código Pix" />
+        </div>
+
+        <p className="font-body text-xs text-contrast/35 mt-5">
+          O QR Code expira em 24 horas.
+        </p>
+      </div>
+    </SuccessWrapper>
+  )
+}
+
+function BoletoSuccess({ boletoUrl, line }: { boletoUrl: string; line: string }) {
+  return (
+    <SuccessWrapper>
+      <div className="text-center">
+        <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle2 className="w-10 h-10 text-accent" />
+        </div>
+        <h2 className="font-title text-4xl text-contrast uppercase tracking-wide mb-2">
+          Boleto Gerado!
+        </h2>
+        <p className="font-body text-contrast/55 text-sm mb-6">
+          Pague o boleto até a data de vencimento (3 dias úteis).
+        </p>
+
+        {line && (
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-5 text-left">
+            <p className="font-body text-[10px] font-semibold uppercase tracking-widest text-contrast/35 mb-2">
+              Linha Digitável
+            </p>
+            <p className="font-mono text-xs text-contrast/60 break-all leading-relaxed">
+              {line}
+            </p>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {line && <CopyButton text={line} label="Copiar linha digitável" />}
+          {boletoUrl && (
+            <a
+              href={boletoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 font-body font-semibold text-sm px-5 py-2.5 rounded-xl bg-accent text-white hover:bg-accent/90 transition-colors duration-200"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Visualizar Boleto
+            </a>
+          )}
+        </div>
+
+        <p className="font-body text-xs text-contrast/35 mt-5">
+          Você também receberá o boleto no e-mail cadastrado.
+        </p>
+      </div>
+    </SuccessWrapper>
+  )
+}
+
 export default function CheckoutForm({ plan }: Props) {
   const [isPending, startTransition] = useTransition()
-  const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null)
+  const [submitResult, setSubmitResult] = useState<CheckoutResult | null>(null)
   const [errorCount, setErrorCount] = useState(0)
 
   const form = useForm<CheckoutFormData>({
@@ -66,11 +223,53 @@ export default function CheckoutForm({ plan }: Props) {
     setSubmitResult(null)
     startTransition(async () => {
       try {
-        const result = await processCheckout(data, plan.id, plan.price, plan.name)
-        setSubmitResult({ success: result.success, message: result.success ? result.message : result.error })
+        let cardToken: string | undefined
+
+        if (data.paymentMethod === 'credit_card') {
+          const publicKey = process.env.NEXT_PUBLIC_PAGARME_PUBLIC_KEY
+          if (!publicKey) {
+            setSubmitResult({ success: false, error: 'Configuração de pagamento ausente. Contate o suporte.' })
+            return
+          }
+
+          const [expMonthStr, expYearStr] = (data.cardExpiry ?? '').split('/')
+          const tokenRes = await fetch(
+            `https://api.pagar.me/core/v5/tokens?appId=${publicKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                type: 'card',
+                card: {
+                  number: (data.cardNumber ?? '').replace(/\D/g, ''),
+                  holder_name: (data.cardName ?? '').toUpperCase(),
+                  exp_month: parseInt(expMonthStr, 10),
+                  exp_year: parseInt(expYearStr, 10),
+                  cvv: data.cardCvv,
+                },
+              }),
+            },
+          )
+
+          if (!tokenRes.ok) {
+            const errBody = await tokenRes.text()
+            console.error('[CheckoutForm] tokenização falhou:', errBody)
+            setSubmitResult({ success: false, error: 'Dados do cartão inválidos. Verifique os dados e tente novamente.' })
+            return
+          }
+
+          const tokenData = await tokenRes.json()
+          cardToken = tokenData.id
+        }
+
+        // Strip raw card fields — only token + installments reach the server
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { cardNumber, cardName, cardExpiry, cardCvv, ...nonCardData } = data
+        const result = await processCheckout(nonCardData, plan.id, plan.price, plan.name, cardToken)
+        setSubmitResult(result)
       } catch (err) {
         console.error('[CheckoutForm] erro inesperado:', err)
-        setSubmitResult({ success: false, message: 'Erro de conexão. Verifique sua internet e tente novamente.' })
+        setSubmitResult({ success: false, error: 'Erro de conexão. Verifique sua internet e tente novamente.' })
       }
     })
   }
@@ -81,30 +280,18 @@ export default function CheckoutForm({ plan }: Props) {
     scrollToFirstError(errors)
   }
 
-  /* ── Estado de sucesso ─────────────────────────────────── */
+  /* ── Telas de sucesso ──────────────────────────────────────── */
   if (submitResult?.success) {
-    return (
-      <div className="min-h-screen bg-surface flex items-center justify-center p-6">
-        <div className="text-center max-w-md animate-[price-fade-in_0.4s_ease-out]">
-          <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-accent" />
-          </div>
-          <h2 className="font-title text-4xl text-contrast uppercase tracking-wide mb-3">
-            Pedido Recebido!
-          </h2>
-          <p className="font-body text-contrast/60 leading-relaxed mb-8">{submitResult.message}</p>
-          <Link
-            href="/planos"
-            className="inline-flex items-center gap-2 font-body font-bold text-sm uppercase tracking-widest px-8 py-4 rounded-xl bg-accent text-white hover:bg-accent/90 transition-colors duration-200"
-          >
-            Voltar aos Planos
-          </Link>
-        </div>
-      </div>
-    )
+    if (submitResult.paymentMethod === 'pix') {
+      return <PixSuccess qrCode={submitResult.qrCode} qrCodeUrl={submitResult.qrCodeUrl} />
+    }
+    if (submitResult.paymentMethod === 'boleto') {
+      return <BoletoSuccess boletoUrl={submitResult.boletoUrl} line={submitResult.line} />
+    }
+    return <CreditCardSuccess message={submitResult.message} />
   }
 
-  /* ── Formulário principal ──────────────────────────────── */
+  /* ── Formulário principal ──────────────────────────────────── */
   return (
     <div className="min-h-screen bg-surface">
       {/* Barra superior fixa */}
@@ -152,7 +339,7 @@ export default function CheckoutForm({ plan }: Props) {
               <PaymentSelector form={form} />
               {paymentMethod === 'credit_card' && <CreditCardInfo form={form} />}
 
-              {/* Erro de validação — banner junto ao botão */}
+              {/* Erro de validação */}
               {errorCount > 0 && !isPending && (
                 <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
                   <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
@@ -168,7 +355,7 @@ export default function CheckoutForm({ plan }: Props) {
               {submitResult && !submitResult.success && (
                 <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
                   <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                  <p className="font-body text-sm text-red-700">{submitResult.message}</p>
+                  <p className="font-body text-sm text-red-700">{submitResult.error}</p>
                 </div>
               )}
 

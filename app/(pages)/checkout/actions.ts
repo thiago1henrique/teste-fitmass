@@ -1,9 +1,11 @@
 'use server'
 
-import { checkoutSchema, type CheckoutFormData } from './schema'
+import { baseCheckoutSchema, type BaseCheckoutFormData } from './schema'
 
 export type CheckoutResult =
-  | { success: true; message: string }
+  | { success: true; paymentMethod: 'credit_card'; message: string }
+  | { success: true; paymentMethod: 'pix'; qrCode: string; qrCodeUrl: string }
+  | { success: true; paymentMethod: 'boleto'; boletoUrl: string; line: string }
   | { success: false; error: string }
 
 function isoDateFromNow(days: number): string {
@@ -13,10 +15,11 @@ function isoDateFromNow(days: number): string {
 }
 
 export async function processCheckout(
-  raw: CheckoutFormData,
+  raw: BaseCheckoutFormData,
   planId: string,
   planPrice: number,
   planName: string,
+  cardToken?: string,
 ): Promise<CheckoutResult> {
   const secretKey = process.env.PAGARME_SECRET_KEY?.trim()
   if (!secretKey) {
@@ -24,7 +27,6 @@ export async function processCheckout(
     return { success: false, error: 'Configuração de pagamento ausente. Contate o suporte.' }
   }
 
-  // Diagnóstico: loga o prefixo da chave sem expor o valor completo
   const keyPreview = `${secretKey.slice(0, 10)}...`
   const keyIsSecret = secretKey.startsWith('sk_')
   console.log(`[processCheckout] chave carregada: ${keyPreview} | é sk_: ${keyIsSecret}`)
@@ -34,7 +36,7 @@ export async function processCheckout(
     return { success: false, error: 'Chave de API inválida. Use a chave secreta (sk_...) do painel Pagar.me.' }
   }
 
-  const parsed = checkoutSchema.safeParse(raw)
+  const parsed = baseCheckoutSchema.safeParse(raw)
   if (!parsed.success) {
     return { success: false, error: 'Dados inválidos. Verifique o formulário e tente novamente.' }
   }
@@ -42,11 +44,14 @@ export async function processCheckout(
   const d = parsed.data
   const rawPhone = d.phone.replace(/\D/g, '')
 
+  if (d.paymentMethod === 'credit_card' && !cardToken) {
+    return { success: false, error: 'Token do cartão ausente. Recarregue a página e tente novamente.' }
+  }
+
   const pagarmePayload = {
-    // items é obrigatório na V5
     items: [
       {
-        amount: planPrice * 100, // centavos
+        amount: planPrice * 100,
         description: `Assinatura Fitmass — Plano ${planName}`,
         quantity: 1,
         code: planId.toUpperCase(),
@@ -80,8 +85,7 @@ export async function processCheckout(
               payment_method: 'credit_card',
               credit_card: {
                 installments: parseInt(d.installments ?? '1', 10),
-                // card_token: preencher após tokenização client-side com o.js do Pagar.me
-                // statement_descriptor: 'FITMASS',
+                card_token: cardToken,
               },
             },
           ]
@@ -126,8 +130,33 @@ export async function processCheckout(
     return { success: false, error: `${msg} (HTTP ${response.status})` }
   }
 
+  const responseBody = await response.json()
+  console.log('[processCheckout] resposta Pagar.me:', JSON.stringify(responseBody, null, 2))
+
+  const charge = responseBody.charges?.[0]
+  const tx = charge?.last_transaction
+
+  if (d.paymentMethod === 'pix') {
+    return {
+      success: true,
+      paymentMethod: 'pix',
+      qrCode: tx?.qr_code ?? '',
+      qrCodeUrl: tx?.qr_code_url ?? '',
+    }
+  }
+
+  if (d.paymentMethod === 'boleto') {
+    return {
+      success: true,
+      paymentMethod: 'boleto',
+      boletoUrl: tx?.pdf ?? tx?.boleto_url ?? '',
+      line: tx?.line ?? tx?.boleto_barcode ?? '',
+    }
+  }
+
   return {
     success: true,
+    paymentMethod: 'credit_card',
     message: 'Pedido recebido com sucesso! Em breve você receberá as instruções no e-mail cadastrado.',
   }
 }
