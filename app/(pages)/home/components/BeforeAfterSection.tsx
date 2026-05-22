@@ -267,16 +267,16 @@ export default function BeforeAfterSection() {
               <div className="w-full aspect-video bg-white/5" aria-hidden="true" />
             )}
             <div
-              className="absolute top-4 left-4 bg-accent/90 backdrop-blur-sm text-white font-body font-semibold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full pointer-events-none select-none"
-              aria-hidden="true"
-            >
-              Fitmass
-            </div>
-            <div
-              className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white/80 font-body font-semibold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full pointer-events-none select-none"
+              className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm text-white/80 font-body font-semibold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full pointer-events-none select-none"
               aria-hidden="true"
             >
               Bluefit
+            </div>
+            <div
+              className="absolute top-4 right-4 bg-accent/90 backdrop-blur-sm text-white font-body font-semibold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full pointer-events-none select-none"
+              aria-hidden="true"
+            >
+              Fitmass
             </div>
           </div>
 

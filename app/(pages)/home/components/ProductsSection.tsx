@@ -54,9 +54,9 @@ const PRODUCTS = [
     description:
       'O software de gestão integrado à balança. Gerencie avaliações, alunos e relatórios em uma plataforma completa.',
     label: 'Software',
-    accent: '#A78BFA',
-    bgFrom: '#0d0a1a',
-    bgTo: '#1a1433',
+    accent: '#F33433',
+    bgFrom: '#141614',
+    bgTo: '#212422',
     image: '/pages/landingpage/produtos/System.png',
   },
   {
@@ -369,16 +369,16 @@ export default function ProductsSection() {
           ══ DESKTOP — original layout (hidden lg:flex) ════════════════════════
           Completely unchanged from the original design.
         */}
-        <div className="hidden lg:flex flex-col flex-1 justify-between px-24 py-16 relative z-10">
+        <div className="hidden lg:flex flex-col flex-1 justify-between px-16 xl:px-24 py-6 xl:py-12 relative z-10">
           {/* Section intro */}
-          <div className="mb-4">
-            <span className="inline-flex items-center gap-2 bg-white/8 text-white/50 font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-3">
+          <div className="mb-2">
+            <span className="inline-flex items-center gap-2 bg-white/8 text-white/50 font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-2">
               <span className="w-1.5 h-1.5 rounded-full bg-white/30" aria-hidden="true" />
               Produtos
             </span>
             <h2
               id="produtos-heading"
-              className="font-title text-4xl md:text-5xl uppercase text-white tracking-wide leading-tight"
+              className="font-title text-3xl xl:text-4xl uppercase text-white tracking-wide leading-tight"
             >
               Conheça o ecossistema{' '}
               <span
@@ -388,16 +388,16 @@ export default function ProductsSection() {
                 Fitmass
               </span>
             </h2>
-            <p className="font-body text-white/50 text-sm mt-2 max-w-xl">
+            <p className="font-body text-white/50 text-xs xl:text-sm mt-1.5 max-w-xl">
               Do equipamento ao app, cada produto foi desenvolvido para elevar o nível de avaliação física da sua academia.
             </p>
           </div>
 
           {/* Grid: Text + Featured Image */}
-          <div className="grid grid-cols-2 gap-12 items-center flex-1">
+          <div className="grid grid-cols-2 gap-8 xl:gap-12 items-center flex-1 min-h-0">
             <div className="max-w-2xl">
               <span
-                className="inline-flex items-center gap-2 text-xs font-body font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6 transition-all duration-500"
+                className="inline-flex items-center gap-2 text-xs font-body font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3 transition-all duration-500"
                 style={{ backgroundColor: `${active.accent}22`, color: active.accent }}
               >
                 <span
@@ -408,11 +408,14 @@ export default function ProductsSection() {
                 {'badge' in active && active.badge ? active.badge : active.label}
               </span>
 
-              <h3 className="font-title text-[6rem] uppercase text-white tracking-wide leading-[0.9] mb-6">
+              <h3
+                className="font-title uppercase text-white tracking-wide leading-[0.9] mb-3 xl:mb-5"
+                style={{ fontSize: 'clamp(2.5rem, 8vh, 5rem)' }}
+              >
                 {active.name}
               </h3>
 
-              <p className="font-body text-xl text-white/70 leading-relaxed max-w-lg mb-8">
+              <p className="font-body text-sm xl:text-base text-white/70 leading-relaxed max-w-lg mb-4 xl:mb-6">
                 {active.description}
               </p>
 
@@ -436,7 +439,7 @@ export default function ProductsSection() {
             </div>
 
             {/* Featured Image Container */}
-            <div className="relative flex items-center justify-center h-[calc(95vh-360px)] transition-all duration-700">
+            <div className="relative flex items-start justify-center h-[calc(95vh-360px)] self-start transition-all duration-700">
               {/* Ambient Glow behind image */}
               <div
                 className="absolute w-[120%] h-[120%] rounded-full blur-[100px] opacity-30 transition-colors duration-1000 animate-pulse"
@@ -470,7 +473,7 @@ export default function ProductsSection() {
 
               {/* MyDay interactive mockup */}
               <div
-                className={`absolute inset-x-0 inset-y-4 flex items-center justify-center transition-all duration-1000 ease-in-out ${
+                className={`absolute inset-x-0 top-0 bottom-0 flex items-start justify-center transition-all duration-1000 ease-in-out ${
                   'isInteractive' in active && active.isInteractive
                     ? 'opacity-100 scale-100 pointer-events-auto'
                     : 'opacity-0 scale-90 pointer-events-none'
@@ -492,22 +495,22 @@ export default function ProductsSection() {
 
           {/* Bottom: Thumbnails + progress bar */}
           <div>
-            <div className="flex gap-4 mb-6 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-3 mb-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {PRODUCTS.map((product, i) => (
                 <button
                   key={product.id}
                   onMouseEnter={() => goTo(i)}
                   onClick={() => goTo(i)}
-                  className={`shrink-0 flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all duration-300 cursor-pointer text-left ${
+                  className={`shrink-0 flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all duration-300 cursor-pointer text-left ${
                     i === activeIndex
                       ? 'border-white/30 bg-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
                       : 'border-white/8 bg-white/4 hover:bg-white/8 hover:border-white/16'
                   }`}
-                  style={{ minWidth: 220 }}
+                  style={{ minWidth: 190 }}
                   aria-label={`Produto: ${product.name}`}
                   aria-pressed={i === activeIndex}
                 >
-                  <div className="relative w-12 h-12 shrink-0 bg-white/5 rounded-lg overflow-hidden p-1">
+                  <div className="relative w-9 h-9 shrink-0 bg-white/5 rounded-lg overflow-hidden p-1">
                     <Image
                       src={product.image}
                       alt=""
