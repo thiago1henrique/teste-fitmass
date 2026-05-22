@@ -73,9 +73,9 @@ const PRODUCTS = [
   },
 ]
 
-const SCALE_MOBILE = 0.75
-const SCALE_SM = 0.92
-const SCALE_LG = 1
+const SCALE_MOBILE = 0.62
+const SCALE_SM = 0.85
+const SCALE_LG = 0.82
 
 export default function ProductsSection() {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -87,6 +87,8 @@ export default function ProductsSection() {
   const [progressKey, setProgressKey] = useState(0)
   const [timerTrigger, setTimerTrigger] = useState(0)
   const [phoneScale, setPhoneScale] = useState(SCALE_MOBILE)
+  const [imageContainerH, setImageContainerH] = useState(0)
+  const imageContainerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -98,6 +100,14 @@ export default function ProductsSection() {
     update()
     window.addEventListener('resize', update, { passive: true })
     return () => window.removeEventListener('resize', update)
+  }, [])
+
+  useEffect(() => {
+    const el = imageContainerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => setImageContainerH(entry.contentRect.height))
+    ro.observe(el)
+    return () => ro.disconnect()
   }, [])
 
   // One observer handles both the entry animation (one-shot) and the tab bar
@@ -131,6 +141,12 @@ export default function ProductsSection() {
   }, [])
 
   const active = PRODUCTS[activeIndex]
+
+  // Scale the phone mockup to never exceed the available container height
+  const PHONE_H = 548
+  const mobilePhoneScale = imageContainerH > 0
+    ? Math.min(phoneScale, (imageContainerH / PHONE_H) * 0.86)
+    : phoneScale
 
   return (
     <>
@@ -194,7 +210,7 @@ export default function ProductsSection() {
       <section
         id="produtos"
         ref={sectionRef}
-        className={`relative w-full overflow-hidden flex flex-col transition-all duration-1000 ease-out h-svh lg:h-[80vh] ${
+        className={`relative w-full overflow-hidden flex flex-col transition-all duration-1000 ease-out h-svh lg:h-[95vh] ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
         }`}
         style={{ background: '#000' }}
@@ -244,6 +260,16 @@ export default function ProductsSection() {
         */}
         <div className="lg:hidden relative z-10 flex flex-col flex-1 px-6 pt-28 pb-5">
 
+          {/* Section context */}
+          <div className="shrink-0 mb-3">
+            <p className="font-bold text-[10px] text-accent uppercase tracking-[0.15em]">
+              Produtos Fitmass
+            </p>
+            <p className="font-body text-xs text-white/40 mt-1 leading-relaxed">
+              Do equipamento ao app, cada produto foi desenvolvido para elevar o nível de avaliação física da sua academia.
+            </p>
+          </div>
+
           {/* ① Título */}
           <div className="shrink-0">
             <span
@@ -257,13 +283,13 @@ export default function ProductsSection() {
               />
               {'badge' in active && active.badge ? active.badge : active.label}
             </span>
-            <h2 className="font-title text-4xl uppercase text-white tracking-wide leading-[0.9]">
+            <h3 className="font-title text-4xl uppercase text-white tracking-wide leading-[0.9]">
               {active.name}
-            </h2>
+            </h3>
           </div>
 
           {/* ② Foto — grows to fill remaining vertical space */}
-          <div className="relative flex-1 min-h-0 my-3">
+          <div ref={imageContainerRef} className="relative flex-1 min-h-0 my-3 overflow-hidden">
             {/* Localised ambient glow */}
             <div
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
@@ -310,7 +336,7 @@ export default function ProductsSection() {
                   : 'opacity-0 scale-95 pointer-events-none'
               }`}
             >
-              <MyDayMockup scale={phoneScale} onInteractChange={setIsMyDayInteracting} />
+              <MyDayMockup scale={mobilePhoneScale} onInteractChange={setIsMyDayInteracting} />
             </div>
           </div>
 
@@ -344,6 +370,29 @@ export default function ProductsSection() {
           Completely unchanged from the original design.
         */}
         <div className="hidden lg:flex flex-col flex-1 justify-between px-24 py-16 relative z-10">
+          {/* Section intro */}
+          <div className="mb-4">
+            <span className="inline-flex items-center gap-2 bg-white/8 text-white/50 font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-white/30" aria-hidden="true" />
+              Produtos
+            </span>
+            <h2
+              id="produtos-heading"
+              className="font-title text-4xl md:text-5xl uppercase text-white tracking-wide leading-tight"
+            >
+              Conheça o ecossistema{' '}
+              <span
+                className="transition-colors duration-1000"
+                style={{ color: active.accent }}
+              >
+                Fitmass
+              </span>
+            </h2>
+            <p className="font-body text-white/50 text-sm mt-2 max-w-xl">
+              Do equipamento ao app, cada produto foi desenvolvido para elevar o nível de avaliação física da sua academia.
+            </p>
+          </div>
+
           {/* Grid: Text + Featured Image */}
           <div className="grid grid-cols-2 gap-12 items-center flex-1">
             <div className="max-w-2xl">
@@ -359,9 +408,9 @@ export default function ProductsSection() {
                 {'badge' in active && active.badge ? active.badge : active.label}
               </span>
 
-              <h2 className="font-title text-[6rem] uppercase text-white tracking-wide leading-[0.9] mb-6">
+              <h3 className="font-title text-[6rem] uppercase text-white tracking-wide leading-[0.9] mb-6">
                 {active.name}
-              </h2>
+              </h3>
 
               <p className="font-body text-xl text-white/70 leading-relaxed max-w-lg mb-8">
                 {active.description}
@@ -387,7 +436,7 @@ export default function ProductsSection() {
             </div>
 
             {/* Featured Image Container */}
-            <div className="relative flex items-center justify-center h-[calc(80vh-220px)] transition-all duration-700">
+            <div className="relative flex items-center justify-center h-[calc(95vh-360px)] transition-all duration-700">
               {/* Ambient Glow behind image */}
               <div
                 className="absolute w-[120%] h-[120%] rounded-full blur-[100px] opacity-30 transition-colors duration-1000 animate-pulse"

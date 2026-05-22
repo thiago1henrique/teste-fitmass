@@ -58,8 +58,8 @@ export default function TestimonialsSection() {
             id="depoimentos-heading"
             className="font-title text-4xl md:text-5xl uppercase text-white tracking-wide leading-tight"
           >
-            O QUE DIZEM OS{' '}
-            <span className="text-accent">NOSSOS CLIENTES</span>
+            Academias que já transformaram resultados com a {' '}
+            <span className="text-accent">Fitmass</span>
           </h2>
         </div>
 

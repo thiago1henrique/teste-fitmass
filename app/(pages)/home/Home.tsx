@@ -15,6 +15,7 @@ import BrazilMapSection from './components/BrazilMapSection'
 import FAQHome from './components/FAQHome'
 import BlogPreviewSection from '../../components/blog/BlogPreviewSection'
 import ContactSection from './components/ContactSection'
+import FinalCTASection from './components/FinalCTASection'
 
 export default function Home() {
   return (
@@ -33,6 +34,7 @@ export default function Home() {
       <FAQHome />
       <BlogPreviewSection />
       <ContactSection />
+      <FinalCTASection />
     </main>
   )
 }

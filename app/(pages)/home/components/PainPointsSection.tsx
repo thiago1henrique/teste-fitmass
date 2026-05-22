@@ -4,17 +4,25 @@ const items = [
     solution: 'Acompanhe a evolução de cada aluno e antecipe o cancelamento',
   },
   {
-    problem: 'Avaliações manuais demoradas e imprecisas',
-    solution: 'Bioimpedância com precisão clínica em menos de 1 minuto',
-  },
-  {
     problem: 'Academia igual a todas as concorrentes',
-    solution: 'App exclusivo com sua marca — diferencial que o aluno vê todo dia',
+    solution: 'Bioimpedância como diferencial, sua academia se destaca no mercado',
   },
   {
-    problem: 'Nenhum dado para tomar decisões de negócio',
-    solution: 'Dashboard completo com métricas de retenção e engajamento',
+    problem: 'Avaliações manuais, demoradas e imprecisas',
+    solution: 'Análise corporal completa com precisão clínica em menos de 1 minuto',
   },
+  {
+    problem: 'Sistemas desconectados, dados perdidos entre profissional e aluno',
+    solution: 'Balança, app e sistema de gestão integrados: tudo em uma só plataforma',
+  },
+  {
+    problem: 'Equipamento genérico sem nenhuma identidade com a sua academia',
+    solution: 'App e balança com a sua marca, diferencial que o aluno vê todo dia',
+  },
+  {
+    problem: 'Suporte técnico frio, você resolve os problemas sozinho',
+    solution: 'Parceiro dedicado do crescimento da sua academia, do dia um em diante',
+  }
 ]
 
 export default function PainPointsSection() {
@@ -36,8 +44,7 @@ export default function PainPointsSection() {
             <span className="text-accent">ALUNOS À SUA ACADEMIA</span>
           </h2>
           <p className="font-body text-contrast/55 max-w-xl mx-auto">
-            Academias sem a Bioscan perdem alunos silenciosamente.
-            Veja o que muda quando você investe em avaliação corporal profissional.
+            Veja lado a lado o que muda quando sua academia investe em bioimpedância profissional. 
           </p>
         </div>
 
