@@ -19,10 +19,7 @@ const items = [
 
 export default function PainPointsSection() {
   return (
-    <section
-      className="py-16 px-4 bg-surface"
-      aria-labelledby="dores-heading"
-    >
+    <section className="py-16 px-4 bg-surface" aria-labelledby="dores-heading">
       <div className="max-w-6xl mx-auto">
 
         {/* Heading */}
@@ -44,28 +41,30 @@ export default function PainPointsSection() {
           </p>
         </div>
 
-        {/* Tabela de comparação */}
+        {/* Tabela — layout unificado mobile + desktop */}
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
           {/* Cabeçalho */}
-          <div className="grid grid-cols-2 divide-x divide-gray-200">
-            <div className="flex items-center gap-2 px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <span className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center shrink-0" aria-hidden="true">
+          <div className="grid grid-cols-2 divide-x divide-red-100">
+            <div className="flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-red-100/60 border-b border-red-200/50">
+              {/* Ícone apenas no desktop */}
+              <span className="hidden sm:flex w-5 h-5 rounded-full bg-red-100 items-center justify-center shrink-0" aria-hidden="true">
                 <svg className="w-3 h-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </span>
-              <span className="font-title text-sm uppercase tracking-wide text-contrast/60">
+              <span className="font-title text-[10px] sm:text-sm uppercase tracking-wide text-red-800/70 leading-tight">
                 Sem avaliação profissional
               </span>
             </div>
-            <div className="flex items-center gap-2 px-6 py-4 bg-accent/5 border-b border-accent/20">
-              <span className="w-5 h-5 rounded-full bg-accent flex items-center justify-center shrink-0" aria-hidden="true">
+            <div className="flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-accent/12 border-b border-accent/25">
+              {/* Ícone apenas no desktop */}
+              <span className="hidden sm:flex w-5 h-5 rounded-full bg-accent items-center justify-center shrink-0" aria-hidden="true">
                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </span>
-              <span className="font-title text-sm uppercase tracking-wide text-accent">
+              <span className="font-title text-[10px] sm:text-sm uppercase tracking-wide text-accent font-semibold leading-tight">
                 Com Fitmass
               </span>
             </div>
@@ -75,23 +74,13 @@ export default function PainPointsSection() {
           {items.map(({ problem, solution }, i) => (
             <div
               key={i}
-              className="grid grid-cols-2 divide-x divide-gray-200 border-b border-gray-200 last:border-b-0"
+              className="grid grid-cols-2 divide-x divide-red-100 border-b border-gray-200 last:border-b-0"
             >
-              <div className="flex items-start gap-3 px-6 py-5">
-                <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-red-50 flex items-center justify-center" aria-hidden="true">
-                  <svg className="w-2.5 h-2.5 text-red-400" fill="currentColor" viewBox="0 0 8 8">
-                    <circle cx="4" cy="4" r="4" />
-                  </svg>
-                </span>
-                <p className="font-body text-contrast/50 text-sm leading-relaxed">{problem}</p>
+              <div className="px-3 sm:px-6 py-3 sm:py-5 bg-red-50/70">
+                <p className="font-body text-red-900/65 text-xs sm:text-sm leading-relaxed">{problem}</p>
               </div>
-              <div className="flex items-start gap-3 px-6 py-5 bg-accent/3">
-                <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center" aria-hidden="true">
-                  <svg className="w-2.5 h-2.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </span>
-                <p className="font-body text-contrast text-sm leading-relaxed font-medium">{solution}</p>
+              <div className="px-3 sm:px-6 py-3 sm:py-5 bg-accent/8">
+                <p className="font-body text-contrast text-xs sm:text-sm leading-relaxed font-medium">{solution}</p>
               </div>
             </div>
           ))}

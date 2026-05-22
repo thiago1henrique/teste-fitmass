@@ -55,7 +55,9 @@
       "Bash(xargs ls -lh)",
       "Bash(Get-ChildItem \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\public\\\\pages\\\\landingpage\\\\como_funciona\")",
       "Bash(Select-Object Name, Length)",
-      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"fitness health card photo editorial dark modern\" --domain style -n 3)"
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"fitness health card photo editorial dark modern\" --domain style -n 3)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"fitness SaaS brand footer mobile\" --design-system -p \"Fitmass Footer\")",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"mobile footer spacing rhythm 8dp\" --domain ux)"
     ]
   }
 }

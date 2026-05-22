@@ -103,34 +103,55 @@ const contactItems = [
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
 
+function SectionHeading({ children }: { children: string }) {
+  return (
+    <div className="mb-6">
+      <h3 className="font-title text-accent text-xs uppercase tracking-[0.2em]">
+        {children}
+      </h3>
+      <div className="mt-2 h-px w-8 bg-accent/50" />
+    </div>
+  )
+}
+
 export default function Footer() {
   return (
     <footer>
-      {/* Corpo principal */}
+      {/* Faixa decorativa no topo */}
       <div
-        className="px-4 py-14"
+        className="h-0.75 w-full"
         style={{
           background:
-            'linear-gradient(105deg, #72a71c 0%, #2d8060 45%, #0e3d2c 100%)',
+            'linear-gradient(90deg, #88BD23 0%, #25B6EB 50%, transparent 100%)',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Corpo principal */}
+      <div
+        className="px-6 pt-12 pb-12 md:py-16 md:px-8"
+        style={{
+          background:
+            'linear-gradient(145deg, #4d7a12 0%, #1e6650 40%, #0a2e1f 100%)',
         }}
       >
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-16">
 
           {/* Col 1 — Marca + Social */}
-          <div>
+          <div className="flex flex-col items-center text-center md:items-start md:text-left pb-10 border-b border-white/10 md:border-0 md:pb-0">
             <Image
               src="https://fitmass.com.br/wp-content/uploads/2023/05/Logo-Fitmass-branca.svg"
               alt="Fitmass"
-              width={160}
-              height={40}
-              className="mb-5 h-10 w-auto"
+              width={148}
+              height={38}
+              className="mb-4 h-9 w-auto"
             />
-            <p className="font-title text-white/80 text-sm uppercase tracking-wider leading-relaxed mb-7 max-w-xs">
+            <p className="font-title text-white/70 text-xs uppercase tracking-[0.18em] leading-relaxed mb-6">
               Tecnologia que retém alunos.
             </p>
 
             {/* Redes sociais */}
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center justify-center md:justify-start gap-3 flex-wrap">
               {socialLinks.map(({ label, href, Icon }) => (
                 <a
                   key={label}
@@ -138,7 +159,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 hover:bg-secondary/20 hover:border-secondary/50 hover:text-secondary flex items-center justify-center text-white transition-all duration-200"
+                  className="w-11 h-11 rounded-full bg-white/10 border border-white/15 hover:bg-secondary/20 hover:border-secondary/50 hover:text-secondary flex items-center justify-center text-white transition-all duration-200"
                 >
                   <Icon />
                 </a>
@@ -147,11 +168,9 @@ export default function Footer() {
           </div>
 
           {/* Col 2 — Navegação */}
-          <div>
-            <h3 className="font-title text-accent text-xs uppercase tracking-[0.2em] mb-5">
-              Navegação
-            </h3>
-            <ul className="space-y-3">
+          <div className="pt-10 pb-10 border-b border-white/10 md:border-0 md:pt-0 md:pb-0">
+            <SectionHeading>Navegação</SectionHeading>
+            <ul className="grid grid-cols-2 md:grid-cols-1 gap-x-6 gap-y-4">
               {navLinks.map(({ label, href }) => (
                 <li key={label}>
                   <a
@@ -166,14 +185,12 @@ export default function Footer() {
           </div>
 
           {/* Col 3 — Contato */}
-          <div>
-            <h3 className="font-title text-accent text-xs uppercase tracking-[0.2em] mb-5">
-              Contato
-            </h3>
-            <ul className="space-y-4">
+          <div className="pt-10 md:pt-0">
+            <SectionHeading>Contato</SectionHeading>
+            <ul className="space-y-5">
               {contactItems.map(({ Icon, label, text, href }) => (
                 <li key={label} className="flex items-start gap-3 text-white/65">
-                  <span className="text-accent mt-0.5">
+                  <span className="text-accent mt-0.5 shrink-0">
                     <Icon />
                   </span>
                   {href ? (
@@ -196,23 +213,26 @@ export default function Footer() {
 
       {/* Barra inferior */}
       <div
-        className="px-4 py-4 border-t border-white/5"
-        style={{ background: '#081c13' }}
+        className="px-6 py-5 border-t border-white/8 md:px-8"
+        style={{ background: '#060f09' }}
       >
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="font-body text-white/35 text-xs text-center sm:text-left">
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+          <p className="font-body text-white/30 text-xs text-center sm:text-left">
             Fitmass S/A &nbsp;|&nbsp; CNPJ: 39.867.600/0001-97
           </p>
-          <div className="flex items-center gap-4">
-            <p className="font-body text-white/35 text-xs">
+          <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-4">
+            <p className="font-body text-white/30 text-xs text-center">
               © 2026 Fitmass. Todos os direitos reservados.
             </p>
-            <a href="/privacidade" className="font-body text-white/40 hover:text-white/70 text-xs transition-colors whitespace-nowrap">
-              Política de Privacidade
-            </a>
-            <a href="/termos" className="font-body text-white/40 hover:text-white/70 text-xs transition-colors whitespace-nowrap">
-              Termos de Uso
-            </a>
+            <div className="flex items-center gap-3">
+              <a href="/privacidade" className="font-body text-white/40 hover:text-white/70 text-xs transition-colors whitespace-nowrap">
+                Política de Privacidade
+              </a>
+              <span className="text-white/20 text-xs" aria-hidden="true">·</span>
+              <a href="/termos" className="font-body text-white/40 hover:text-white/70 text-xs transition-colors whitespace-nowrap">
+                Termos de Uso
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -263,7 +263,7 @@ export default function ProductsSection() {
           </div>
 
           {/* ② Foto — grows to fill remaining vertical space */}
-          <div className="relative flex-1 min-h-0 my-3 overflow-hidden">
+          <div className="relative flex-1 min-h-0 my-3">
             {/* Localised ambient glow */}
             <div
               className="absolute inset-0 flex items-center justify-center pointer-events-none"

@@ -73,8 +73,8 @@ export default function Header({
         menuOpen
           ? 'bg-contrast shadow-lg shadow-black/25'
           : scrolled || forceDark
-          ? 'bg-contrast/97 backdrop-blur-md shadow-lg shadow-black/25'
-          : 'bg-transparent backdrop-blur-sm'
+          ? 'bg-contrast shadow-lg shadow-black/25'
+          : 'bg-contrast'
       }`}
     >
 
