@@ -19,7 +19,7 @@ const profile = {
 
 const MOCK_TREE: CategoryNode[] = [
   {
-    id: 'mock-redes', name: 'Redes Sociais', order: 0, children: [],
+    id: 'mock-redes', name: 'Redes Sociais', order: 0, hasTabs: false, children: [],
     links: [
       { id: 'mock-site',        title: 'Site Fitmass',       url: 'https://fitmass.com.br/',                                                                                                                                                                                                                                                      description: 'Conheça a Fitmass',                    icon: 'fitmass'   },
       { id: 'mock-instagram',   title: 'Instagram',           url: 'https://www.instagram.com/fitmass.tech/',                                                                                                                                                                                                                                       description: 'Siga a Fitmass no Instagram',           icon: 'instagram' },
@@ -30,7 +30,7 @@ const MOCK_TREE: CategoryNode[] = [
     ],
   },
   {
-    id: 'mock-apps', name: 'Aplicativos', order: 1, links: [],
+    id: 'mock-apps', name: 'Aplicativos', order: 1, hasTabs: true, links: [],
     children: [
       {
         id: 'mock-fitmass-app', name: 'Fitmass App', order: 0, children: [],
@@ -73,6 +73,7 @@ export default async function LinksPage() {
     name: c.name,
     order: c.order ?? 0,
     parentId: c.parentId ?? null,
+    hasTabs: c.hasTabs ?? null,
     disabled: c.disabled ?? false,
     disabledLabel: c.disabledLabel ?? null,
   }))
@@ -92,12 +93,22 @@ export default async function LinksPage() {
     .sort((a, b) => a.order - b.order)
 
   const dbTree: CategoryNode[] = topLevel.map((cat) => ({
-    ...cat,
+    id: cat.id,
+    name: cat.name,
+    order: cat.order,
+    hasTabs: cat.hasTabs,
+    disabled: cat.disabled,
+    disabledLabel: cat.disabledLabel,
     children: categories
       .filter((c) => c.parentId === cat.id)
       .sort((a, b) => a.order - b.order)
       .map((child) => ({
-        ...child,
+        id: child.id,
+        name: child.name,
+        order: child.order,
+        hasTabs: child.hasTabs,
+        disabled: child.disabled,
+        disabledLabel: child.disabledLabel,
         children: [],
         links: links.filter((l) => l.categoryId === child.id).sort((a, b) => a.order - b.order),
       })),

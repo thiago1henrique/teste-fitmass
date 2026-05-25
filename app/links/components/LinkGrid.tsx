@@ -14,7 +14,7 @@ export function LinkGrid({ tree }: { tree: CategoryNode[] }) {
       {tree.map((node) => (
         <div key={node.id} className="flex flex-col gap-2">
           <CategoryHeader category={node} />
-          {node.children.length > 0 ? (
+          {(node.hasTabs ?? node.children.length > 0) && node.children.length > 0 ? (
             <AppsSection category={node} />
           ) : (
             node.links.map((link) => <LinkCard key={link.id} link={link} />)

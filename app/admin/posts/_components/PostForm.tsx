@@ -267,44 +267,89 @@ function LivePreview({
   html: string
 }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 flex items-center gap-2">
-        <div className="w-2.5 h-2.5 rounded-full bg-red-300" />
-        <div className="w-2.5 h-2.5 rounded-full bg-yellow-300" />
-        <div className="w-2.5 h-2.5 rounded-full bg-green-300" />
-        <span className="font-body text-xs text-contrast/30 ml-2">Prévia</span>
+    <div className="flex flex-col items-center gap-3 w-full">
+      <div className="flex items-center justify-between w-full px-1">
+        <span className="font-body text-[10px] font-semibold text-contrast/30 uppercase tracking-widest">
+          Preview mobile
+        </span>
+        <span className="font-body text-[10px] text-contrast/20">Role para ver o conteúdo</span>
       </div>
 
-      <div className="overflow-y-auto max-h-[calc(100vh-160px)] p-6">
-        {coverUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={coverUrl} alt="" className="w-full rounded-xl mb-5 object-cover max-h-48" />
-        ) : (
-          <div className="w-full h-32 rounded-xl mb-5 bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center">
-            <svg className="w-8 h-8 text-accent/25" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+      {/* Phone frame */}
+      <div style={{ width: 340 }}>
+        <div
+          className="rounded-[2.4rem] border-[5px] border-gray-800 bg-gray-800 overflow-hidden shadow-2xl relative"
+          style={{ height: 620 }}
+        >
+          {/* Notch */}
+          <div className="absolute top-0 inset-x-0 flex justify-center z-10 pointer-events-none">
+            <div className="w-24 h-5 bg-gray-800 rounded-b-2xl" />
           </div>
-        )}
 
-        <h1 className="font-title text-2xl uppercase text-contrast tracking-wide leading-tight mb-3">
-          {title || <span className="text-contrast/25 italic normal-case font-body font-normal text-base">Título do post</span>}
-        </h1>
+          {/* Scrollable post content */}
+          <div className="w-full h-full overflow-y-auto bg-white" style={{ paddingTop: 20 }}>
 
-        {summary && (
-          <p className="font-body text-sm text-contrast/60 leading-relaxed mb-5 border-l-2 border-accent pl-3">
-            {summary}
-          </p>
-        )}
+            {/* Simulated site nav bar */}
+            <div className="bg-contrast px-4 py-2.5 flex items-center justify-between">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-white.svg" alt="Fitmass" className="h-4 w-auto opacity-90" />
+              <div className="flex gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
+                <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
+                <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
+              </div>
+            </div>
 
-        {html && html !== '<p></p>' ? (
-          <div
-            className="prose-content text-sm"
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }) }}
-          />
-        ) : (
-          <p className="font-body text-sm text-contrast/20 italic">O conteúdo aparecerá aqui…</p>
-        )}
+            {/* Cover */}
+            {coverUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={coverUrl} alt="" className="w-full object-cover" style={{ height: 170 }} />
+            ) : (
+              <div
+                className="w-full bg-gradient-to-br from-accent/15 to-secondary/10 flex items-center justify-center"
+                style={{ height: 170 }}
+              >
+                <svg className="w-10 h-10 text-accent/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            )}
+
+            {/* Post body */}
+            <div className="px-4 pt-4 pb-8">
+              <h1 className="font-title text-lg uppercase text-contrast tracking-wide leading-tight mb-2">
+                {title || (
+                  <span className="text-contrast/20 italic normal-case font-body font-normal text-sm">
+                    Título do post
+                  </span>
+                )}
+              </h1>
+
+              {summary && (
+                <p className="font-body text-xs text-contrast/60 leading-relaxed mb-4 border-l-2 border-accent pl-2.5">
+                  {summary}
+                </p>
+              )}
+
+              {html && html !== '<p></p>' ? (
+                <div
+                  className="prose-content"
+                  style={{ fontSize: '12px' }}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }),
+                  }}
+                />
+              ) : (
+                <p className="font-body text-xs text-contrast/20 italic">O conteúdo aparecerá aqui…</p>
+              )}
+            </div>
+          </div>
+
+          {/* Bottom home bar */}
+          <div className="absolute bottom-1.5 inset-x-0 flex justify-center pointer-events-none">
+            <div className="w-16 h-1 bg-gray-600 rounded-full" />
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -477,7 +522,7 @@ export default function PostForm({ post, action }: Props) {
         </div>
 
         {/* ── Main content ─────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-0 flex-1">
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-0 flex-1">
 
           {/* Left column — form fields */}
           <div className="p-8 space-y-5 border-r border-gray-100">
@@ -630,19 +675,17 @@ export default function PostForm({ post, action }: Props) {
             </div>
           </div>
 
-          {/* Right column — live preview (sticky) */}
-          <div className="p-6 bg-gray-50/60">
-            <div className="sticky top-[49px]">
-              <p className="font-body text-xs font-semibold text-contrast/40 uppercase tracking-widest mb-3">
-                Prévia em tempo real
-              </p>
-              <LivePreview
-                title={title}
-                summary={summary}
-                coverUrl={coverUrl}
-                html={editorHtml}
-              />
-            </div>
+          {/* Right column — live preview (sticky: sticks in <main> scroll container) */}
+          <div
+            className="hidden xl:flex flex-col items-center justify-start self-start sticky bg-gray-50/60 border-l border-gray-100 overflow-hidden pt-6"
+            style={{ top: 49, height: 'calc(100vh - 49px)' }}
+          >
+            <LivePreview
+              title={title}
+              summary={summary}
+              coverUrl={coverUrl}
+              html={editorHtml}
+            />
           </div>
         </div>
       </form>

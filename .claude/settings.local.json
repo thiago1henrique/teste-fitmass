@@ -68,7 +68,15 @@
       "PowerShell(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\public\" -Name | Where-Object { $_ -match '\\\\.\\(svg\\)$' })",
       "PowerShell(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\public\\\\fonts\" -Name | Where-Object { $_ -match '\\\\.\\(ttf\\)$' })",
       "Bash(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\\\\admin\" -Recurse -File)",
-      "Bash(Select-Object -ExpandProperty FullName)"
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(where playwright *)",
+      "Bash(npx playwright *)",
+      "Bash(npx @playwright/test --version)",
+      "Bash(npm list *)",
+      "Read(//c/Users/thiag/AppData/Roaming/npm/node_modules/**)",
+      "Bash(ls \"C:\\\\Users\\\\thiag\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\\" 2>&1 | head -5; npx --yes playwright@1.60.0 --version 2>&1 | head -3)",
+      "Read(//c/Users/thiag/AppData/Local/npm-cache/**)"
     ]
   }
 }

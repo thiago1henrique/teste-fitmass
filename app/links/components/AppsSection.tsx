@@ -15,6 +15,7 @@ export interface CategoryNode {
   id: string
   name: string
   order: number
+  hasTabs?: boolean | null
   disabled?: boolean | null
   disabledLabel?: string | null
   children: CategoryNode[]

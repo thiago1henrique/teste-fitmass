@@ -32,6 +32,7 @@ export default async function LinksAdminPage() {
     name: c.name,
     order: c.order ?? 0,
     parentId: c.parentId ?? null,
+    hasTabs: c.hasTabs ?? false,
     disabled: c.disabled ?? false,
     disabledLabel: c.disabledLabel ?? null,
   }))
@@ -44,6 +45,7 @@ export default async function LinksAdminPage() {
     icon: l.icon ?? null,
     categoryId: l.categoryId,
     order: l.order ?? 0,
+    disabled: l.disabled ?? false,
   }))
 
   return <LinksAdmin categories={categories} links={links} />

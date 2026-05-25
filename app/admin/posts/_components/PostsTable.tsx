@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition, useMemo } from 'react'
-import { deletePost } from '@/app/actions/posts'
+import { deletePost, duplicatePost } from '@/app/actions/posts'
 
 type Post = {
   id: string
@@ -33,6 +33,7 @@ function weekLabel(isoKey: string): string {
 
 export default function PostsTable({ posts }: { posts: Post[] }) {
   const [confirmId, setConfirmId] = useState<string | null>(null)
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PUBLISHED' | 'DRAFT'>('ALL')
@@ -41,6 +42,14 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
     startTransition(async () => {
       await deletePost(id)
       setConfirmId(null)
+    })
+  }
+
+  function handleDuplicate(id: string) {
+    setDuplicatingId(id)
+    startTransition(async () => {
+      await duplicatePost(id)
+      setDuplicatingId(null)
     })
   }
 
@@ -201,6 +210,14 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
                           >
                             Exportar
                           </a>
+                          <button
+                            onClick={() => handleDuplicate(post.id)}
+                            disabled={isPending}
+                            className="font-body text-sm text-contrast/40 hover:text-secondary transition-colors disabled:opacity-50"
+                            title="Duplicar post como rascunho"
+                          >
+                            {duplicatingId === post.id ? 'Duplicando…' : 'Duplicar'}
+                          </button>
                           <a
                             href={`/admin/posts/${post.id}/edit`}
                             className="font-body text-sm text-accent hover:text-accent/80 transition-colors"
@@ -227,7 +244,7 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
                           ) : (
                             <button
                               onClick={() => setConfirmId(post.id)}
-                              className="font-body text-sm text-contrast/40 hover:text-red-500 transition-colors"
+                              className="font-body text-sm text-red-500 hover:text-red-600 transition-colors"
                             >
                               Excluir
                             </button>

@@ -113,6 +113,36 @@ export async function updatePost(id: string, formData: FormData) {
   redirect('/admin/posts')
 }
 
+export async function duplicatePost(id: string) {
+  const session = await requireSession()
+
+  const client = getClient()
+  const { data: post } = await client.models.Post.get({ id })
+  if (!post) return { error: 'Post não encontrado.' }
+
+  const newTitle = `Cópia de ${post.title}`
+  let slug = generateSlug(newTitle)
+  const { data: existing } = await client.models.Post.list({ filter: { slug: { eq: slug } } })
+  if (existing.length > 0) slug = `${slug}-${Date.now()}`
+
+  await client.models.Post.create({
+    title:      newTitle,
+    slug,
+    summary:    post.summary,
+    content:    post.content,
+    coverUrl:   post.coverUrl ?? undefined,
+    status:     'DRAFT',
+    categories: post.categories ?? [],
+    authorId:   session.userId,
+    authorName: session.name,
+  })
+
+  auditLog('post_duplicated', session.userId, { originalId: id, slug })
+
+  revalidateTag('posts', 'default')
+  revalidatePath('/admin/posts')
+}
+
 export async function deletePost(id: string) {
   const session = await requireSession()
 

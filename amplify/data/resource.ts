@@ -27,6 +27,7 @@ const schema = a.schema({
       name:          a.string().required(),
       order:         a.integer().required(),
       parentId:      a.string(),
+      hasTabs:       a.boolean(),
       disabled:      a.boolean(),
       disabledLabel: a.string(),
     })
@@ -44,6 +45,7 @@ const schema = a.schema({
       icon:        a.string(),
       categoryId:  a.string().required(),
       order:       a.integer().required(),
+      disabled:    a.boolean(),
     })
     .authorization((allow) => [
       allow.groups(['ADMIN', 'EDITOR']),
