@@ -93,6 +93,42 @@
   50%       { transform: translateY(-8px); }
 }
 
+/* /links — volumetric smoke */
+@keyframes smoke-a {
+  0%, 100% { transform: translate(0px,   0px) scale(1);    }
+  20%      { transform: translate(55px, -35px) scale(1.08); }
+  45%      { transform: translate(-35px, 45px) scale(0.94); }
+  70%      { transform: translate(65px,  25px) scale(1.06); }
+  85%      { transform: translate(-15px,-40px) scale(1.01); }
+}
+@keyframes smoke-b {
+  0%, 100% { transform: translate(0px,   0px) scale(1);    }
+  25%      { transform: translate(-65px, 40px) scale(1.12); }
+  55%      { transform: translate(45px, -55px) scale(0.9);  }
+  80%      { transform: translate(-25px, 35px) scale(1.04); }
+}
+@keyframes smoke-c {
+  0%, 100% { transform: translate(0px,   0px) scale(1);    }
+  30%      { transform: translate(40px, -50px) scale(1.1);  }
+  65%      { transform: translate(-45px, 35px) scale(0.92); }
+}
+@keyframes neon-flicker {
+  0%, 100% { opacity: 1;    }
+  8%       { opacity: 0.88; }
+  15%      { opacity: 0.97; }
+  30%      { opacity: 0.82; }
+  42%      { opacity: 1;    }
+  56%      { opacity: 0.9;  }
+  70%      { opacity: 1;    }
+  85%      { opacity: 0.86; }
+  93%      { opacity: 0.97; }
+}
+@keyframes wisp-drift {
+  0%, 100% { transform: translateX(0px)  scaleX(1);    opacity: 0.15; }
+  35%      { transform: translateX(55px) scaleX(1.22); opacity: 0.24; }
+  70%      { transform: translateX(-20px) scaleX(0.88); opacity: 0.10; }
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50%       { transform: translateY(-20px); }

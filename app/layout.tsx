@@ -100,7 +100,8 @@ async function PublicScripts() {
 }
 
 async function ConditionalFooter() {
-  if (await isAdminRoute()) return null
+  const pathname = (await headers()).get('x-pathname') ?? ''
+  if (pathname.startsWith('/admin') || pathname.startsWith('/links')) return null
   return <Footer />
 }
 

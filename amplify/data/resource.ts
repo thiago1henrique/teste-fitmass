@@ -21,6 +21,35 @@ const schema = a.schema({
       // update intentionally removed — view counting must use a backend-only resolver
       allow.publicApiKey().to(['read']),
     ]),
+
+  LinkCategory: a
+    .model({
+      name:          a.string().required(),
+      order:         a.integer().required(),
+      parentId:      a.string(),
+      disabled:      a.boolean(),
+      disabledLabel: a.string(),
+    })
+    .authorization((allow) => [
+      allow.groups(['ADMIN', 'EDITOR']),
+      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
+    ]),
+
+  LinkItem: a
+    .model({
+      title:       a.string().required(),
+      url:         a.string().required(),
+      description: a.string(),
+      icon:        a.string(),
+      categoryId:  a.string().required(),
+      order:       a.integer().required(),
+    })
+    .authorization((allow) => [
+      allow.groups(['ADMIN', 'EDITOR']),
+      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
+    ]),
 })
 
 export type Schema = ClientSchema<typeof schema>

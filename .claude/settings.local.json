@@ -61,7 +61,14 @@
       "Bash(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\" -Recurse -Filter \"*HowItWorks*\" -ErrorAction SilentlyContinue)",
       "Bash(Select-Object -First 20)",
       "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")",
-      "Bash(node -e \"require\\('lucide-react'\\)\")"
+      "Bash(node -e \"require\\('lucide-react'\\)\")",
+      "PowerShell(if \\(!\\(Test-Path \"C:\\\\Users\\\\thiag\\\\Desktop\\\\fitmass-backup\"\\)\\) { New-Item -ItemType Directory -Path \"C:\\\\Users\\\\thiag\\\\Desktop\\\\fitmass-backup\" })",
+      "Bash(ls -la \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\public\\\\\" | grep -E '\\\\.\\(svg|ttf|woff\\)$|^d.*fonts')",
+      "Read(//d/Dev/Fitmass/fitmass-site/public\" | grep -E '/**)",
+      "PowerShell(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\public\" -Name | Where-Object { $_ -match '\\\\.\\(svg\\)$' })",
+      "PowerShell(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\public\\\\fonts\" -Name | Where-Object { $_ -match '\\\\.\\(ttf\\)$' })",
+      "Bash(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\\\\admin\" -Recurse -File)",
+      "Bash(Select-Object -ExpandProperty FullName)"
     ]
   }
 }
