@@ -4,10 +4,22 @@ import { usePathname } from 'next/navigation'
 import Header from '@/app/components/header/Header'
 
 const navLinks = [
-  { label: 'Início',  href: '/'               },
-  { label: 'Planos',  href: '/planos'          },
-  { label: 'Blog',    href: '/blog'            },
-  { label: 'Contato', href: '/contato'          },
+  { label: 'Início',   href: '/'       },
+  {
+    label: 'Produtos',
+    dropdown: [
+      {
+        label: 'MyDay — IA no WhatsApp',
+        href: '/myday',
+        image: '/pages/landingpage/aiSection/MyDay-icone.svg',
+        description: 'IA de acompanhamento nutricional que funciona direto no WhatsApp dos seus alunos. Sua academia monetiza a cada mensalidade paga.',
+        cta: 'Confira',
+      },
+    ],
+  },
+  { label: 'Planos',   href: '/planos' },
+  { label: 'Blog',     href: '/blog'   },
+  { label: 'Contato',  href: '/contato' },
 ]
 
 const cta = {

@@ -125,6 +125,7 @@ export default function Footer() {
             'linear-gradient(90deg, #88BD23 0%, #25B6EB 50%, transparent 100%)',
         }}
         aria-hidden="true"
+        suppressHydrationWarning
       />
 
       {/* Corpo principal */}

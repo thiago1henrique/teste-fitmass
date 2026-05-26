@@ -127,7 +127,9 @@ function Bubble({ msg }: { msg: Msg }) {
           <div className="relative rounded-xl overflow-hidden">
             <img src={msg.photoSrc} alt="Refeição" className="w-27.5 h-27.5 object-cover block" />
             <div className="absolute bottom-1 right-1.5 px-1 py-px">
-              <span className="text-white text-[7px] leading-none drop-shadow">11:23</span>
+              <span className="text-white text-[7px] leading-none drop-shadow" suppressHydrationWarning>
+                {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+              </span>
             </div>
           </div>
         </div>
@@ -188,10 +190,20 @@ export default function MyDayMockup({ scale = 1, onInteractChange }: MyDayMockup
   const [messages, setMessages] = useState<Msg[]>([])
   const [isTyping, setIsTyping] = useState(false)
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null)
+  const [currentTime, setCurrentTime] = useState('9:41')
 
   const listRef = useRef<HTMLDivElement>(null)
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
   const msgCounter = useRef(0)
+
+  useEffect(() => {
+    function tick() {
+      setCurrentTime(new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }))
+    }
+    tick()
+    const id = setInterval(tick, 30_000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     const el = listRef.current
@@ -280,7 +292,7 @@ export default function MyDayMockup({ scale = 1, onInteractChange }: MyDayMockup
         <div className="absolute -right-0.5 top-29   w-0.75 h-11 bg-[#111] rounded-r-full" aria-hidden="true" />
 
         {/* Screen */}
-        <div className="absolute inset-1.25 rounded-[2.3rem] overflow-hidden flex flex-col">
+        <div className="absolute inset-1.25 rounded-[2.3rem] overflow-hidden flex flex-col bg-[#f0f0f0]">
 
           {/* Status bar */}
           <div
@@ -288,13 +300,21 @@ export default function MyDayMockup({ scale = 1, onInteractChange }: MyDayMockup
             style={{ backgroundColor: '#075E54' }}
           >
             <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-10 h-2.75 bg-black rounded-full" aria-hidden="true" />
-            <div className="flex items-end gap-px z-10" aria-hidden="true">
-              {[2, 3, 4, 5, 6].map((h, i) => (
-                <div key={i} className="w-0.5 rounded-sm bg-white" style={{ height: h, opacity: i < 4 ? 1 : 0.35 }} />
-              ))}
+            <div className="flex items-center gap-1.5 z-10" aria-hidden="true">
+              <div className="flex items-end gap-px">
+                {[2, 3, 4, 5, 6].map((h, i) => (
+                  <div key={i} className="w-0.5 rounded-sm bg-white" style={{ height: h, opacity: i < 4 ? 1 : 0.35 }} />
+                ))}
+              </div>
+              {/* WiFi icon */}
+              <svg viewBox="0 0 24 24" fill="white" className="w-2.5 h-2.5" aria-hidden="true">
+                <path d="M1.5 8.5C5.6 4.4 10.5 2.5 12 2.5s6.4 1.9 10.5 6l-1.5 1.5C17.6 6.6 14.9 4.5 12 4.5S6.4 6.6 3 10l-1.5-1.5z" opacity=".4"/>
+                <path d="M5 12c1.9-1.9 4.3-3 7-3s5.1 1.1 7 3l-1.5 1.5C16 12 14.1 11 12 11s-4 1-5.5 2.5L5 12z" opacity=".7"/>
+                <path d="M8.5 15.5C9.4 14.6 10.6 14 12 14s2.6.6 3.5 1.5L12 19l-3.5-3.5z"/>
+              </svg>
             </div>
             <div className="z-10 rounded px-1.5 py-0.5">
-              <span className="text-[7.5px] font-bold text-white leading-none">9:41</span>
+              <span className="text-[7.5px] font-bold text-white leading-none" suppressHydrationWarning>{currentTime}</span>
             </div>
           </div>
 
@@ -306,7 +326,7 @@ export default function MyDayMockup({ scale = 1, onInteractChange }: MyDayMockup
             <img src={MYDAY_AVATAR} alt="" aria-hidden="true" className="w-7 h-7 rounded-full shrink-0 object-contain bg-white p-0.5" />
             <div className="flex-1 min-w-0">
               <div className="text-white text-[10px] font-bold leading-tight truncate">MyDay</div>
-              <div className="text-white/60 text-[7.5px] leading-tight">Assistente de Nutrição</div>
+              <div className="text-white/60 text-[7.5px] leading-tight">Fitmass</div>
             </div>
             <div className="flex items-center gap-2 shrink-0 opacity-90">
               <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5" aria-hidden="true">
