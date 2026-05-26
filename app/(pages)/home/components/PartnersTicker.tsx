@@ -133,7 +133,7 @@ export default function PartnersTicker({ topDiagonal = false }: { topDiagonal?: 
           <div className="flex overflow-hidden">
             <ul
               className="flex gap-14 animate-marquee whitespace-nowrap"
-              style={{ willChange: 'transform' }}
+              style={{ willChange: 'transform', backfaceVisibility: 'hidden' }}
             >
               {[...partners, ...partners].map((name, i) => (
                 <li

@@ -36,7 +36,7 @@
 
   --font-title: 'AeroMatics', 'Impact', 'Arial Black', sans-serif;
 
-  --animate-marquee: marquee 120s linear infinite;
+  --animate-marquee: marquee 260s linear infinite;
 
   --animate-blob-1: blob-drift-1 14s ease-in-out infinite;
   --animate-blob-2: blob-drift-2 18s ease-in-out infinite;
@@ -54,8 +54,8 @@
    ===================================================== */
 
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 
 @keyframes price-fade-in {
