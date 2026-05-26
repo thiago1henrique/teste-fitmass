@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 const faqs = [
   {
-    question: 'A balança tem garantia?',
+    question: 'A balança de bioimpedância tem garantia?',
     answer:
       'Sim, todos os equipamentos Fitmass possuem garantia de 12 meses contra defeitos de fabricação e suporte técnico nacional.',
   },
@@ -41,7 +41,7 @@ export default function FAQ() {
         <div className="text-center mb-8">
           <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
-            Dúvidas Frequentes
+            FAQ
           </span>
           <h2
             id="faq-heading"

@@ -63,7 +63,7 @@ function NetworkIcon({ className }: { className?: string }) {
 /* ─── Tooltip image sets ─────────────────────────────────────────────────── */
 
 const personalizacaoImages = [1, 2, 3, 4, 5].map((n) => ({
-  src: `/pages/planos/cardsSection/recursos/personalizacao-0${n}.png`,
+  src: `/pages/planos/cardsSection/acordeon/personalizacao/personalizacao-0${n}_white.png`,
   alt: `Personalização ${n}`,
 }))
 
@@ -76,6 +76,10 @@ const plotagemImages = [1, 2, 3, 4, 5].map((n) => ({
   src: `/pages/planos/cardsSection/recursos/plotagem-0${n}.png`,
   alt: `Plotagem ${n}`,
 }))
+
+const pesquisaImages = [
+  { src: '/pages/planos/cardsSection/recursos/formulario_bio3.png', alt: 'Formulário de pesquisa pós medição Bioscan 3.0' },
+]
 
 /* ─── Data ───────────────────────────────────────────────────────────────── */
 
@@ -99,7 +103,7 @@ const plans: Plan[] = [
     description: 'Para academias começarem a acompanhar avaliações corporais e evolução dos alunos.',
     badge: null,
     cta: 'Começar grátis',
-    ctaHref: 'https://wa.me/5541984810567?text=Desejo%20saber%20mais%20sobre%20o%20plano%20B%C3%A1sico',
+    ctaHref: 'https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0',
     Icon: DumbbellIcon,
     features: [
       'Avaliações corporais ilimitadas',
@@ -117,7 +121,7 @@ const plans: Plan[] = [
     description: 'Para academias que querem profissionalizar avaliações e melhorar o acompanhamento dos alunos.',
     badge: null,
     cta: 'Saiba Mais',
-    ctaHref: 'https://wa.me/5541984810567?text=Desejo%20saber%20mais%20sobre%20o%20plano%20Premium',
+    ctaHref: 'https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0',
     Icon: TrendingIcon,
     features: [
       'Tudo do Básico incluído',
@@ -136,7 +140,7 @@ const plans: Plan[] = [
     description: 'Para academias que querem transformar avaliações corporais em estratégia de retenção e crescimento.',
     badge: 'MAIS POPULAR',
     cta: 'Quero o ULTRA',
-    ctaHref: 'https://wa.me/5541984810567?text=Desejo%20saber%20sobre%20o%20plano%20ULTRA',
+    ctaHref: 'https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0',
     Icon: LightningIcon,
     features: [
       'Personalização do aplicativo da academia',
@@ -155,7 +159,7 @@ const plans: Plan[] = [
     description: 'Para redes de academias e operações com múltiplas unidades que precisam de integração avançada e suporte dedicado.',
     badge: null,
     cta: 'Fale Conosco',
-    ctaHref: 'https://wa.me/5541984810567?text=Desejo%20conhecer%20o%20plano%20Enterprise',
+    ctaHref: 'https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0',
     Icon: NetworkIcon,
     features: [
       'Tudo do ULTRA incluído',
@@ -186,7 +190,7 @@ function PriceDisplay({ planId, isAnnual }: { planId: string; isAnnual: boolean 
     const t = setTimeout(() => {
       setCurrentAnnual(isAnnual)
       setVisible(true)
-    }, 150)
+    }, 220)
     return () => clearTimeout(t)
   }, [isAnnual])
 
@@ -216,7 +220,7 @@ function PriceDisplay({ planId, isAnnual }: { planId: string; isAnnual: boolean 
   return (
     <div className="mb-6">
       <div
-        className={`flex items-baseline gap-1 transition-all duration-150 ${
+        className={`flex items-baseline gap-1 transition-all duration-300 ease-out ${
           visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1.5'
         }`}
       >
@@ -230,7 +234,7 @@ function PriceDisplay({ planId, isAnnual }: { planId: string; isAnnual: boolean 
           /mês
         </span>
       </div>
-      <div className={`transition-opacity duration-150 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`transition-opacity duration-300 ease-out ${visible ? 'opacity-100' : 'opacity-0'}`}>
         {currentAnnual ? (
           <span className="inline-block mt-1.5 text-xs font-semibold font-body text-accent bg-accent/10 rounded-full px-2.5 py-0.5">
             Cobrado anualmente
@@ -340,7 +344,12 @@ export default function PlanCards() {
               >
                 Plano Anual
               </span>
-              <span className="bg-accent text-white text-xs font-bold font-body rounded-full px-2.5 py-0.5 leading-none whitespace-nowrap">
+              <span
+                className={`bg-accent text-white text-xs font-bold font-body rounded-full px-2.5 py-1 leading-none whitespace-nowrap transition-all duration-300 ease-out ${
+                  isAnnual ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'
+                }`}
+                aria-hidden={!isAnnual}
+              >
                 Economize até 25%
               </span>
             </div>
@@ -428,6 +437,8 @@ export default function PlanCards() {
                           tooltip = <ImageTooltip images={bioImages} ariaLabel="Ver exemplos de personalização de telas do Bioscan" />
                         } else if (f === 'Plotagem do Bioscan') {
                           tooltip = <ImageTooltip images={plotagemImages} ariaLabel="Ver exemplos de plotagem" />
+                        } else if (f === 'Pesquisas personalizadas após medições') {
+                          tooltip = <ImageTooltip images={pesquisaImages} ariaLabel="Ver formulário de pesquisa pós medição Bioscan 3.0" />
                         }
                       }
                       return (

@@ -101,13 +101,16 @@ const prices = data.metadata.precos as Record<PlanKey, string>
 /* ─── Tooltip images ─────────────────────────────────────────────────────── */
 
 const personalizacaoImages = [1, 2, 3, 4, 5].map((n) => ({
-  src: `/pages/planos/cardsSection/recursos/personalizacao-0${n}.png`,
+  src: `/pages/planos/cardsSection/acordeon/personalizacao/personalizacao-0${n}_white.png`,
   alt: `Personalização ${n}`,
 }))
 
 const FEATURE_TOOLTIPS: Record<string, { images: { src: string; alt: string }[]; ariaLabel: string }> = {
   'Criar Cards Personalizados Timeline App': {
-    images: personalizacaoImages,
+    images: [1, 2, 3, 4, 5].map((n) => ({
+      src: `/pages/planos/cardsSection/acordeon/personalizacao/card_personalizado_0${n}.png`,
+      alt: `Card personalizado timeline ${n}`,
+    })),
     ariaLabel: 'Ver exemplos de cards personalizados para timeline',
   },
   'Personalização Cores App': {
@@ -123,9 +126,23 @@ const FEATURE_TOOLTIPS: Record<string, { images: { src: string; alt: string }[];
     ariaLabel: 'Ver exemplo de tela de descanso com anúncio clicável',
   },
   'Personalização Cores Telas Bioscan 3.0': {
-    images: personalizacaoImages,
+    images: [1, 2, 3, 4, 5].map((n) => ({
+      src: `/pages/planos/cardsSection/acordeon/personalizacao/personalizacao_cores_0${n}.png`,
+      alt: `Personalização cores Bioscan ${n}`,
+    })),
     ariaLabel: 'Ver exemplos de personalização de cores das telas do Bioscan',
   },
+  'Criação Pesquisas Customizadas Pós Medição Bioscan 3.0': {
+    images: [{ src: '/pages/planos/cardsSection/acordeon/personalizacao/formulario_bio3.png', alt: 'Formulário de pesquisa pós medição Bioscan 3.0' }],
+    ariaLabel: 'Ver formulário de pesquisa pós medição Bioscan 3.0',
+  },
+}
+
+const DISPLAY_NAMES: Record<string, string> = {
+  'Personalização Cores App': 'Personalização de cores no App',
+  'Telas Descanso Customizadas Bioscan 3.0': 'Telas de Descanso Customizadas Bioscan 3.0',
+  'Telas Descanso Anúncios Clicáveis Bioscan 3.0': 'Telas de Descanso com Anúncios Clicáveis Bioscan 3.0',
+  'Criação Pesquisas Customizadas Pós Medição Bioscan 3.0': 'Criação de Pesquisas Customizadas Pós Medição Bioscan 3.0',
 }
 
 /* ─── Icons ──────────────────────────────────────────────────────────────── */
@@ -326,20 +343,31 @@ export default function ComparisonAccordion() {
 
                   {/* Feature rows */}
                   <div className="divide-y divide-gray-50">
-                    {category.features.map((feature) => (
+                    {category.features.map((feature) => {
+                      const displayName = DISPLAY_NAMES[feature.name] ?? feature.name
+                      const tooltip = FEATURE_TOOLTIPS[feature.name]
+                      const words = displayName.split(' ')
+                      const lastWord = tooltip ? words.pop()! : null
+                      const restText = tooltip ? words.join(' ') : displayName
+
+                      return (
                       <div
                         key={feature.name}
                         className="grid grid-cols-[2fr_1fr_1fr_1fr] items-start px-4 md:px-6 py-3 hover:bg-surface/60 transition-colors"
                       >
-                        <span className="font-body text-sm text-contrast pr-4 flex items-start gap-1.5">
-                          <span className="leading-snug">{feature.name}</span>
-                          {FEATURE_TOOLTIPS[feature.name] && (
-                            <span className="shrink-0 mt-0.5">
-                              <ImageTooltip
-                                images={FEATURE_TOOLTIPS[feature.name].images}
-                                ariaLabel={FEATURE_TOOLTIPS[feature.name].ariaLabel}
-                              />
-                            </span>
+                        <span className="font-body text-sm text-contrast pr-4 leading-snug">
+                          {restText}
+                          {lastWord && (
+                            <>
+                              {' '}
+                              <span className="whitespace-nowrap">
+                                {lastWord}
+                                <ImageTooltip
+                                  images={tooltip!.images}
+                                  ariaLabel={tooltip!.ariaLabel}
+                                />
+                              </span>
+                            </>
                           )}
                         </span>
                         {feature.availability.map((available, i) => (
@@ -353,7 +381,7 @@ export default function ComparisonAccordion() {
                           </div>
                         ))}
                       </div>
-                    ))}
+                    )})}
                   </div>
                 </div>
               </div>

@@ -52,7 +52,7 @@ const PRODUCTS = [
     name: 'Fitmass System',
     tagline: 'Gestão completa da sua academia',
     description:
-      'O software de gestão integrado à balança. Gerencie avaliações, alunos e relatórios em uma plataforma completa.',
+      'O software de gestão integrado à bioimpedância. Gerencie avaliações, alunos e relatórios em uma plataforma completa.',
     label: 'Software',
     accent: '#F33433',
     bgFrom: '#141614',

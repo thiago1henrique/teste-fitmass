@@ -7,9 +7,9 @@ const STEPS: { number: string; Icon: LucideIcon; title: string; description: str
   {
     number: '01',
     Icon: Scale,
-    title: 'Avaliação na balança',
+    title: 'Avaliação no Bioscan',
     description:
-      'O aluno sobe na balança Bioscan. Em menos de 1 minuto, o equipamento realiza a análise completa de bioimpedância.',
+      'O aluno sobe na balança de bioimpedância Bioscan. Em menos de 1 minuto, o equipamento realiza a análise completa.',
   },
   {
     number: '02',
@@ -115,7 +115,7 @@ export default function HowItWorksSection() {
             id="como-funciona-heading"
             className="font-title text-4xl md:text-5xl uppercase text-white tracking-wide leading-tight"
           >
-            Da balança ao resultado:{' '}
+            Da bioimpedância ao resultado:{' '}
             <span className="text-accent">entenda o fluxo</span>
           </h2>
           <p className="font-body text-white/60 mt-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">

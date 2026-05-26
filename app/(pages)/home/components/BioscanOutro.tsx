@@ -124,7 +124,7 @@ export default function BioscanOutro() {
           }}
         >
           <Link
-            href="https://wa.me/5541984810567?text=Desejo%20conhecer%20mais%20sobre%20a%20Fitmass"
+            href="https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0"
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-2 bg-accent hover:bg-accent/90 active:scale-95 text-black font-body font-bold text-xs sm:text-sm uppercase tracking-wide sm:tracking-wider px-5 sm:px-8 py-4 rounded-full transition-all duration-200 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"

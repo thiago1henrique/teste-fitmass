@@ -26,7 +26,7 @@ const faqs = [
   {
     question: 'Qual a entrega técnica e prazo de implementação?',
     answer:
-      'O sistema é Plug & Play: a balança conecta à sua rede e o software está pronto no mesmo dia. O processo de onboarding guiado garante que você comece a usar sem complicações técnicas.',
+      'O sistema é Plug & Play: a balança de bioimpedância conecta à sua rede e o software está pronto no mesmo dia. O processo de onboarding guiado garante que você comece a usar sem complicações técnicas.',
   },
 ]
 

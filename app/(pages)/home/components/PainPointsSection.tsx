@@ -13,11 +13,11 @@ const items = [
   },
   {
     problem: 'Sistemas desconectados, dados perdidos entre profissional e aluno',
-    solution: 'Balança, app e sistema de gestão integrados: tudo em uma só plataforma',
+    solution: 'Bioimpedância, app e sistema de gestão integrados: tudo em uma só plataforma',
   },
   {
     problem: 'Equipamento genérico sem nenhuma identidade com a sua academia',
-    solution: 'App e balança com a sua marca, diferencial que o aluno vê todo dia',
+    solution: 'App e bioimpedância com a sua marca, diferencial que o aluno vê todo dia',
   },
   {
     problem: 'Suporte técnico frio, você resolve os problemas sozinho',

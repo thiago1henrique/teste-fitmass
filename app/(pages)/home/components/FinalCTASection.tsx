@@ -62,7 +62,7 @@ export default function FinalCTASection() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a
-            href="https://wa.me/5541984810567"
+            href="https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0"
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-3 bg-contrast text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-contrast/85 active:scale-[0.98] transition-all duration-200 shadow-xl shadow-black/20"
@@ -87,7 +87,7 @@ export default function FinalCTASection() {
 
         {/* Social proof */}
         <p className="mt-10 font-body text-contrast/50 text-sm tracking-wide">
-          +200 academias já confiam na Fitmass&nbsp;&nbsp;·&nbsp;&nbsp;Sem contrato de fidelidade
+          +150 academias já confiam na Fitmass&nbsp;&nbsp;·&nbsp;&nbsp;Sem contrato de fidelidade
         </p>
       </div>
     </section>

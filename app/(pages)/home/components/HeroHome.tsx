@@ -56,7 +56,7 @@ export default function HeroHome() {
           </h1>
 
           <p className="font-body text-white/65 text-lg md:text-xl leading-relaxed mb-10 max-w-xl">
-            Tecnologia de avaliação física completa: a balança Bioscan, o app para o aluno e o sistema de gestão. Tudo em um só ecossistema, pensado para academias que querem crescer.
+            Tecnologia de avaliação física completa: a balança de bioimpedância Bioscan, o app para o aluno e o sistema de gestão. Tudo em um só ecossistema, pensado para academias que querem crescer.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
@@ -70,7 +70,7 @@ export default function HeroHome() {
               </svg>
             </a>
             <a
-              href="https://wa.me/5541984810567?text=Desejo%20conhecer%20mais%20sobre%20a%20Fitmass"
+              href="https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0"
               className="inline-flex items-center justify-center border border-secondary/40 text-secondary font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-secondary hover:bg-secondary/10 transition-colors whitespace-nowrap"
             >
               Falar com um consultor 

@@ -97,9 +97,8 @@ function SliderHandle({
 
 const FITMASS_ITEMS = [
   { name: 'Bioscan',         desc: 'Balança de bioimpedância com análise completa em menos de 1 minuto.' },
-  { name: 'App do Aluno',    desc: 'Histórico, metas e evolução sempre na palma da mão do aluno.' },
+  { name: 'Fitmass App',     desc: 'Histórico, metas e evolução sempre na palma da mão do aluno.' },
   { name: 'Fitmass System',  desc: 'Gestão de avaliações e relatórios para professor e academia.' },
-  { name: 'Pocket',          desc: 'Avaliação pelo celular do personal, em qualquer lugar.' },
 ]
 
 const CUSTOM_ITEMS = [
@@ -207,7 +206,7 @@ export default function BeforeAfterSection() {
             <span className="text-accent">NA PRÁTICA</span>
           </h2>
           <p className="font-body text-white/60 mt-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
-            Arraste o divisor e compare — relatórios Fitmass com precisão clínica versus o padrão do mercado.
+            Arraste o divisor e veja a personalização do Fitmass ganhar forma.
           </p>
         </div>
       </div>

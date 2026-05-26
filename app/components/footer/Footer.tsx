@@ -76,7 +76,7 @@ const navLinks = [
 const socialLinks = [
   { label: 'Instagram', href: 'https://www.instagram.com/fitmass.tech/',                                                                                         Icon: InstagramIcon },
   { label: 'YouTube',   href: 'https://www.youtube.com/@fitmass791',                                                                                              Icon: YouTubeIcon   },
-  { label: 'WhatsApp',  href: 'https://wa.me/5541984810567?text=Ol%C3%A1,%20vim%20do%20site%20e%20gostaria%20de%20ter%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20Fitmass', Icon: WhatsAppIcon  },
+  { label: 'WhatsApp',  href: 'https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0', Icon: WhatsAppIcon  },
   { label: 'Facebook',  href: 'https://www.facebook.com/fitmass.tech/',                                                                                           Icon: FacebookIcon  },
 ]
 
@@ -96,7 +96,7 @@ const contactItems = [
   {
     Icon: LocationIcon,
     label: 'Endereço',
-    text: 'Curitiba, PR – Brasil',
+    text: 'Pinhais - PR',
     href: undefined,
   },
 ]

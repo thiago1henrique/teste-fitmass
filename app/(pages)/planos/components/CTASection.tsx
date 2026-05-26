@@ -64,7 +64,7 @@ export default function CTASection() {
         </p>
 
         <a
-          href="https://wa.me/5541984810567?text=Desejo%20come%C3%A7ar%20com%20o%20Fitmass%20na%20minha%20academia"
+          href="https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-3 bg-accent text-white font-body font-bold text-base uppercase tracking-widest px-12 py-5 rounded-2xl hover:bg-accent/90 active:scale-95 transition-all duration-200 shadow-2xl shadow-accent/30"

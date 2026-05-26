@@ -76,7 +76,12 @@
       "Bash(npm list *)",
       "Read(//c/Users/thiag/AppData/Roaming/npm/node_modules/**)",
       "Bash(ls \"C:\\\\Users\\\\thiag\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\\" 2>&1 | head -5; npx --yes playwright@1.60.0 --version 2>&1 | head -3)",
-      "Read(//c/Users/thiag/AppData/Local/npm-cache/**)"
+      "Read(//c/Users/thiag/AppData/Local/npm-cache/**)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\.github\" -Force -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -Property Name, FullName)",
+      "Bash(npm --version)",
+      "Bash(gh repo *)",
+      "Bash(gh auth *)"
     ]
   }
 }

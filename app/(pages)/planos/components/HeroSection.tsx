@@ -62,7 +62,7 @@ export default function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4">
             <a
               href="#planos"
-              className="inline-flex items-center justify-center gap-2 bg-accent text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-accent/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-accent text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-accent/90 transition-colors whitespace-nowrap"
             >
               Ver Planos
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -70,10 +70,10 @@ export default function HeroSection() {
               </svg>
             </a>
             <a
-              href="https://wa.me/5541984810567?text=Desejo%20conhecer%20mais%20sobre%20a%20Fitmass"
+              href="https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center border border-white/20 text-white/80 font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-secondary/60 hover:text-secondary transition-colors"
+              className="inline-flex items-center justify-center border border-white/20 text-white/80 font-body font-semibold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:border-secondary/60 hover:text-secondary transition-colors whitespace-nowrap"
             >
               Falar com Especialista
             </a>
@@ -84,7 +84,7 @@ export default function HeroSection() {
         <div
           className="flex justify-center lg:justify-end items-center"
           role="img"
-          aria-label="Balança de bioimpedância Biosan"
+          aria-label="Balança de bioimpedância Bioscan"
         >
           <div className="relative" style={{ perspective: '1000px' }}>
             {/* Glow ambiente */}
@@ -108,8 +108,8 @@ export default function HeroSection() {
             {/* Imagem com classe 3D */}
             <div className="img-3d-tilt">
               <Image
-                src="/pages/landingpage/bioscan-2.png"
-                alt="Balança de bioimpedância Biosan"
+                src="/pages/landingpage/bioscan-3.png"
+                alt="Balança de bioimpedância Bioscan 3"
                 width={700}
                 height={980}
                 sizes="(max-width: 1024px) 100vw, 560px"
@@ -121,18 +121,8 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div
-        className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 opacity-30 pointer-events-none select-none"
-        aria-hidden="true"
-      >
-        <span className="font-body text-white text-[10px] uppercase tracking-[0.25em]">Desça a página</span>
-        <svg className="w-4 h-4 text-white animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
 
-      {/* Diagonal divider → PlanCards (bg-surface) */}
+{/* Diagonal divider → PlanCards (bg-surface) */}
       <div className="absolute bottom-0 left-0 right-0 pointer-events-none" aria-hidden="true">
         <svg viewBox="0 0 1440 72" preserveAspectRatio="none" className="w-full" style={{ height: 73, display: 'block' }}>
           <polygon fill="#F8F8F8" points="1441,-1 1441,73 -1,73" />
