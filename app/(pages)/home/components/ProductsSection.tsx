@@ -320,6 +320,7 @@ export default function ProductsSection() {
                       src={p.image}
                       alt={p.name}
                       fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.7)]"
                       priority={i === 0}
                     />
@@ -463,6 +464,7 @@ export default function ProductsSection() {
                         src={p.image}
                         alt={p.name}
                         fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-contain drop-shadow-[0_35px_60px_rgba(0,0,0,0.6)]"
                         priority={i === 0}
                       />
@@ -515,6 +517,7 @@ export default function ProductsSection() {
                       src={product.image}
                       alt=""
                       fill
+                      sizes="36px"
                       className={`object-contain transition-all duration-500 ${
                         i === activeIndex ? 'scale-100' : 'grayscale opacity-60'
                       }`}

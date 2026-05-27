@@ -59,6 +59,7 @@ function ImageInsertModal({
     }
     setUploading(false)
     if (data.error) { setUploadError(data.error); return }
+    if (!data.url) { setUploadError('URL não retornada pelo servidor.'); return }
     onInsert(data.url)
   }
 
@@ -172,6 +173,7 @@ function CoverInput({
     }
     setUploading(false)
     if (data.error) { setUploadError(data.error); return }
+    if (!data.url) { setUploadError('URL não retornada pelo servidor.'); return }
     onChange(data.url)
   }
 
