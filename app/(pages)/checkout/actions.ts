@@ -60,6 +60,7 @@ export async function processCheckout(
     customer: {
       name: d.name,
       email: d.email,
+      type: 'individual',
       document: d.cpf.replace(/\D/g, ''),
       document_type: 'CPF',
       phones: {
@@ -135,6 +136,16 @@ export async function processCheckout(
 
   const charge = responseBody.charges?.[0]
   const tx = charge?.last_transaction
+
+  if (charge?.status === 'failed' || tx?.status === 'failed') {
+    const gatewayMsg = tx?.gateway_response?.errors?.[0]?.message ?? ''
+    const isPibNotConfigured = gatewayMsg.includes('action_forbidden') || gatewayMsg.includes('Sem ambiente')
+    const userMsg = isPibNotConfigured
+      ? 'Pagamento via PIX não está disponível no momento. Escolha outro método de pagamento.'
+      : `Pagamento recusado pelo gateway. Tente novamente ou use outro método.`
+    console.error('[processCheckout] charge failed:', gatewayMsg)
+    return { success: false, error: userMsg }
+  }
 
   if (d.paymentMethod === 'pix') {
     return {

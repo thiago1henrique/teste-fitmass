@@ -49,7 +49,14 @@ function ImageInsertModal({
     const fd = new FormData()
     fd.set('file', file)
     const res  = await fetch('/api/upload', { method: 'POST', body: fd })
-    const data = await res.json()
+    let data: { url?: string; error?: string } = {}
+    try {
+      data = await res.json()
+    } catch {
+      setUploading(false)
+      setUploadError('Resposta inválida do servidor. Tente novamente.')
+      return
+    }
     setUploading(false)
     if (data.error) { setUploadError(data.error); return }
     onInsert(data.url)
@@ -155,7 +162,14 @@ function CoverInput({
     const fd = new FormData()
     fd.set('file', file)
     const res  = await fetch('/api/upload', { method: 'POST', body: fd })
-    const data = await res.json()
+    let data: { url?: string; error?: string } = {}
+    try {
+      data = await res.json()
+    } catch {
+      setUploading(false)
+      setUploadError('Resposta inválida do servidor. Tente novamente.')
+      return
+    }
     setUploading(false)
     if (data.error) { setUploadError(data.error); return }
     onChange(data.url)

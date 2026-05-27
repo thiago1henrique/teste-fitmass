@@ -75,13 +75,13 @@ function SuccessWrapper({ children }: { children: React.ReactNode }) {
       <div className="w-full max-w-md animate-[price-fade-in_0.4s_ease-out]">
         {children}
         <div className="text-center mt-8">
-          <Link
+          <a
             href="/planos"
             className="inline-flex items-center gap-2 font-body text-sm text-contrast/40 hover:text-accent transition-colors duration-200"
           >
             <ChevronLeft className="w-4 h-4" />
             Voltar aos Planos
-          </Link>
+          </a>
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@ function CreditCardSuccess({ message }: { message: string }) {
 }
 
 function PixSuccess({ qrCode, qrCodeUrl }: { qrCode: string; qrCodeUrl: string }) {
-  const isImageUrl = qrCodeUrl.startsWith('http')
+  const isImageUrl = qrCodeUrl.startsWith('http') || qrCodeUrl.startsWith('data:image')
   return (
     <SuccessWrapper>
       <div className="text-center">
