@@ -1,4 +1,16 @@
-const items = [
+type PainItem = { problem: string; solution: string }
+
+type Props = {
+  items?: PainItem[]
+  badge?: string
+  title?: React.ReactNode
+  subtitle?: string
+  leftHeader?: string
+  rightHeader?: string
+  headingId?: string
+}
+
+const DEFAULT_ITEMS: PainItem[] = [
   {
     problem: 'Alunos abandonam sem dar explicação',
     solution: 'Acompanhe a evolução de cada aluno e antecipe o cancelamento',
@@ -22,29 +34,36 @@ const items = [
   {
     problem: 'Suporte técnico frio, você resolve os problemas sozinho',
     solution: 'Parceiro dedicado do crescimento da sua academia, do dia um em diante',
-  }
+  },
 ]
 
-export default function PainPointsSection() {
+export default function PainPointsSection({
+  items = DEFAULT_ITEMS,
+  badge = 'Problema & Solução',
+  title = <>O QUE ESTÁ CUSTANDO{' '}<span className="text-accent">ALUNOS À SUA ACADEMIA</span></>,
+  subtitle = 'Veja lado a lado o que muda quando sua academia investe em bioimpedância profissional.',
+  leftHeader = 'Sem avaliação profissional',
+  rightHeader = 'Com Fitmass',
+  headingId = 'dores-heading',
+}: Props) {
   return (
-    <section className="py-16 px-4 bg-surface" aria-labelledby="dores-heading">
+    <section className="py-16 px-4 bg-surface" aria-labelledby={headingId}>
       <div className="max-w-6xl mx-auto">
 
         {/* Heading */}
         <div className="text-center mb-10">
           <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
-            Problema & Solução
+            {badge}
           </span>
           <h2
-            id="dores-heading"
+            id={headingId}
             className="font-title text-4xl md:text-5xl uppercase text-contrast tracking-wide leading-tight mb-4"
           >
-            O QUE ESTÁ CUSTANDO{' '}
-            <span className="text-accent">ALUNOS À SUA ACADEMIA</span>
+            {title}
           </h2>
           <p className="font-body text-contrast/55 max-w-xl mx-auto">
-            Veja lado a lado o que muda quando sua academia investe em bioimpedância profissional. 
+            {subtitle}
           </p>
         </div>
 
@@ -61,7 +80,7 @@ export default function PainPointsSection() {
                 </svg>
               </span>
               <span className="font-title text-[10px] sm:text-sm uppercase tracking-wide text-red-800/70 leading-tight">
-                Sem avaliação profissional
+                {leftHeader}
               </span>
             </div>
             <div className="flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-accent/12 border-b border-accent/25">
@@ -72,7 +91,7 @@ export default function PainPointsSection() {
                 </svg>
               </span>
               <span className="font-title text-[10px] sm:text-sm uppercase tracking-wide text-accent font-semibold leading-tight">
-                Com Fitmass
+                {rightHeader}
               </span>
             </div>
           </div>

@@ -67,6 +67,28 @@ const PLANS: Record<string, PlanDetails> = {
       'Webhooks para automações externas',
     ],
   },
+  myday: {
+    id: 'myday',
+    name: 'MyDay Mensal',
+    price: 29.9,
+    billing: 'monthly',
+    features: [
+      'Acesso completo ao Fitmass MyDay',
+      'Renovação mensal automática',
+      'Cancele quando quiser',
+    ],
+  },
+  'myday-annual': {
+    id: 'myday-annual',
+    name: 'MyDay Anual',
+    price: 269,
+    billing: 'annual',
+    features: [
+      'Acesso completo ao Fitmass MyDay',
+      'Acesso garantido por 12 meses',
+      'Economize 25% em relação ao plano mensal',
+    ],
+  },
 }
 
 type Props = {

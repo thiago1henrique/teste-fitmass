@@ -279,16 +279,219 @@ function CheckItem({
   )
 }
 
+/* ─── Card inner content (shared between swipe deck and grid) ────────────── */
+
+function PlanCardContent({
+  plan,
+  isAnnual,
+  ctaOverride,
+}: {
+  plan: Plan
+  isAnnual: boolean
+  ctaOverride?: string
+}) {
+  const isUltra = plan.id === 'ultra'
+  const isEnterprise = plan.id === 'enterprise'
+  const isDark = isUltra || isEnterprise
+  const isCheckoutPlan = plan.id === 'premium' || plan.id === 'ultra'
+  const checkoutHref = ctaOverride ?? `/checkout?plan=${plan.id}&billing=${isAnnual ? 'annual' : 'monthly'}`
+
+  return (
+    <>
+      {plan.badge && (
+        <div className="bg-accent text-white font-body font-bold text-xs uppercase tracking-widest text-center py-2 rounded-t-[14px]">
+          {plan.badge}
+        </div>
+      )}
+
+      <div className="flex flex-col flex-1 p-8">
+        <div
+          className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shrink-0 ${
+            isDark ? 'bg-accent/20 text-accent' : 'bg-accent/10 text-accent'
+          }`}
+        >
+          <plan.Icon className="w-8 h-8" />
+        </div>
+
+        <h3
+          className={`font-title text-3xl uppercase tracking-wide mb-1 ${
+            isUltra ? 'text-accent' : isEnterprise ? 'text-white' : 'text-contrast'
+          }`}
+        >
+          {plan.name}
+        </h3>
+
+        <p
+          className={`font-body text-sm leading-snug mb-6 ${
+            isDark ? 'text-white/55' : 'text-contrast/55'
+          }`}
+        >
+          {plan.subtitle}
+        </p>
+
+        <PriceDisplay planId={plan.id} isAnnual={isAnnual} />
+
+        <hr className={`mb-6 ${isDark ? 'border-white/10' : 'border-gray-100'}`} />
+
+        <p
+          className={`font-body text-sm leading-relaxed mb-6 ${
+            isDark ? 'text-white/75' : 'text-contrast/65'
+          }`}
+        >
+          {plan.description}
+        </p>
+
+        <ul className="space-y-3 flex-1" aria-label={`Recursos do plano ${plan.name}`}>
+          {plan.features.map((f) => {
+            let tooltip: React.ReactNode = undefined
+            if (isUltra) {
+              if (f === 'Personalização do aplicativo da academia') {
+                tooltip = <ImageTooltip images={personalizacaoImages} ariaLabel="Ver exemplos de personalização do aplicativo" />
+              } else if (f === 'Personalização das telas do Bioscan') {
+                tooltip = <ImageTooltip images={bioImages} ariaLabel="Ver exemplos de personalização de telas do Bioscan" />
+              } else if (f === 'Plotagem do Bioscan') {
+                tooltip = <ImageTooltip images={plotagemImages} ariaLabel="Ver exemplos de plotagem" />
+              } else if (f === 'Pesquisas personalizadas após medições') {
+                tooltip = <ImageTooltip images={pesquisaImages} ariaLabel="Ver formulário de pesquisa pós medição Bioscan 3.0" />
+              }
+            }
+            return <CheckItem key={f} text={f} isDark={isDark} tooltip={tooltip} />
+          })}
+        </ul>
+
+        {isCheckoutPlan ? (
+          <Link
+            href={checkoutHref}
+            className={`mt-8 block text-center font-body font-semibold text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+              isUltra
+                ? 'bg-accent text-white hover:bg-accent/90 shadow-lg shadow-accent/30'
+                : 'border-2 border-accent/50 text-accent hover:border-accent hover:bg-accent hover:text-white'
+            }`}
+          >
+            {plan.cta}
+          </Link>
+        ) : (
+          <a
+            href={plan.ctaHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`mt-8 block text-center font-body font-semibold text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+              isEnterprise
+                ? 'bg-white/10 text-white/80 border border-white/20 hover:bg-secondary/15 hover:border-secondary/40 hover:text-secondary'
+                : 'border-2 border-accent/50 text-accent hover:border-accent hover:bg-accent hover:text-white'
+            }`}
+          >
+            {plan.cta}
+          </a>
+        )}
+      </div>
+    </>
+  )
+}
+
 /* ─── Section ────────────────────────────────────────────────────────────── */
 
-export default function PlanCards() {
+type PlanCardsProps = {
+  visiblePlanIds?: string[]
+  ctaOverride?: string
+  sectionTitle?: React.ReactNode
+  sectionSubtitle?: string
+  sectionBadge?: string
+  showToggle?: boolean
+  headingId?: string
+  cardWidth?: number
+  mobileSwipe?: boolean
+}
+
+export default function PlanCards({
+  visiblePlanIds,
+  ctaOverride,
+  sectionTitle = 'Escolha Seu Plano',
+  sectionSubtitle = 'Soluções completas em bioimpedância para cada fase do seu negócio.',
+  sectionBadge = 'Planos e Preços',
+  showToggle = true,
+  headingId = 'planos-heading',
+  cardWidth,
+  mobileSwipe = false,
+}: PlanCardsProps = {}) {
   const [isAnnual, setIsAnnual] = useState(false)
+
+  // Swipe deck state (only used when mobileSwipe=true)
+  const [swipeIndex, setSwipeIndex] = useState(0)
+  const [swipeDragX, setSwipeDragX] = useState(0)
+  const [isSwipeDragging, setIsSwipeDragging] = useState(false)
+
+  const startX = useRef(0)
+  const startY = useRef(0)
+  const gestureDir = useRef<'h' | 'v' | null>(null)
+  const captured = useRef(false)
+
+  const visiblePlans = visiblePlanIds ? plans.filter(p => visiblePlanIds.includes(p.id)) : plans
+  const gridCols = visiblePlans.length <= 2
+    ? 'grid-cols-1 md:grid-cols-2'
+    : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4'
+
+  const SWIPE_THRESHOLD = 75
+  const total = visiblePlans.length
+
+  const onSwipePointerDown = (e: React.PointerEvent) => {
+    startX.current = e.clientX
+    startY.current = e.clientY
+    gestureDir.current = null
+    captured.current = false
+  }
+
+  const onSwipePointerMove = (e: React.PointerEvent) => {
+    const dx = e.clientX - startX.current
+    const dy = e.clientY - startY.current
+
+    if (gestureDir.current === null) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return
+      gestureDir.current = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v'
+      if (gestureDir.current === 'h') {
+        e.currentTarget.setPointerCapture(e.pointerId)
+        captured.current = true
+        setIsSwipeDragging(true)
+      }
+    }
+
+    if (gestureDir.current !== 'h') return
+
+    const canLeft = swipeIndex < total - 1
+    const canRight = swipeIndex > 0
+    let effective = dx
+    if (dx < 0 && !canLeft) effective = dx * 0.2
+    if (dx > 0 && !canRight) effective = dx * 0.2
+    setSwipeDragX(effective)
+  }
+
+  const onSwipePointerUp = () => {
+    if (!captured.current) return
+    setIsSwipeDragging(false)
+    gestureDir.current = null
+    captured.current = false
+
+    const goLeft = swipeDragX < -SWIPE_THRESHOLD && swipeIndex < total - 1
+    const goRight = swipeDragX > SWIPE_THRESHOLD && swipeIndex > 0
+
+    if (goLeft || goRight) {
+      const flyTo = goLeft ? -600 : 600
+      const next = goLeft ? swipeIndex + 1 : swipeIndex - 1
+      setSwipeDragX(flyTo)
+      setTimeout(() => {
+        setSwipeIndex(next)
+        setSwipeDragX(0)
+      }, 280)
+    } else {
+      setSwipeDragX(0)
+    }
+  }
 
   return (
     <section
       id="planos"
       className="py-20 px-4 bg-surface"
-      aria-labelledby="planos-heading"
+      aria-labelledby={headingId}
     >
       <div className="max-w-6xl mx-auto">
 
@@ -296,78 +499,159 @@ export default function PlanCards() {
         <div className="text-center mb-10">
           <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
-            Planos e Preços
+            {sectionBadge}
           </span>
           <h2
-            id="planos-heading"
+            id={headingId}
             className="font-title text-4xl md:text-5xl text-contrast uppercase tracking-wide mb-4"
           >
-            Escolha Seu Plano
+            {sectionTitle}
           </h2>
           <p className="font-body text-contrast/60 text-lg max-w-xl mx-auto">
-            Soluções completas em bioimpedância para cada fase do seu negócio.
+            {sectionSubtitle}
           </p>
         </div>
 
         {/* Toggle mensal / anual */}
-        <div className="flex justify-center mb-20">
-          <div className="flex items-center gap-4">
-            <span
-              className={`font-body text-sm font-semibold transition-colors duration-200 select-none ${
-                !isAnnual ? 'text-contrast' : 'text-contrast/40'
-              }`}
-            >
-              Mensal
-            </span>
-
-            <button
-              type="button"
-              role="switch"
-              aria-checked={isAnnual}
-              aria-label="Alternar entre plano mensal e anual"
-              onClick={() => setIsAnnual(a => !a)}
-              className="relative w-12 h-6 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 cursor-pointer"
-              style={{ backgroundColor: isAnnual ? '#88BD23' : '#d1d5db' }}
-            >
-              <span
-                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${
-                  isAnnual ? 'translate-x-6' : 'translate-x-0'
-                }`}
-              />
-            </button>
-
-            <div className="flex items-center gap-2.5">
+        {showToggle && (
+          <div className="flex justify-center mb-20">
+            <div className="flex items-center gap-4">
               <span
                 className={`font-body text-sm font-semibold transition-colors duration-200 select-none ${
-                  isAnnual ? 'text-contrast' : 'text-contrast/40'
+                  !isAnnual ? 'text-contrast' : 'text-contrast/40'
                 }`}
               >
-                Plano Anual
+                Mensal
               </span>
-              <span
-                className={`bg-accent text-white text-xs font-bold font-body rounded-full px-2.5 py-1 leading-none whitespace-nowrap transition-all duration-300 ease-out ${
-                  isAnnual ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'
-                }`}
-                aria-hidden={!isAnnual}
+
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isAnnual}
+                aria-label="Alternar entre plano mensal e anual"
+                onClick={() => setIsAnnual(a => !a)}
+                className="relative w-12 h-6 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 cursor-pointer"
+                style={{ backgroundColor: isAnnual ? '#88BD23' : '#d1d5db' }}
               >
-                Economize até 25%
-              </span>
+                <span
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${
+                    isAnnual ? 'translate-x-6' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+
+              <div className="flex items-center gap-2.5">
+                <span
+                  className={`font-body text-sm font-semibold transition-colors duration-200 select-none ${
+                    isAnnual ? 'text-contrast' : 'text-contrast/40'
+                  }`}
+                >
+                  Plano Anual
+                </span>
+                <span
+                  className={`bg-accent text-white text-xs font-bold font-body rounded-full px-2.5 py-1 leading-none whitespace-nowrap transition-all duration-300 ease-out ${
+                    isAnnual ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'
+                  }`}
+                  aria-hidden={!isAnnual}
+                >
+                  Economize até 25%
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
-          {plans.map((plan) => {
+        {/* ── Mobile swipe deck (only when mobileSwipe=true) ── */}
+        {mobileSwipe && (
+          <div className="md:hidden mb-6">
+            <div className="relative">
+              {visiblePlans.map((plan, i) => {
+                const offset = i - swipeIndex
+                if (offset < 0 || offset > 2) return null
+                const isActive = offset === 0
+                const isUltra = plan.id === 'ultra'
+                const isEnterprise = plan.id === 'enterprise'
+
+                const tx = isActive ? swipeDragX : 0
+                const rot = isActive && isSwipeDragging ? swipeDragX / 22 : 0
+                const scale = isActive ? 1 : 1 - offset * 0.04
+                const ty = isActive ? 0 : offset * 14
+                const opacity = offset > 1 ? 0.55 : 1
+
+                return (
+                  <div
+                    key={plan.id}
+                    className={`${isActive ? 'relative cursor-grab active:cursor-grabbing' : 'absolute inset-x-0 top-0 pointer-events-none'}`}
+                    style={{
+                      transform: `translateX(${tx}px) rotate(${rot}deg) scale(${scale}) translateY(${ty}px)`,
+                      transformOrigin: 'top center',
+                      zIndex: 10 - offset,
+                      opacity,
+                      transition:
+                        isSwipeDragging && isActive
+                          ? 'none'
+                          : 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease',
+                      willChange: 'transform',
+                      userSelect: 'none',
+                    }}
+                    onPointerDown={isActive ? onSwipePointerDown : undefined}
+                    onPointerMove={isActive ? onSwipePointerMove : undefined}
+                    onPointerUp={isActive ? onSwipePointerUp : undefined}
+                    onPointerCancel={isActive ? onSwipePointerUp : undefined}
+                  >
+                    <article
+                      className={`flex flex-col rounded-2xl ${
+                        isUltra
+                          ? 'bg-contrast border-2 border-accent shadow-2xl shadow-accent/25'
+                          : isEnterprise
+                          ? 'bg-[#1a1a2e] border border-white/10 shadow-lg'
+                          : 'bg-white border border-gray-200 shadow-md'
+                      }`}
+                      aria-label={`Plano ${plan.name}`}
+                      draggable={false}
+                    >
+                      <PlanCardContent plan={plan} isAnnual={isAnnual} ctaOverride={ctaOverride} />
+                    </article>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Dots + hint */}
+            <div className="mt-5 flex flex-col items-center gap-2" aria-hidden="true">
+              <div className="flex items-center justify-center gap-2">
+                {visiblePlans.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { if (!isSwipeDragging) { setSwipeIndex(i); setSwipeDragX(0) } }}
+                    className={`rounded-full transition-all duration-300 ${
+                      i === swipeIndex ? 'w-5 h-1.5 bg-accent' : 'w-1.5 h-1.5 bg-contrast/20'
+                    }`}
+                    aria-label={`Ver plano ${visiblePlans[i].name}`}
+                  />
+                ))}
+              </div>
+              <p className="font-body text-xs text-contrast/35">← arraste para ver outros planos →</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Grid (desktop always, mobile when mobileSwipe=false) ── */}
+        <div
+          className={
+            cardWidth
+              ? `${mobileSwipe ? 'hidden md:flex' : 'flex'} flex-wrap justify-center gap-6 items-start`
+              : `${mobileSwipe ? 'hidden md:grid' : 'grid'} ${gridCols} gap-6 items-start`
+          }
+        >
+          {visiblePlans.map((plan) => {
             const isUltra = plan.id === 'ultra'
             const isEnterprise = plan.id === 'enterprise'
-            const isDark = isUltra || isEnterprise
-            const isCheckoutPlan = plan.id === 'premium' || plan.id === 'ultra'
-            const checkoutHref = `/checkout?plan=${plan.id}&billing=${isAnnual ? 'annual' : 'monthly'}`
 
             return (
               <article
                 key={plan.id}
+                style={cardWidth ? { width: cardWidth } : undefined}
                 className={`relative flex flex-col rounded-2xl transition-all duration-300 ${
                   isUltra
                     ? 'bg-contrast border-2 border-accent shadow-2xl shadow-accent/25 xl:scale-105 xl:-translate-y-3 z-10'
@@ -377,112 +661,12 @@ export default function PlanCards() {
                 }`}
                 aria-label={`Plano ${plan.name}`}
               >
-                {/* Badge */}
-                {plan.badge && (
-                  <div className="bg-accent text-white font-body font-bold text-xs uppercase tracking-widest text-center py-2 rounded-t-[14px]">
-                    {plan.badge}
-                  </div>
-                )}
-
-                <div className="flex flex-col flex-1 p-8">
-                  {/* Ícone */}
-                  <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shrink-0 ${
-                      isDark ? 'bg-accent/20 text-accent' : 'bg-accent/10 text-accent'
-                    }`}
-                  >
-                    <plan.Icon className="w-8 h-8" />
-                  </div>
-
-                  {/* Nome */}
-                  <h3
-                    className={`font-title text-3xl uppercase tracking-wide mb-1 ${
-                      isUltra ? 'text-accent' : isEnterprise ? 'text-white' : 'text-contrast'
-                    }`}
-                  >
-                    {plan.name}
-                  </h3>
-
-                  {/* Subtítulo */}
-                  <p
-                    className={`font-body text-sm leading-snug mb-6 ${
-                      isDark ? 'text-white/55' : 'text-contrast/55'
-                    }`}
-                  >
-                    {plan.subtitle}
-                  </p>
-
-                  {/* Preço */}
-                  <PriceDisplay planId={plan.id} isAnnual={isAnnual} />
-
-                  <hr className={`mb-6 ${isDark ? 'border-white/10' : 'border-gray-100'}`} />
-
-                  {/* Descrição */}
-                  <p
-                    className={`font-body text-sm leading-relaxed mb-6 ${
-                      isDark ? 'text-white/75' : 'text-contrast/65'
-                    }`}
-                  >
-                    {plan.description}
-                  </p>
-
-                  {/* Features */}
-                  <ul className="space-y-3 flex-1" aria-label={`Recursos do plano ${plan.name}`}>
-                    {plan.features.map((f) => {
-                      let tooltip: React.ReactNode = undefined
-                      if (isUltra) {
-                        if (f === 'Personalização do aplicativo da academia') {
-                          tooltip = <ImageTooltip images={personalizacaoImages} ariaLabel="Ver exemplos de personalização do aplicativo" />
-                        } else if (f === 'Personalização das telas do Bioscan') {
-                          tooltip = <ImageTooltip images={bioImages} ariaLabel="Ver exemplos de personalização de telas do Bioscan" />
-                        } else if (f === 'Plotagem do Bioscan') {
-                          tooltip = <ImageTooltip images={plotagemImages} ariaLabel="Ver exemplos de plotagem" />
-                        } else if (f === 'Pesquisas personalizadas após medições') {
-                          tooltip = <ImageTooltip images={pesquisaImages} ariaLabel="Ver formulário de pesquisa pós medição Bioscan 3.0" />
-                        }
-                      }
-                      return (
-                        <CheckItem
-                          key={f}
-                          text={f}
-                          isDark={isDark}
-                          tooltip={tooltip}
-                        />
-                      )
-                    })}
-                  </ul>
-
-                  {/* CTA */}
-                  {isCheckoutPlan ? (
-                    <Link
-                      href={checkoutHref}
-                      className={`mt-8 block text-center font-body font-semibold text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                        isUltra
-                          ? 'bg-accent text-white hover:bg-accent/90 shadow-lg shadow-accent/30'
-                          : 'border-2 border-accent/50 text-accent hover:border-accent hover:bg-accent hover:text-white'
-                      }`}
-                    >
-                      {plan.cta}
-                    </Link>
-                  ) : (
-                    <a
-                      href={plan.ctaHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`mt-8 block text-center font-body font-semibold text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                        isEnterprise
-                          ? 'bg-white/10 text-white/80 border border-white/20 hover:bg-secondary/15 hover:border-secondary/40 hover:text-secondary'
-                          : 'border-2 border-accent/50 text-accent hover:border-accent hover:bg-accent hover:text-white'
-                      }`}
-                    >
-                      {plan.cta}
-                    </a>
-                  )}
-                </div>
+                <PlanCardContent plan={plan} isAnnual={isAnnual} ctaOverride={ctaOverride} />
               </article>
             )
           })}
         </div>
+
       </div>
     </section>
   )

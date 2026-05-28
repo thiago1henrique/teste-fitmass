@@ -175,6 +175,109 @@ function Bubble({ msg }: { msg: Msg }) {
   )
 }
 
+// ── Owner Dashboard ───────────────────────────────────────────────────────────
+
+const OWNER_STUDENTS = [
+  { name: 'Ana Silva',    note: 'Almoço registrado',    time: '2min',  pct: 95, icon: '🥗' },
+  { name: 'Carlos M.',   note: 'Meta de proteína!',     time: '12min', pct: 88, icon: '💪' },
+  { name: 'Patrícia L.', note: 'Café da manhã',         time: '34min', pct: 72, icon: '☕' },
+  { name: 'Roberto S.',  note: 'Jantar registrado',     time: '1h',    pct: 91, icon: '🍽️' },
+]
+
+function OwnerDashboard({ currentTime }: { currentTime: string }) {
+  return (
+    <div className="flex flex-col h-full" style={{ backgroundColor: '#fafafa' }}>
+
+      {/* Status bar */}
+      <div
+        className="relative flex items-center justify-between px-4 pt-2.5 pb-1 shrink-0"
+        style={{ backgroundColor: '#FF6A00' }}
+      >
+        <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-10 h-2.75 bg-black rounded-full" aria-hidden="true" />
+        <div className="flex items-center gap-1.5 z-10" aria-hidden="true">
+          <div className="flex items-end gap-px">
+            {[2, 3, 4, 5, 6].map((h, i) => (
+              <div key={i} className="w-0.5 rounded-sm bg-white" style={{ height: h, opacity: i < 4 ? 1 : 0.35 }} />
+            ))}
+          </div>
+          <svg viewBox="0 0 24 24" fill="white" className="w-2.5 h-2.5" aria-hidden="true">
+            <path d="M1.5 8.5C5.6 4.4 10.5 2.5 12 2.5s6.4 1.9 10.5 6l-1.5 1.5C17.6 6.6 14.9 4.5 12 4.5S6.4 6.6 3 10l-1.5-1.5z" opacity=".4"/>
+            <path d="M5 12c1.9-1.9 4.3-3 7-3s5.1 1.1 7 3l-1.5 1.5C16 12 14.1 11 12 11s-4 1-5.5 2.5L5 12z" opacity=".7"/>
+            <path d="M8.5 15.5C9.4 14.6 10.6 14 12 14s2.6.6 3.5 1.5L12 19l-3.5-3.5z"/>
+          </svg>
+        </div>
+        <div className="z-10">
+          <span className="text-[7.5px] font-bold text-white leading-none" suppressHydrationWarning>{currentTime}</span>
+        </div>
+      </div>
+
+      {/* App header + stats */}
+      <div className="px-3 pt-2.5 pb-3 shrink-0" style={{ backgroundColor: '#FF6A00' }}>
+        <div className="flex items-center justify-between mb-2.5">
+          <div>
+            <div className="text-white/70 text-[7px] uppercase tracking-wide leading-tight">Gestor MyDay</div>
+            <div className="text-white text-[11px] font-bold leading-tight">Power Fit Academia</div>
+          </div>
+          <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-[12px]">🏋️</div>
+        </div>
+        <div className="grid grid-cols-3 gap-1.5">
+          {[
+            { label: 'Alunos',     value: '47'  },
+            { label: 'Refeições',  value: '124' },
+            { label: 'Compliance', value: '91%' },
+          ].map(s => (
+            <div key={s.label} className="bg-white/20 rounded-xl px-1.5 py-1.5 text-center">
+              <div className="text-white text-[13px] font-bold leading-tight">{s.value}</div>
+              <div className="text-white/70 text-[6.5px] uppercase tracking-wide leading-tight mt-0.5">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Activity feed */}
+      <div className="flex-1 overflow-y-auto px-2.5 pt-2" style={{ backgroundColor: '#f0f0f0' }}>
+        <p className="text-[7px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Atividade recente</p>
+
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-2 py-1.5 mb-2 flex items-center gap-1.5">
+          <span className="text-[11px] shrink-0">⚠️</span>
+          <p className="text-[7.5px] font-semibold text-amber-700 flex-1 min-w-0 leading-tight">3 alunos sem registro hoje</p>
+          <button className="shrink-0 text-[6.5px] font-bold text-white bg-amber-500 px-1.5 py-0.5 rounded-full">
+            Avisar
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-1.5 pb-2">
+          {OWNER_STUDENTS.map(s => (
+            <div key={s.name} className="bg-white rounded-xl px-2 py-1.5 flex items-center gap-1.5 shadow-sm">
+              <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center shrink-0 text-[10px]">
+                {s.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[8px] font-bold text-gray-800 leading-tight truncate">{s.name}</div>
+                <div className="text-[7px] text-gray-400 leading-tight truncate">{s.note}</div>
+              </div>
+              <div className="shrink-0 text-right">
+                <div className="text-[6.5px] text-gray-400 leading-none">{s.time}</div>
+                <div
+                  className="text-[7.5px] font-bold leading-none mt-0.5"
+                  style={{ color: s.pct >= 80 ? '#16a34a' : '#d97706' }}
+                >
+                  {s.pct}%
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Home indicator */}
+      <div className="flex justify-center pb-2 pt-0.5 shrink-0" style={{ backgroundColor: '#f0f0f0' }}>
+        <div className="w-12 h-0.75 rounded-full bg-black/20" />
+      </div>
+    </div>
+  )
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 const PHONE_W = 260
@@ -183,9 +286,10 @@ const PHONE_H = 548
 interface MyDayMockupProps {
   scale?: number
   onInteractChange?: (interacting: boolean) => void
+  view?: 'aluno' | 'dono'
 }
 
-export default function MyDayMockup({ scale = 1, onInteractChange }: MyDayMockupProps) {
+export default function MyDayMockup({ scale = 1, onInteractChange, view = 'aluno' }: MyDayMockupProps) {
   const [simState, setSimState] = useState<SimState>('IDLE')
   const [messages, setMessages] = useState<Msg[]>([])
   const [isTyping, setIsTyping] = useState(false)
@@ -293,6 +397,12 @@ export default function MyDayMockup({ scale = 1, onInteractChange }: MyDayMockup
 
         {/* Screen */}
         <div className="absolute inset-1.25 rounded-[2.3rem] overflow-hidden flex flex-col bg-[#f0f0f0]">
+
+          {view === 'dono' && (
+            <div className="absolute inset-0 z-10">
+              <OwnerDashboard currentTime={currentTime} />
+            </div>
+          )}
 
           {/* Status bar */}
           <div

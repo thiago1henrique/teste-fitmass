@@ -11,6 +11,7 @@ export type DropdownItem = {
   image?: string
   description?: string
   cta?: string
+  altView?: { label: string; description: string; cta?: string }
 }
 
 export type NavLink =
@@ -25,6 +26,112 @@ interface HeaderProps {
   forceDark?: boolean
 }
 
+// ── Mobile product card ───────────────────────────────────────────────────────
+function MobileProductCard({
+  item,
+  onClose,
+  animDelay,
+  visible,
+}: {
+  item: DropdownItem
+  onClose: () => void
+  animDelay: number
+  visible: boolean
+}) {
+  const [viewIndex, setViewIndex] = useState(0)
+  const activeDesc = viewIndex === 1 && item.altView ? item.altView.description : item.description
+  const activeCta  = viewIndex === 1 && item.altView?.cta ? item.altView.cta : item.cta
+
+  return (
+    <div
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.98)',
+        transition: visible
+          ? `opacity 420ms ease-out ${animDelay}ms, transform 520ms cubic-bezier(0.16,1,0.3,1) ${animDelay}ms`
+          : 'none',
+      }}
+    >
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,106,0,0.12) 0%, rgba(255,255,255,0.03) 70%, transparent 100%)',
+          boxShadow: '0 0 0 1px rgba(255,106,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)',
+        }}
+      >
+        {/* Header row */}
+        <div className="flex items-center gap-3 px-4 pt-4 pb-3">
+          {item.image && (
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: 'rgba(255,106,0,0.18)' }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={item.image} alt="" aria-hidden="true" className="w-6 h-6 object-contain" />
+            </div>
+          )}
+          <h3 className="font-title uppercase text-white text-base tracking-wide leading-tight">
+            {item.label}
+          </h3>
+        </div>
+
+        <div className="h-px mx-4 bg-white/8" aria-hidden="true" />
+
+        <div className="p-4 flex flex-col gap-3">
+          {/* Toggle */}
+          {item.altView && (
+            <div
+              className="self-start flex items-center rounded-full p-0.5"
+              style={{
+                backgroundColor: 'rgba(255,106,0,0.12)',
+                border: '1px solid rgba(255,106,0,0.22)',
+              }}
+            >
+              {([{ label: 'Aluno', idx: 0 }, { label: item.altView.label, idx: 1 }] as const).map(
+                ({ label, idx }) => (
+                  <button
+                    key={label}
+                    onClick={() => setViewIndex(idx)}
+                    className="px-3.5 rounded-full font-body font-semibold uppercase tracking-wide transition-all duration-300 cursor-pointer text-[11px]"
+                    style={{
+                      height: '32px',
+                      backgroundColor: viewIndex === idx ? '#FF6A00' : 'transparent',
+                      color: viewIndex === idx ? '#fff' : 'rgba(255,255,255,0.4)',
+                    }}
+                  >
+                    {label}
+                  </button>
+                )
+              )}
+            </div>
+          )}
+
+          {/* Description */}
+          {activeDesc && (
+            <p className="font-body text-[13px] text-white/50 leading-relaxed">{activeDesc}</p>
+          )}
+
+          {/* CTA */}
+          {activeCta && (
+            <a
+              href={item.href}
+              onClick={onClose}
+              className="inline-flex items-center gap-1.5 font-body font-semibold text-[11px] uppercase tracking-widest
+                text-secondary border border-secondary/30 px-4 py-2.5 rounded-xl self-start
+                transition-[background-color,border-color] duration-150 active:bg-secondary/10 active:border-secondary"
+            >
+              {activeCta}
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Header({
   navLinks,
   cta = { label: 'Conhecer Planos', href: '/planos' },
@@ -37,6 +144,7 @@ export default function Header({
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [displayedItem, setDisplayedItem] = useState<DropdownItem | null>(null)
   const [cardVisible, setCardVisible] = useState(false)
+  const [cardViewIndex, setCardViewIndex] = useState(0)
   const rafRef = useRef<number>(0)
   const cardRaf = useRef<number>(0)
   const cardHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -137,6 +245,7 @@ export default function Header({
     if (hoveredDropdownItem) {
       if (cardHideTimer.current) clearTimeout(cardHideTimer.current)
       setDisplayedItem(hoveredDropdownItem)
+      setCardViewIndex(0)
       cancelAnimationFrame(cardRaf.current)
       cardRaf.current = requestAnimationFrame(() => setCardVisible(true))
     } else {
@@ -159,21 +268,184 @@ export default function Header({
         }`}
       />
 
-      {/* Overlay mobile */}
+      {/* ── MOBILE MEGA MENU ──────────────────────────────────────────────── */}
       <div
-        aria-hidden="true"
-        onClick={() => setMenuOpen(false)}
-        className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
-          menuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
-        }`}
-      />
+        aria-hidden={!menuOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu de navegação"
+        className="fixed inset-0 z-[60] md:hidden flex flex-col overflow-hidden"
+        style={{
+          background: '#050505',
+          transform: menuOpen ? 'translateY(0)' : 'translateY(-100%)',
+          transition: menuOpen
+            ? 'transform 480ms cubic-bezier(0.32,0.72,0,1)'
+            : 'transform 360ms cubic-bezier(0.4,0,1,1)',
+          pointerEvents: menuOpen ? 'auto' : 'none',
+        }}
+      >
+        {/* Atmospheric gradient */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse 90% 55% at 85% -5%, rgba(136,189,35,0.13) 0%, transparent 55%), radial-gradient(ellipse 70% 45% at -5% 90%, rgba(37,182,235,0.09) 0%, transparent 55%)',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Logo + close */}
+        <div className="relative flex items-center justify-between px-6 pt-6 pb-3 shrink-0">
+          <Link
+            href="/"
+            aria-label="Ir para a página inicial Fitmass"
+            onClick={() => setMenuOpen(false)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-colorida.svg" alt="Fitmass" className="h-9 w-auto" />
+          </Link>
+          <button
+            onClick={() => setMenuOpen(false)}
+            aria-label="Fechar menu"
+            className="w-10 h-10 flex items-center justify-center rounded-full active:scale-90 transition-transform duration-150"
+            style={{
+              border: '1px solid rgba(255,255,255,0.12)',
+              background: 'rgba(255,255,255,0.05)',
+            }}
+          >
+            <svg className="w-[18px] h-[18px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="relative flex-1 overflow-y-auto">
+
+          {/* Primary nav links */}
+          <nav aria-label="Menu principal" className="px-6 pt-1 pb-5">
+            {(navLinks.filter((l) => !l.dropdown) as Array<{ label: string; href: string }>).map(
+              (link, index) => {
+                const isActive = pathname === link.href
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={(e) => { handleAnchorClick(e, link.href); setMenuOpen(false) }}
+                    className="flex items-center justify-between py-[14px]"
+                    style={{
+                      borderBottom: '1px solid rgba(255,255,255,0.06)',
+                      opacity: menuOpen ? 1 : 0,
+                      transform: menuOpen ? 'translateX(0)' : 'translateX(-20px)',
+                      transition: menuOpen
+                        ? `opacity 400ms ease-out ${100 + index * 55}ms, transform 480ms cubic-bezier(0.16,1,0.3,1) ${100 + index * 55}ms`
+                        : 'none',
+                    }}
+                  >
+                    <div className="flex items-baseline gap-3">
+                      <span
+                        className="font-body text-[10px] font-bold tabular-nums leading-none"
+                        style={{ color: isActive ? '#88BD23' : 'rgba(255,255,255,0.18)' }}
+                      >
+                        0{index + 1}
+                      </span>
+                      <span
+                        className="font-title text-[2rem] uppercase tracking-wide leading-none"
+                        style={{ color: isActive ? '#88BD23' : 'rgba(255,255,255,0.88)' }}
+                      >
+                        {link.label}
+                      </span>
+                    </div>
+                    <svg
+                      className="w-4 h-4 shrink-0 opacity-20"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                      aria-hidden="true"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </a>
+                )
+              }
+            )}
+          </nav>
+
+          {/* Product cards */}
+          {(navLinks.filter((l) => l.dropdown) as Array<{ label: string; dropdown: DropdownItem[] }>).map(
+            (link) => {
+              const nonDropCount = navLinks.filter((x) => !x.dropdown).length
+              return (
+                <div key={link.label} className="px-6 pb-8">
+                  <p
+                    className="font-body text-[9px] uppercase tracking-[0.22em] text-white/25 mb-4"
+                    style={{
+                      opacity: menuOpen ? 1 : 0,
+                      transition: menuOpen
+                        ? `opacity 360ms ease-out ${100 + nonDropCount * 55 + 40}ms`
+                        : 'none',
+                    }}
+                  >
+                    {link.label}
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    {link.dropdown.map((item, idx) => (
+                      <MobileProductCard
+                        key={item.href}
+                        item={item}
+                        onClose={() => setMenuOpen(false)}
+                        animDelay={100 + nonDropCount * 55 + 100 + idx * 80}
+                        visible={menuOpen}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )
+            }
+          )}
+        </div>
+
+        {/* Bottom CTA */}
+        <div
+          className="relative shrink-0 px-6 py-5"
+          style={{
+            borderTop: '1px solid rgba(255,255,255,0.07)',
+            opacity: menuOpen ? 1 : 0,
+            transition: menuOpen ? 'opacity 360ms ease-out 380ms' : 'none',
+          }}
+        >
+          <a
+            href={cta.href}
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center justify-center gap-2 w-full font-body font-semibold text-sm uppercase tracking-widest
+              bg-accent text-white rounded-2xl py-4 active:scale-[0.98] transition-transform duration-150"
+            style={{ boxShadow: '0 8px 32px rgba(136,189,35,0.28)' }}
+          >
+            {cta.label}
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+        </div>
+      </div>
 
       <header
         suppressHydrationWarning
-        className={`fixed w-full top-0 z-50 bg-contrast transition-shadow duration-300 ${
-          scrolled || menuOpen ? 'shadow-lg shadow-black/25' : ''
+        className={`fixed w-full top-0 z-50 transition-shadow duration-300 ${
+          scrolled || menuOpen ? 'shadow-lg shadow-black/40' : ''
         }`}
+        style={{ background: '#050505' }}
       >
+        {/* Gradiente atmosférico — espelha o visual do mega menu */}
+        <div
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+          style={{
+            background:
+              'radial-gradient(ellipse 55% 120% at 96% 50%, rgba(136,189,35,0.09) 0%, transparent 60%), radial-gradient(ellipse 40% 120% at 4% 50%, rgba(37,182,235,0.07) 0%, transparent 60%)',
+          }}
+          aria-hidden="true"
+        />
         {/* Linha decorativa bicolor */}
         <div
           className={`absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-secondary/30 via-accent/50 to-secondary/30
@@ -272,9 +544,9 @@ export default function Header({
             <button
               onClick={() => setMenuOpen((v) => !v)}
               className="md:hidden text-white p-2 rounded-lg hover:bg-white/10 transition-colors duration-200"
-              aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+              aria-label="Abrir menu"
               aria-expanded={menuOpen}
-              aria-controls="mobile-menu"
+              aria-haspopup="dialog"
             >
               <svg suppressHydrationWarning className={`w-5 h-5${menuOpen ? ' hidden' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path suppressHydrationWarning strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -381,7 +653,38 @@ export default function Header({
                     >
                       {displayedItem.label}
                     </h3>
-                    {displayedItem.description && (
+                    {displayedItem.altView && (
+                      <div
+                        style={{
+                          opacity: cardVisible ? 1 : 0,
+                          transform: cardVisible ? 'translateY(0px)' : 'translateY(10px)',
+                          transition: cardVisible
+                            ? 'opacity 280ms ease-out 90ms, transform 300ms cubic-bezier(0.16,1,0.3,1) 90ms'
+                            : 'none',
+                        }}
+                        className="flex items-center"
+                      >
+                        <div
+                          className="flex items-center rounded-full p-0.5"
+                          style={{ backgroundColor: 'rgba(255,106,0,0.15)' }}
+                        >
+                          {[{ label: 'Aluno', idx: 0 }, { label: displayedItem.altView.label, idx: 1 }].map(({ label, idx }) => (
+                            <button
+                              key={label}
+                              onClick={() => setCardViewIndex(idx)}
+                              className="px-3 py-1 rounded-full font-body font-semibold uppercase tracking-wide transition-all duration-300 cursor-pointer text-xs"
+                              style={{
+                                backgroundColor: cardViewIndex === idx ? '#FF6A00' : 'transparent',
+                                color: cardViewIndex === idx ? '#fff' : 'rgba(255,255,255,0.45)',
+                              }}
+                            >
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {(displayedItem.description || displayedItem.altView) && (
                       <p
                         style={{
                           opacity: cardVisible ? 1 : 0,
@@ -392,10 +695,12 @@ export default function Header({
                         }}
                         className="font-body text-white/50 text-sm leading-relaxed"
                       >
-                        {displayedItem.description}
+                        {cardViewIndex === 1 && displayedItem.altView
+                          ? displayedItem.altView.description
+                          : displayedItem.description}
                       </p>
                     )}
-                    {displayedItem.cta && (
+                    {(displayedItem.cta || displayedItem.altView?.cta) && (
                       <a
                         href={displayedItem.href}
                         onClick={closeMegaMenu}
@@ -410,7 +715,9 @@ export default function Header({
                           text-secondary border border-secondary/30 hover:border-secondary hover:bg-secondary/10
                           px-3.5 py-1.5 rounded-lg transition-[border-color,background-color] duration-150 self-start"
                       >
-                        {displayedItem.cta}
+                        {cardViewIndex === 1 && displayedItem.altView?.cta
+                          ? displayedItem.altView.cta
+                          : displayedItem.cta}
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                         </svg>
@@ -423,78 +730,6 @@ export default function Header({
           </div>
         </div>
 
-        {/* ── Menu mobile ─────────────────────────────────────────────────── */}
-        <nav
-          id="mobile-menu"
-          aria-label="Navegação mobile"
-          className={`relative z-50 md:hidden bg-contrast overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
-            menuOpen ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
-          }`}
-        >
-          <div className="px-4 pb-4 pt-2 space-y-1 border-t border-white/10">
-            {navLinks.map((link) => {
-              if (link.dropdown) {
-                const isActive = link.dropdown.some((item) => pathname === item.href)
-                return (
-                  <div key={link.label}>
-                    <span
-                      className={`flex items-center gap-3 font-body text-xs uppercase tracking-widest py-2 px-3 ${
-                        isActive ? 'text-accent font-bold' : 'text-white/40'
-                      }`}
-                    >
-                      {link.label}
-                    </span>
-                    {link.dropdown.map((item) => {
-                      const itemActive = pathname === item.href
-                      return (
-                        <a
-                          key={item.href}
-                          href={item.href}
-                          onClick={() => setMenuOpen(false)}
-                          className={`flex items-center gap-3 font-body text-sm py-2.5 px-5 rounded-lg transition-colors duration-200 ${
-                            itemActive
-                              ? 'text-accent font-semibold bg-white/5'
-                              : 'text-white/75 hover:text-secondary hover:bg-white/5'
-                          }`}
-                        >
-                          <span className="w-1 h-1 rounded-full bg-secondary shrink-0" aria-hidden="true" />
-                          {item.label}
-                        </a>
-                      )
-                    })}
-                  </div>
-                )
-              }
-
-              const isActive = pathname === link.href
-              return (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={(e) => handleAnchorClick(e, link.href)}
-                  className={`flex items-center gap-3 font-body text-sm py-3 px-3 rounded-lg transition-colors duration-200 ${
-                    isActive
-                      ? 'text-accent font-bold bg-white/5'
-                      : 'text-white/80 hover:text-secondary hover:bg-white/5'
-                  }`}
-                >
-                  <span className="w-1 h-1 rounded-full shrink-0 bg-accent" aria-hidden="true" />
-                  {link.label}
-                </a>
-              )
-            })}
-
-            <div className="pt-3 border-t border-white/10">
-              <a
-                href={cta.href}
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center font-body font-semibold text-xs uppercase tracking-widest px-5 py-3 rounded-xl bg-accent text-white hover:bg-accent/90 transition-colors duration-200"
-              >
-                {cta.label}
-              </a>
-            </div>
-          </div>
-        </nav>
       </header>
     </>
   )

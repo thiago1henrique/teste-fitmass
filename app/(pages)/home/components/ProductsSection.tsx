@@ -87,6 +87,7 @@ export default function ProductsSection() {
   const [progressKey, setProgressKey] = useState(0)
   const [timerTrigger, setTimerTrigger] = useState(0)
   const [phoneScale, setPhoneScale] = useState(SCALE_MOBILE)
+  const [myDayView, setMyDayView] = useState<'aluno' | 'dono'>('aluno')
   const [imageContainerH, setImageContainerH] = useState(0)
   const imageContainerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
@@ -288,6 +289,29 @@ export default function ProductsSection() {
             </h3>
           </div>
 
+          {'isInteractive' in active && active.isInteractive && (
+            <div className="shrink-0 flex items-center mb-1">
+              <div
+                className="flex items-center rounded-full p-0.5"
+                style={{ backgroundColor: 'rgba(255,106,0,0.15)' }}
+              >
+                {(['aluno', 'dono'] as const).map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => setMyDayView(v)}
+                    className="px-3 py-1 rounded-full font-body font-semibold uppercase tracking-wide transition-all duration-300 cursor-pointer text-[10px]"
+                    style={{
+                      backgroundColor: myDayView === v ? '#FF6A00' : 'transparent',
+                      color: myDayView === v ? '#fff' : 'rgba(255,255,255,0.45)',
+                    }}
+                  >
+                    {v === 'aluno' ? 'Aluno' : 'Dono Academia'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* ② Foto — grows to fill remaining vertical space */}
           <div ref={imageContainerRef} className="relative flex-1 min-h-0 my-3 overflow-hidden">
             {/* Localised ambient glow */}
@@ -337,7 +361,7 @@ export default function ProductsSection() {
                   : 'opacity-0 scale-95 pointer-events-none'
               }`}
             >
-              <MyDayMockup scale={mobilePhoneScale} onInteractChange={setIsMyDayInteracting} />
+              <MyDayMockup scale={mobilePhoneScale} onInteractChange={setIsMyDayInteracting} view={myDayView} />
             </div>
           </div>
 
@@ -416,6 +440,29 @@ export default function ProductsSection() {
                 {active.name}
               </h3>
 
+              {'isInteractive' in active && active.isInteractive && (
+                <div className="flex items-center mb-4 xl:mb-5">
+                  <div
+                    className="flex items-center rounded-full p-0.5"
+                    style={{ backgroundColor: 'rgba(255,106,0,0.15)' }}
+                  >
+                    {(['aluno', 'dono'] as const).map((v) => (
+                      <button
+                        key={v}
+                        onClick={() => setMyDayView(v)}
+                        className="px-4 py-1.5 rounded-full font-body font-semibold uppercase tracking-wide transition-all duration-300 cursor-pointer text-xs"
+                        style={{
+                          backgroundColor: myDayView === v ? '#FF6A00' : 'transparent',
+                          color: myDayView === v ? '#fff' : 'rgba(255,255,255,0.45)',
+                        }}
+                      >
+                        {v === 'aluno' ? 'Aluno' : 'Dono Academia'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <p className="font-body text-sm xl:text-base text-white/70 leading-relaxed max-w-lg mb-4 xl:mb-6">
                 {active.description}
               </p>
@@ -481,7 +528,7 @@ export default function ProductsSection() {
                     : 'opacity-0 scale-90 pointer-events-none'
                 }`}
               >
-                <MyDayMockup scale={SCALE_LG} onInteractChange={setIsMyDayInteracting} />
+                <MyDayMockup scale={SCALE_LG} onInteractChange={setIsMyDayInteracting} view={myDayView} />
               </div>
 
               {/* Decorative large ordinal */}

@@ -4,15 +4,32 @@ export default function FinalCTASection() {
   return (
     <section
       id="cta-final"
-      className="relative bg-accent overflow-hidden"
+      className="relative bg-contrast overflow-hidden"
       aria-label="Comece sua transformação com a Fitmass"
     >
-      {/* Diagonal de entrada — escuro para verde */}
-      <div className="pointer-events-none" aria-hidden="true">
-        <svg viewBox="0 0 1440 72" preserveAspectRatio="none" className="w-full" style={{ height: 72, display: 'block' }}>
-          <polygon fill="#333333" points="0,0 1440,0 0,72" />
-        </svg>
-      </div>
+      {/* Vídeo de fundo */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        src="/pages/landingpage/fitmass_cta.mp4"
+      />
+
+      {/* Overlay escuro sobre o vídeo para legibilidade */}
+      <div className="absolute inset-0 bg-black/55 pointer-events-none" aria-hidden="true" />
+
+      {/* Fade de entrada — cobre o vídeo uniformemente */}
+      <div
+        className="absolute top-0 inset-x-0 h-80 pointer-events-none z-10"
+        aria-hidden="true"
+        style={{
+          background:
+            'linear-gradient(to bottom, #333333 0%, rgba(51,51,51,0.85) 20%, rgba(51,51,51,0.55) 45%, rgba(51,51,51,0.15) 70%, transparent 100%)',
+        }}
+      />
 
       {/* Hachura diagonal decorativa */}
       <div
@@ -31,30 +48,30 @@ export default function FinalCTASection() {
         aria-hidden="true"
       />
 
-      {/* Glow escuro no canto inferior esquerdo */}
+      {/* Glow verde no canto inferior esquerdo */}
       <div
-        className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-black/10 blur-3xl pointer-events-none"
+        className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-accent/20 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 
-      <div className="relative max-w-5xl mx-auto px-4 pt-4 pb-24 text-center">
+      <div className="relative z-20 max-w-5xl mx-auto px-4 pt-32 pb-32 text-center">
 
         {/* Badge */}
-        <span className="inline-flex items-center gap-2 bg-black/10 text-contrast font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-contrast/70" aria-hidden="true" />
+        <span className="inline-flex items-center gap-2 bg-white/10 text-white font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-8 border border-white/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
           Dê o próximo passo
         </span>
 
         {/* Headline principal */}
-        <h2 className="font-title text-5xl md:text-7xl lg:text-[5.5rem] uppercase tracking-wide leading-none mb-6 text-contrast">
+        <h2 className="font-title text-5xl md:text-7xl lg:text-[5.5rem] uppercase tracking-wide leading-none mb-6 text-white">
           SUA ACADEMIA<br />
-          <span className="text-white" style={{ textShadow: '0 2px 24px rgba(0,0,0,0.18)' }}>
+          <span className="text-accent" style={{ textShadow: '0 2px 32px rgba(136,189,35,0.4)' }}>
             MERECE MAIS
           </span>
         </h2>
 
         {/* Subtítulo */}
-        <p className="font-body text-contrast/70 text-lg md:text-xl max-w-xl mx-auto mb-12 leading-relaxed">
+        <p className="font-body text-white/75 text-lg md:text-xl max-w-xl mx-auto mb-12 leading-relaxed">
           Junte-se às academias que já usam a Fitmass para vender mais,
           reter alunos e crescer de verdade.
         </p>
@@ -65,7 +82,7 @@ export default function FinalCTASection() {
             href="https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+mais+informa%C3%A7%C3%B5es+sobre+o+Fitmass&type=phone_number&app_absent=0"
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-3 bg-contrast text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-contrast/85 active:scale-[0.98] transition-all duration-200 shadow-xl shadow-black/20"
+            className="group inline-flex items-center gap-3 bg-accent text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-accent/85 active:scale-[0.98] transition-all duration-200 shadow-xl shadow-accent/30"
           >
             <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
@@ -76,7 +93,7 @@ export default function FinalCTASection() {
 
           <a
             href="/planos"
-            className="inline-flex items-center gap-2 bg-white/25 text-contrast font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-white/40 active:scale-[0.98] transition-all duration-200 border border-black/10"
+            className="inline-flex items-center gap-2 bg-white/15 text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-white/25 active:scale-[0.98] transition-all duration-200 border border-white/30"
           >
             Ver planos e preços
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -86,7 +103,7 @@ export default function FinalCTASection() {
         </div>
 
         {/* Social proof */}
-        <p className="mt-10 font-body text-contrast/50 text-sm tracking-wide">
+        <p className="mt-10 font-body text-white/45 text-sm tracking-wide">
           +150 academias já confiam na Fitmass&nbsp;&nbsp;·&nbsp;&nbsp;Sem contrato de fidelidade
         </p>
       </div>
