@@ -10,12 +10,13 @@ const navLinks = [
     dropdown: [
       {
         label: 'MyDay — IA no WhatsApp',
-        href: '/myday',
+        href: '/myday/aluno',
         image: '/pages/landingpage/aiSection/MyDay-icone.svg',
-        description: 'IA de acompanhamento nutricional que funciona direto no WhatsApp dos seus alunos. Aluno registra, você monetiza.',
-        cta: 'Confira',
+        description: 'IA que te acompanha no WhatsApp, controla déficit calórico, registra treinos e manda seu progresso automaticamente. Sem app.',
+        cta: 'Quero começar',
         altView: {
           label: 'Dono Academia',
+          href: '/myday/dono-academia',
           description: 'Acompanhe a nutrição de todos os alunos em tempo real. Veja compliance, envie lembretes e cobre mensalidade recorrente.',
           cta: 'Ver para academia',
         },

@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import HeroHome from './components/HeroHome'
 import ProductsSection from './components/ProductsSection'
 import AboutUsSection from './components/AboutUsSection'
@@ -32,7 +33,9 @@ export default function Home() {
       {/* <PersonalizationSection /> */}
       {/* <BrazilMapSection /> */}
       <FAQHome />
-      <BlogPreviewSection />
+      <Suspense>
+        <BlogPreviewSection />
+      </Suspense>
       <ContactSection />
       <FinalCTASection />
     </main>

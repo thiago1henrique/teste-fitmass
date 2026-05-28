@@ -72,7 +72,7 @@ export default function Contato() {
 
       <div className="relative max-w-6xl mx-auto px-4 pt-36 pb-24">
         {/* Cabeçalho */}
-        <div className="text-center mb-14">
+        <div className="text-left mb-14">
           <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
             Fale Conosco
@@ -81,7 +81,7 @@ export default function Contato() {
             VAMOS CONVERSAR SOBRE{' '}
             <span className="text-accent">SUA ACADEMIA</span>
           </h1>
-          <p className="mt-4 font-body text-white/50 text-base max-w-xl mx-auto leading-relaxed">
+          <p className="mt-4 font-body text-white/50 text-base max-w-xl leading-relaxed">
             Estamos prontos para mostrar como a Fitmass pode transformar os resultados da sua academia.
           </p>
         </div>

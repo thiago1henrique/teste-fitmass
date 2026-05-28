@@ -51,7 +51,7 @@ function CheckItem({ text, isDark }: { text: string; isDark: boolean }) {
   return (
     <li className="flex items-start gap-2.5">
       <svg
-        className="w-4 h-4 mt-0.5 shrink-0 text-accent"
+        className="w-4 h-4 mt-0.5 shrink-0 text-[#FF6A00]"
         fill="none" viewBox="0 0 24 24"
         stroke="currentColor" strokeWidth={2.5} aria-hidden="true"
       >
@@ -149,11 +149,11 @@ const PLANS: Plan[] = [
 
 function CardInner({ plan }: { plan: Plan }) {
   const ctaBase =
-    'mt-8 block text-center font-body font-semibold text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent'
+    'mt-8 block text-center font-body font-semibold text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6A00]'
   const ctaClass =
     plan.ctaVariant === 'filled'
-      ? `${ctaBase} bg-accent text-white hover:bg-accent/90 shadow-lg shadow-accent/30`
-      : `${ctaBase} border-2 border-accent/50 text-accent hover:border-accent hover:bg-accent hover:text-white`
+      ? `${ctaBase} bg-[#FF6A00] text-white hover:bg-[#FF6A00]/90 shadow-lg shadow-[#FF6A00]/30`
+      : `${ctaBase} border-2 border-[#FF6A00]/50 text-[#FF6A00] hover:border-[#FF6A00] hover:bg-[#FF6A00] hover:text-white`
 
   return (
     <>
@@ -161,8 +161,8 @@ function CardInner({ plan }: { plan: Plan }) {
         <div
           className={`font-body font-bold text-xs uppercase tracking-widest text-center py-2 rounded-t-[14px] ${
             plan.topBadgeAccent
-              ? 'bg-accent text-white'
-              : 'bg-accent/15 text-accent border-b border-accent/20'
+              ? 'bg-[#FF6A00] text-white'
+              : 'bg-[#FF6A00]/15 text-[#FF6A00] border-b border-[#FF6A00]/20'
           }`}
         >
           {plan.topBadge}
@@ -171,14 +171,14 @@ function CardInner({ plan }: { plan: Plan }) {
       <div className="flex flex-col flex-1 p-8">
         <div
           className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shrink-0 ${
-            plan.dark ? 'bg-accent/20 text-accent' : 'bg-accent/10 text-accent'
+            plan.dark ? 'bg-[#FF6A00]/20 text-[#FF6A00]' : 'bg-[#FF6A00]/10 text-[#FF6A00]'
           }`}
         >
           <plan.Icon className="w-8 h-8" />
         </div>
         <h3
           className={`font-title text-3xl uppercase tracking-wide mb-1 ${
-            plan.dark ? 'text-accent' : 'text-contrast'
+            plan.dark ? 'text-[#FF6A00]' : 'text-contrast'
           }`}
         >
           {plan.name}
@@ -201,7 +201,7 @@ function CardInner({ plan }: { plan: Plan }) {
             </span>
             <span
               className={`font-title text-5xl tabular-nums leading-none ${
-                plan.dark ? 'text-accent' : 'text-contrast'
+                plan.dark ? 'text-[#FF6A00]' : 'text-contrast'
               }`}
             >
               {plan.priceMain}
@@ -260,13 +260,14 @@ export default function MyDayPlanSection() {
   const [dragX, setDragX] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
 
+  const deckRef = useRef<HTMLDivElement>(null)
   const startX = useRef(0)
   const startY = useRef(0)
   const gestureDir = useRef<'h' | 'v' | null>(null)
   const captured = useRef(false)
 
   const total = PLANS.length
-  const THRESHOLD = 75
+  const THRESHOLD = 60
 
   const onPointerDown = (e: React.PointerEvent) => {
     startX.current = e.clientX
@@ -291,7 +292,6 @@ export default function MyDayPlanSection() {
 
     if (gestureDir.current !== 'h') return
 
-    // Rubber band at edges
     const canLeft = activeIndex < total - 1
     const canRight = activeIndex > 0
     let effective = dx
@@ -306,17 +306,16 @@ export default function MyDayPlanSection() {
     gestureDir.current = null
     captured.current = false
 
+    const W = deckRef.current?.offsetWidth ?? 400
     const goLeft = dragX < -THRESHOLD && activeIndex < total - 1
     const goRight = dragX > THRESHOLD && activeIndex > 0
 
-    if (goLeft || goRight) {
-      const flyTo = goLeft ? -600 : 600
-      const next = goLeft ? activeIndex + 1 : activeIndex - 1
-      setDragX(flyTo)
-      setTimeout(() => {
-        setActiveIndex(next)
-        setDragX(0)
-      }, 280)
+    if (goLeft) {
+      setDragX(-W)
+      setTimeout(() => { setActiveIndex(activeIndex + 1); setDragX(0) }, 300)
+    } else if (goRight) {
+      setDragX(W)
+      setTimeout(() => { setActiveIndex(activeIndex - 1); setDragX(0) }, 300)
     } else {
       setDragX(0)
     }
@@ -332,8 +331,8 @@ export default function MyDayPlanSection() {
 
         {/* Cabeçalho */}
         <div className="text-center mb-14">
-          <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
+          <span className="inline-flex items-center gap-2 bg-[#FF6A00]/15 text-[#FF6A00] font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00]" aria-hidden="true" />
             Planos
           </span>
           <h2
@@ -347,35 +346,34 @@ export default function MyDayPlanSection() {
           </p>
         </div>
 
-        {/* ── Mobile: swipe deck ── */}
+        {/* ── Mobile: carrossel horizontal ── */}
         <div className="md:hidden">
-          <div className="relative h-[560px] overflow-hidden">
+          {/* overflow-hidden recorta os cards fora de tela durante o arraste */}
+          <div ref={deckRef} className="relative overflow-hidden">
+
+            {/* Elemento fantasma: define a altura igual à do card 1 (Anual = mais alto) */}
+            <div className="invisible pointer-events-none" aria-hidden="true">
+              <article className="flex flex-col rounded-2xl bg-contrast border-2 border-[#FF6A00]">
+                <CardInner plan={PLANS[0]} />
+              </article>
+            </div>
+
+            {/* Cards reais: cada um posicionado em offset * largura + dragX */}
             {PLANS.map((plan, i) => {
               const offset = i - activeIndex
-              // render active card + up to 2 behind it
-              if (offset < 0 || offset > 2) return null
+              if (Math.abs(offset) > 1) return null
 
+              const W = deckRef.current?.offsetWidth ?? 400
+              const tx = offset * W + dragX
               const isActive = offset === 0
-              const tx = isActive ? dragX : 0
-              const rot = isActive && isDragging ? dragX / 22 : 0
-              // Behind cards: scale down from top-center, peek slightly
-              const scale = isActive ? 1 : 1 - offset * 0.04
-              const ty = isActive ? 0 : offset * 14
-              const opacity = offset > 1 ? 0.55 : 1
 
               return (
                 <div
                   key={plan.id}
-                  className={`absolute inset-x-0 top-0 ${isActive ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'}`}
+                  className={`absolute inset-x-0 top-0 h-full ${isActive ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'}`}
                   style={{
-                    transform: `translateX(${tx}px) rotate(${rot}deg) scale(${scale}) translateY(${ty}px)`,
-                    transformOrigin: 'top center',
-                    zIndex: 10 - offset,
-                    opacity,
-                    transition:
-                      isDragging && isActive
-                        ? 'none'
-                        : 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease',
+                    transform: `translateX(${tx}px)`,
+                    transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                     willChange: 'transform',
                     userSelect: 'none',
                   }}
@@ -385,9 +383,9 @@ export default function MyDayPlanSection() {
                   onPointerCancel={isActive ? onPointerUp : undefined}
                 >
                   <article
-                    className={`flex flex-col rounded-2xl ${
+                    className={`flex flex-col h-full rounded-2xl ${
                       plan.dark
-                        ? 'bg-contrast border-2 border-accent shadow-2xl shadow-accent/25'
+                        ? 'bg-contrast border-2 border-[#FF6A00]'
                         : 'bg-white border border-gray-200 shadow-md'
                     }`}
                     aria-label={`Plano ${plan.name}`}
@@ -406,19 +404,15 @@ export default function MyDayPlanSection() {
               {PLANS.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => {
-                    if (!isDragging) { setActiveIndex(i); setDragX(0) }
-                  }}
+                  onClick={() => { if (!isDragging) { setActiveIndex(i); setDragX(0) } }}
                   className={`rounded-full transition-all duration-300 ${
-                    i === activeIndex ? 'w-5 h-1.5 bg-accent' : 'w-1.5 h-1.5 bg-contrast/20'
+                    i === activeIndex ? 'w-5 h-1.5 bg-[#FF6A00]' : 'w-1.5 h-1.5 bg-contrast/20'
                   }`}
                   aria-label={`Ver plano ${PLANS[i].name}`}
                 />
               ))}
             </div>
-            <p className="font-body text-xs text-contrast/35">
-              ← arraste para ver outros planos →
-            </p>
+            <p className="font-body text-xs text-contrast/35">← arraste para ver outros planos →</p>
           </div>
         </div>
 
@@ -429,7 +423,7 @@ export default function MyDayPlanSection() {
               key={plan.id}
               className={`relative flex flex-col rounded-2xl transition-all duration-300 ${
                 plan.dark
-                  ? 'bg-contrast border-2 border-accent shadow-2xl shadow-accent/25 md:scale-105 md:-translate-y-3 z-10'
+                  ? 'bg-contrast border-2 border-[#FF6A00] shadow-2xl shadow-[#FF6A00]/25 md:scale-105 md:-translate-y-3 z-10'
                   : 'bg-white border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1'
               }`}
               aria-label={`Plano ${plan.name}`}

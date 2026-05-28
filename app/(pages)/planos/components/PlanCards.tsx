@@ -401,6 +401,7 @@ type PlanCardsProps = {
   headingId?: string
   cardWidth?: number
   mobileSwipe?: boolean
+  accentHex?: string
 }
 
 export default function PlanCards({
@@ -413,6 +414,7 @@ export default function PlanCards({
   headingId = 'planos-heading',
   cardWidth,
   mobileSwipe = false,
+  accentHex,
 }: PlanCardsProps = {}) {
   const [isAnnual, setIsAnnual] = useState(false)
 
@@ -426,7 +428,10 @@ export default function PlanCards({
   const gestureDir = useRef<'h' | 'v' | null>(null)
   const captured = useRef(false)
 
-  const visiblePlans = visiblePlanIds ? plans.filter(p => visiblePlanIds.includes(p.id)) : plans
+  // Preserva a ordem definida em visiblePlanIds (filter ignora a ordem do array original)
+  const visiblePlans = visiblePlanIds
+    ? visiblePlanIds.map(id => plans.find(p => p.id === id)).filter((p): p is Plan => p !== undefined)
+    : plans
   const gridCols = visiblePlans.length <= 2
     ? 'grid-cols-1 md:grid-cols-2'
     : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4'
@@ -492,11 +497,12 @@ export default function PlanCards({
       id="planos"
       className="py-20 px-4 bg-surface"
       aria-labelledby={headingId}
+      style={accentHex ? { '--color-accent': accentHex } as React.CSSProperties : undefined}
     >
       <div className="max-w-6xl mx-auto">
 
         {/* Cabeçalho */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-14">
           <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
             {sectionBadge}
@@ -531,7 +537,7 @@ export default function PlanCards({
                 aria-label="Alternar entre plano mensal e anual"
                 onClick={() => setIsAnnual(a => !a)}
                 className="relative w-12 h-6 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 cursor-pointer"
-                style={{ backgroundColor: isAnnual ? '#88BD23' : '#d1d5db' }}
+                style={{ backgroundColor: isAnnual ? (accentHex ?? '#88BD23') : '#d1d5db' }}
               >
                 <span
                   className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${
@@ -564,33 +570,64 @@ export default function PlanCards({
         {/* ── Mobile swipe deck (only when mobileSwipe=true) ── */}
         {mobileSwipe && (
           <div className="md:hidden mb-6">
-            <div className="relative">
+            <div className="relative pb-8">
+
+              {/* Placeholder invisível segura a altura do container;
+                  todos os cards são absolute para evitar reflow que quebra CSS transitions */}
+              <article className="invisible pointer-events-none flex flex-col rounded-2xl bg-white" aria-hidden="true">
+                <PlanCardContent plan={visiblePlans[0]} isAnnual={isAnnual} ctaOverride={ctaOverride} />
+              </article>
+
               {visiblePlans.map((plan, i) => {
                 const offset = i - swipeIndex
-                if (offset < 0 || offset > 2) return null
-                const isActive = offset === 0
-                const isUltra = plan.id === 'ultra'
+                if (offset < -1 || offset > 2) return null
+
+                const isActive  = offset === 0
+                const isPrev    = offset === -1
+                const isUltra   = plan.id === 'ultra'
                 const isEnterprise = plan.id === 'enterprise'
 
-                const tx = isActive ? swipeDragX : 0
-                const rot = isActive && isSwipeDragging ? swipeDragX / 22 : 0
-                const scale = isActive ? 1 : 1 - offset * 0.04
-                const ty = isActive ? 0 : offset * 14
-                const opacity = offset > 1 ? 0.55 : 1
+                let transform: string
+                let opacity: number
+                let zIndex: number
+
+                if (isPrev) {
+                  // Desliza da esquerda proporcional ao drag direito
+                  const dragRight = Math.max(0, swipeDragX)
+                  transform = `translateX(calc(-110% + ${dragRight}px))`
+                  opacity   = Math.min(1, dragRight / 80)
+                  zIndex    = 5
+                } else if (isActive) {
+                  const rot = isSwipeDragging ? swipeDragX / 22 : 0
+                  transform = `translateX(${swipeDragX}px) rotate(${rot}deg)`
+                  opacity   = 1
+                  zIndex    = 10
+                } else if (offset === 1) {
+                  // Desempilha progressivamente conforme o card ativo é arrastado p/ esquerda
+                  const progress = swipeDragX < 0 ? Math.min(1, Math.abs(swipeDragX) / 180) : 0
+                  const scale    = 0.96 + 0.04 * progress
+                  const ty       = 14 * (1 - progress)
+                  transform = `scale(${scale}) translateY(${ty}px)`
+                  opacity   = 1
+                  zIndex    = 9
+                } else {
+                  transform = `scale(${1 - offset * 0.04}) translateY(${offset * 14}px)`
+                  opacity   = 0.55
+                  zIndex    = 10 - offset
+                }
 
                 return (
                   <div
                     key={plan.id}
-                    className={`${isActive ? 'relative cursor-grab active:cursor-grabbing' : 'absolute inset-x-0 top-0 pointer-events-none'}`}
+                    className={`absolute inset-x-0 top-0 ${isActive ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'}`}
                     style={{
-                      transform: `translateX(${tx}px) rotate(${rot}deg) scale(${scale}) translateY(${ty}px)`,
+                      transform,
                       transformOrigin: 'top center',
-                      zIndex: 10 - offset,
+                      zIndex,
                       opacity,
-                      transition:
-                        isSwipeDragging && isActive
-                          ? 'none'
-                          : 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease',
+                      transition: isSwipeDragging
+                        ? 'none'
+                        : 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease',
                       willChange: 'transform',
                       userSelect: 'none',
                     }}
@@ -618,7 +655,7 @@ export default function PlanCards({
             </div>
 
             {/* Dots + hint */}
-            <div className="mt-5 flex flex-col items-center gap-2" aria-hidden="true">
+            <div className="mt-5 flex flex-col items-center gap-2.5" aria-hidden="true">
               <div className="flex items-center justify-center gap-2">
                 {visiblePlans.map((_, i) => (
                   <button
@@ -631,7 +668,21 @@ export default function PlanCards({
                   />
                 ))}
               </div>
-              <p className="font-body text-xs text-contrast/35">← arraste para ver outros planos →</p>
+              <div className="flex items-center gap-2">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={2.5}
+                  className="w-3.5 h-3.5 text-accent/60"
+                  style={{ animation: 'swipe-nudge 1.4s ease-in-out infinite reverse' }}
+                >
+                  <polyline points="10,3 5,8 10,13" />
+                </svg>
+                <span className="font-body text-xs text-contrast/40">deslize para ver outros planos</span>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={2.5}
+                  className="w-3.5 h-3.5 text-accent/60"
+                  style={{ animation: 'swipe-nudge 1.4s ease-in-out infinite' }}
+                >
+                  <polyline points="6,3 11,8 6,13" />
+                </svg>
+              </div>
             </div>
           </div>
         )}

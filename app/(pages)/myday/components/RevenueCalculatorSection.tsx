@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 const PREMIUM_PRICE = 9.9
 const ULTRA_PRICE = 20
@@ -30,7 +30,7 @@ function SliderInput({ id, students, sliderPct, onChange }: SliderProps) {
         <label htmlFor={id} className="font-body font-semibold text-contrast text-sm">
           Número de alunos
         </label>
-        <span className="font-title text-2xl text-accent">
+        <span className="font-title text-2xl text-[#FF6A00]">
           {students} aluno{students !== 1 ? 's' : ''}
         </span>
       </div>
@@ -44,8 +44,8 @@ function SliderInput({ id, students, sliderPct, onChange }: SliderProps) {
         onChange={(e) => onChange(Number(e.target.value))}
         className="w-full h-2 rounded-full appearance-none cursor-pointer"
         style={{
-          accentColor: 'var(--color-accent)',
-          background: `linear-gradient(to right, var(--color-accent) 0%, var(--color-accent) ${sliderPct}%, #e5e7eb ${sliderPct}%, #e5e7eb 100%)`,
+          accentColor: 'var(--color-myday)',
+          background: `linear-gradient(to right, var(--color-myday) 0%, var(--color-myday) ${sliderPct}%, #e5e7eb ${sliderPct}%, #e5e7eb 100%)`,
         }}
         aria-label="Número de alunos aderindo ao serviço"
         aria-valuemin={1}
@@ -63,6 +63,32 @@ function SliderInput({ id, students, sliderPct, onChange }: SliderProps) {
 
 export default function RevenueCalculatorSection() {
   const [students, setStudents] = useState(100)
+  const [fixedVisible, setFixedVisible] = useState(false)
+
+  const sectionRef = useRef<HTMLElement>(null)
+  const sliderRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    // CSS sticky quebra no Safari/iOS quando html/body têm overflow-x: hidden.
+    // Usamos position:fixed controlado via scroll como fallback universal.
+    if (window.matchMedia('(min-width: 1024px)').matches) return
+
+    const HEADER_H = 64
+    const BUFFER = 80
+
+    const handleScroll = () => {
+      const slider = sliderRef.current
+      const section = sectionRef.current
+      if (!slider || !section) return
+      const sliderBottom = slider.getBoundingClientRect().bottom
+      const sectionBottom = section.getBoundingClientRect().bottom
+      setFixedVisible(sliderBottom < HEADER_H && sectionBottom > HEADER_H + BUFFER)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const sliderPct = ((students - 1) / (500 - 1)) * 100
   const premiumRevenue = students * PREMIUM_PRICE
@@ -71,16 +97,99 @@ export default function RevenueCalculatorSection() {
   const yearlyDiff = monthlyDiff * 12
   const closestPreset = getClosestPreset(students)
 
+  /* ── JSX partials (evita duplicação entre mobile e desktop) ─────────── */
+  const calcCards = (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+      <div className="min-w-0 bg-white border border-gray-200 rounded-2xl p-6" role="region" aria-label="Plano Premium">
+        <p className="font-body font-bold text-contrast uppercase tracking-wider text-xs mb-1">Plano Premium</p>
+        <p className="font-body text-contrast/45 text-xs mb-5">R$9,90/aluno/mês</p>
+        <p className="font-title text-3xl text-[#FF6A00] leading-none" aria-live="polite">
+          {formatBRL(premiumRevenue)}
+        </p>
+        <p className="font-body text-contrast/45 text-xs mt-2">/mês com {students} aluno{students !== 1 ? 's' : ''}</p>
+      </div>
+      <div className="min-w-0 bg-[#FF6A00]/5 border-2 border-[#FF6A00] rounded-2xl p-6 relative" role="region" aria-label="Plano Ultra">
+        <span className="absolute top-3 right-3 bg-[#FF6A00] text-white font-body font-bold text-xs uppercase px-2 py-0.5 rounded-full">Ultra</span>
+        <p className="font-body font-bold text-contrast uppercase tracking-wider text-xs mb-1">Plano Ultra</p>
+        <p className="font-body text-contrast/45 text-xs mb-5">R$20/aluno/mês</p>
+        <p className="font-title text-3xl text-[#FF6A00] leading-none" aria-live="polite">
+          {formatBRL(ultraRevenue)}
+        </p>
+        <p className="font-body text-contrast/45 text-xs mt-2">/mês com {students} aluno{students !== 1 ? 's' : ''}</p>
+      </div>
+    </div>
+  )
+
+  const calcCallout = (
+    <div className="bg-[#FF6A00]/10 border border-[#FF6A00]/20 rounded-2xl px-6 py-4 text-center">
+      <p className="font-body text-contrast/80 text-sm leading-relaxed">
+        Com o <span className="font-bold text-[#FF6A00]">Ultra</span> você fatura{' '}
+        <span className="font-title text-lg text-[#FF6A00]" aria-live="polite">{formatBRL(monthlyDiff)}/mês</span>{' '}
+        a mais — <span className="font-bold text-contrast" aria-live="polite">{formatBRL(yearlyDiff)}/ano</span>
+      </p>
+    </div>
+  )
+
+  const refTables = (
+    <>
+      <p className="font-body text-contrast/45 text-xs uppercase tracking-widest mb-6">
+        Valores de referência — clique para selecionar
+      </p>
+      <div className="mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+        <div className="bg-contrast px-4 py-3">
+          <p className="font-body font-bold text-white text-sm uppercase tracking-wide">Plano Premium</p>
+          <p className="font-body text-white/45 text-xs">R$9,90/aluno/mês</p>
+        </div>
+        <table className="w-full" role="table" aria-label="Tabela Plano Premium">
+          <tbody>
+            {PRESETS.map((n, i) => {
+              const active = n === closestPreset
+              return (
+                <tr key={n} onClick={() => setStudents(n)} className={`cursor-pointer transition-colors duration-150 ${active ? 'bg-[#FF6A00]/10' : i % 2 === 0 ? 'bg-white hover:bg-[#FF6A00]/5' : 'bg-gray-50 hover:bg-[#FF6A00]/5'}`}>
+                  <td className={`px-4 py-2.5 font-body text-sm text-contrast/65 ${active ? 'border-l-2 border-[#FF6A00] font-semibold text-contrast' : ''}`}>{n} alunos</td>
+                  <td className={`px-4 py-2.5 font-body text-sm text-right ${active ? 'text-[#FF6A00] font-bold' : 'text-contrast font-medium'}`}>{formatBRL(n * PREMIUM_PRICE)}/mês</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+        <div className="bg-contrast px-4 py-3 flex items-center justify-between">
+          <div>
+            <p className="font-body font-bold text-white text-sm uppercase tracking-wide">Plano Ultra</p>
+            <p className="font-body text-white/45 text-xs">R$20/aluno/mês</p>
+          </div>
+          <span className="bg-[#FF6A00] text-white font-body font-bold text-xs uppercase tracking-wide px-2.5 py-1 rounded-full">Mais lucrativo</span>
+        </div>
+        <table className="w-full" role="table" aria-label="Tabela Plano Ultra">
+          <tbody>
+            {PRESETS.map((n, i) => {
+              const active = n === closestPreset
+              return (
+                <tr key={n} onClick={() => setStudents(n)} className={`cursor-pointer transition-colors duration-150 ${active ? 'bg-[#FF6A00]/10' : i % 2 === 0 ? 'bg-white hover:bg-[#FF6A00]/5' : 'bg-gray-50 hover:bg-[#FF6A00]/5'}`}>
+                  <td className={`px-4 py-2.5 font-body text-sm text-contrast/65 ${active ? 'border-l-2 border-[#FF6A00] font-semibold text-contrast' : ''}`}>{n} alunos</td>
+                  <td className={`px-4 py-2.5 font-body text-sm text-right ${active ? 'text-[#FF6A00] font-bold' : 'text-contrast font-medium'}`}>{formatBRL(n * ULTRA_PRICE)}/mês</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
+  )
+
   return (
     <section
+      ref={sectionRef}
       id="potencial-receita-myday"
       className="bg-surface"
       aria-labelledby="potencial-receita-heading"
     >
-      {/* Cabeçalho centralizado */}
+      {/* Cabeçalho */}
       <div className="max-w-3xl mx-auto px-6 pt-20 pb-12 text-center">
-        <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
+        <span className="inline-flex items-center gap-2 bg-[#FF6A00]/15 text-[#FF6A00] font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00]" aria-hidden="true" />
           Potencial de Receita
         </span>
         <h2
@@ -88,178 +197,65 @@ export default function RevenueCalculatorSection() {
           className="font-title text-4xl md:text-5xl uppercase text-contrast tracking-wide mb-3"
         >
           Quanto sua academia pode faturar com o{' '}
-          <span className="text-accent">MyDay?</span>
+          <span className="text-[#FF6A00]">MyDay?</span>
         </h2>
         <p className="text-contrast/60 font-body">
           Veja o potencial de receita mensal com base no número de alunos que aderirem ao serviço.
         </p>
       </div>
 
-      {/* ── Slider sticky — APENAS MOBILE ─────────────────────────────
-          Fica preso abaixo do header enquanto as tabelas rolam.
-          No desktop este bloco fica oculto; o slider é renderizado
-          dentro da coluna direita. ──────────────────────────────────── */}
-      <div className="lg:hidden sticky top-16 z-10 bg-surface border-y border-gray-200 shadow-[0_4px_16px_rgba(0,0,0,0.06)] px-6 py-4">
-        <SliderInput
-          id="students-slider-mobile"
-          students={students}
-          sliderPct={sliderPct}
-          onChange={setStudents}
-        />
+      {/* ── MOBILE ─────────────────────────────────────────────────────────
+          overflow-x:hidden em html/body quebra CSS sticky no Safari/iOS.
+          Solução: slider original no fluxo normal + cópia fixed que aparece
+          via JS quando o original sai da tela e a section ainda é visível. ── */}
+      <div className="lg:hidden">
+
+        {/* Slider original — mantém o espaço no layout */}
+        <div ref={sliderRef} className="border-y border-gray-200 px-6 py-5 bg-surface">
+          <SliderInput id="students-slider-mobile" students={students} sliderPct={sliderPct} onChange={setStudents} />
+        </div>
+
+        {/* Slider fixed — aparece instantaneamente, some com fade ao sair da seção */}
+        <div
+          className={`fixed top-16 left-0 right-0 z-30 bg-surface border-b border-gray-200 px-6 py-5 shadow-md ${!fixedVisible && 'pointer-events-none'}`}
+          style={{
+            opacity: fixedVisible ? 1 : 0,
+            transition: fixedVisible ? 'none' : 'opacity 300ms ease-in-out',
+          }}
+        >
+          <SliderInput id="students-slider-mobile-fixed" students={students} sliderPct={sliderPct} onChange={setStudents} />
+        </div>
+
+        {/* Resultados — scrollam abaixo do slider */}
+        <div className="px-6 pt-6 pb-2">
+          {calcCards}
+          {calcCallout}
+        </div>
+
+        {/* Tabelas de referência */}
+        <div className="px-6 py-8">
+          {refTables}
+        </div>
       </div>
 
-      {/* ── Layout split full-width ────────────────────────────────────
-          Mobile: flex-col — cards (order-1) acima, tabelas (order-2) abaixo.
-          Desktop: grid 2 cols — tabelas à esquerda, calculadora à direita. ── */}
-      <div className="flex flex-col lg:grid lg:grid-cols-2 border-t border-gray-200">
+      {/* ── DESKTOP ───────────────────────────────────────────────────────
+          Grid 2 colunas — tabelas à esquerda, calculadora sticky à direita. ── */}
+      <div className="hidden lg:grid lg:grid-cols-2 border-t border-gray-200">
 
-        {/* ── ESQUERDA: Tabelas ───────────────────────────────────────── */}
-        <div className="order-2 lg:order-1 min-w-0 px-6 lg:pl-10 xl:pl-20 lg:pr-12 py-8 lg:py-12 border-b lg:border-b-0 lg:border-r border-gray-200">
-          <p className="font-body text-contrast/45 text-xs uppercase tracking-widest mb-6">
-            Valores de referência — clique para selecionar
-          </p>
-
-          {/* Tabela Premium */}
-          <div className="mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm">
-            <div className="bg-contrast px-4 py-3 flex items-center justify-between">
-              <div>
-                <p className="font-body font-bold text-white text-sm uppercase tracking-wide">Plano Premium</p>
-                <p className="font-body text-white/45 text-xs">R$9,90/aluno/mês</p>
-              </div>
-            </div>
-            <table className="w-full" role="table" aria-label="Tabela Plano Premium">
-              <tbody>
-                {PRESETS.map((n, i) => {
-                  const active = n === closestPreset
-                  return (
-                    <tr
-                      key={n}
-                      onClick={() => setStudents(n)}
-                      className={`cursor-pointer transition-colors duration-150 ${
-                        active ? 'bg-accent/10' : i % 2 === 0 ? 'bg-white hover:bg-accent/5' : 'bg-gray-50 hover:bg-accent/5'
-                      }`}
-                    >
-                      <td className={`px-4 py-2.5 font-body text-sm text-contrast/65 ${active ? 'border-l-2 border-accent font-semibold text-contrast' : ''}`}>
-                        {n} alunos
-                      </td>
-                      <td className={`px-4 py-2.5 font-body text-sm text-right ${active ? 'text-accent font-bold' : 'text-contrast font-medium'}`}>
-                        {formatBRL(n * PREMIUM_PRICE)}/mês
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Tabela Ultra */}
-          <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
-            <div className="bg-contrast px-4 py-3 flex items-center justify-between">
-              <div>
-                <p className="font-body font-bold text-white text-sm uppercase tracking-wide">Plano Ultra</p>
-                <p className="font-body text-white/45 text-xs">R$20/aluno/mês</p>
-              </div>
-              <span className="bg-accent text-white font-body font-bold text-xs uppercase tracking-wide px-2.5 py-1 rounded-full">
-                Mais lucrativo
-              </span>
-            </div>
-            <table className="w-full" role="table" aria-label="Tabela Plano Ultra">
-              <tbody>
-                {PRESETS.map((n, i) => {
-                  const active = n === closestPreset
-                  return (
-                    <tr
-                      key={n}
-                      onClick={() => setStudents(n)}
-                      className={`cursor-pointer transition-colors duration-150 ${
-                        active ? 'bg-accent/10' : i % 2 === 0 ? 'bg-white hover:bg-accent/5' : 'bg-gray-50 hover:bg-accent/5'
-                      }`}
-                    >
-                      <td className={`px-4 py-2.5 font-body text-sm text-contrast/65 ${active ? 'border-l-2 border-accent font-semibold text-contrast' : ''}`}>
-                        {n} alunos
-                      </td>
-                      <td className={`px-4 py-2.5 font-body text-sm text-right ${active ? 'text-accent font-bold' : 'text-contrast font-medium'}`}>
-                        {formatBRL(n * ULTRA_PRICE)}/mês
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+        {/* Esquerda: tabelas */}
+        <div className="min-w-0 px-6 lg:pl-10 xl:pl-20 lg:pr-12 py-12 border-r border-gray-200">
+          {refTables}
         </div>
 
-        {/* ── DIREITA: Calculadora ────────────────────────────────────── */}
-        <div className="order-1 lg:order-2 min-w-0 px-6 lg:pl-12 lg:pr-10 xl:pr-10 py-8 lg:py-12 flex flex-col justify-center">
-
-          {/* Slider — APENAS DESKTOP (mobile usa o sticky acima) */}
-          <div className="hidden lg:block mb-10">
-            <SliderInput
-              id="students-slider-desktop"
-              students={students}
-              sliderPct={sliderPct}
-              onChange={setStudents}
-            />
+        {/* Direita: calculadora sticky */}
+        <div className="min-w-0 px-6 lg:pl-12 lg:pr-10 xl:pr-10 py-12 flex flex-col justify-center sticky top-16 self-start bg-surface">
+          <div className="mb-10">
+            <SliderInput id="students-slider-desktop" students={students} sliderPct={sliderPct} onChange={setStudents} />
           </div>
-
-          {/* Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <div className="min-w-0 bg-white border border-gray-200 rounded-2xl p-6" role="region" aria-label="Plano Premium">
-              <p className="font-body font-bold text-contrast uppercase tracking-wider text-xs mb-1">Plano Premium</p>
-              <p className="font-body text-contrast/45 text-xs mb-5">R$9,90/aluno/mês</p>
-              <p
-                className="font-title text-3xl lg:text-4xl 2xl:text-5xl text-accent leading-none"
-                aria-live="polite"
-                aria-label={`Receita Premium: ${formatBRL(premiumRevenue)} por mês`}
-              >
-                {formatBRL(premiumRevenue)}
-              </p>
-              <p className="font-body text-contrast/45 text-xs mt-2">
-                /mês com {students} aluno{students !== 1 ? 's' : ''}
-              </p>
-            </div>
-
-            <div className="min-w-0 bg-accent/5 border-2 border-accent rounded-2xl p-6 relative" role="region" aria-label="Plano Ultra">
-              <span className="absolute top-3 right-3 bg-accent text-white font-body font-bold text-xs uppercase px-2 py-0.5 rounded-full">
-                Ultra
-              </span>
-              <p className="font-body font-bold text-contrast uppercase tracking-wider text-xs mb-1">Plano Ultra</p>
-              <p className="font-body text-contrast/45 text-xs mb-5">R$20/aluno/mês</p>
-              <p
-                className="font-title text-3xl lg:text-4xl 2xl:text-5xl text-accent leading-none"
-                aria-live="polite"
-                aria-label={`Receita Ultra: ${formatBRL(ultraRevenue)} por mês`}
-              >
-                {formatBRL(ultraRevenue)}
-              </p>
-              <p className="font-body text-contrast/45 text-xs mt-2">
-                /mês com {students} aluno{students !== 1 ? 's' : ''}
-              </p>
-            </div>
-          </div>
-
-          {/* Callout */}
-          <div className="bg-accent/10 border border-accent/20 rounded-2xl px-6 py-4 text-center">
-            <p className="font-body text-contrast/80 text-sm leading-relaxed">
-              Com o <span className="font-bold text-accent">Ultra</span> você fatura{' '}
-              <span
-                className="font-title text-lg text-accent"
-                aria-live="polite"
-                aria-label={`${formatBRL(monthlyDiff)} por mês a mais`}
-              >
-                {formatBRL(monthlyDiff)}/mês
-              </span>{' '}
-              a mais —{' '}
-              <span
-                className="font-bold text-contrast"
-                aria-live="polite"
-                aria-label={`${formatBRL(yearlyDiff)} por ano`}
-              >
-                {formatBRL(yearlyDiff)}/ano
-              </span>
-            </p>
-          </div>
+          {calcCards}
+          {calcCallout}
         </div>
+
       </div>
     </section>
   )

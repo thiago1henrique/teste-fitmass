@@ -165,7 +165,7 @@ function Bubble({ msg }: { msg: Msg }) {
             <span key={i} className={`block ${line === '' ? 'h-1' : ''}`}>{line}</span>
           ))}
           <div className="text-right mt-0.5 -mb-0.5">
-            <span className="text-[6.5px] text-black/30 leading-none">
+            <span className="text-[6.5px] text-black/30 leading-none" suppressHydrationWarning>
               {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>

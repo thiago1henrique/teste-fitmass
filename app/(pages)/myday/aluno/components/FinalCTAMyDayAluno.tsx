@@ -1,18 +1,18 @@
-const WHATSAPP_CONSULTOR =
-  'https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+gostaria+de+falar+com+um+consultor+sobre+o+MyDay&type=phone_number&app_absent=0'
+const WHATSAPP_MYDAY =
+  'https://api.whatsapp.com/send/?phone=5541984810567&text=Ol%C3%A1%2C+vim+do+site+e+quero+come%C3%A7ar+a+usar+o+Fitmass+MyDay&type=phone_number&app_absent=0'
 
 const bullets = [
-  'Nova fonte de receita recorrente',
-  'Integração com sua Bioscan',
-  'Sem trabalho operacional',
-  'Diferencial competitivo real',
+  '7 dias grátis',
+  'Sem baixar nada',
+  'Funciona no WhatsApp',
+  'Cancelamento simples',
 ]
 
-export default function FinalCTAMyDay() {
+export default function FinalCTAMyDayAluno() {
   return (
     <section
-      id="cta-final-myday"
-      aria-labelledby="cta-myday-heading"
+      id="cta-final-myday-aluno"
+      aria-labelledby="cta-myday-aluno-heading"
       className="relative bg-contrast overflow-hidden"
     >
       {/* SVG diagonal transition from bg-surface (FAQ) */}
@@ -30,7 +30,7 @@ export default function FinalCTAMyDay() {
 
       {/* Glows */}
       <div
-        className="pointer-events-none absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[#FF6A00]/15 blur-3xl"
+        className="pointer-events-none absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[#FF6A00]/10 blur-3xl"
         aria-hidden="true"
       />
       <div
@@ -43,7 +43,7 @@ export default function FinalCTAMyDay() {
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(37,182,235,1) 1px, transparent 1px), linear-gradient(90deg, rgba(37,182,235,1) 1px, transparent 1px)',
+            'linear-gradient(rgba(255,106,0,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,106,0,1) 1px, transparent 1px)',
           backgroundSize: '72px 72px',
         }}
         aria-hidden="true"
@@ -53,28 +53,31 @@ export default function FinalCTAMyDay() {
         {/* Badge */}
         <span className="inline-flex items-center gap-2 bg-[#FF6A00]/15 text-[#FF6A00] font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00]" aria-hidden="true" />
-          Nova Receita
+          Comece hoje
         </span>
 
         {/* Heading */}
         <h2
-          id="cta-myday-heading"
+          id="cta-myday-aluno-heading"
           className="font-title text-4xl md:text-5xl uppercase text-white tracking-wide mb-4"
         >
-          Sua academia pronta para gerar nova receita?
+          Pronto para parar de adivinhar?
         </h2>
 
         {/* Subtitle */}
-        <p className="font-body text-white/60 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-          Fale com nosso time e descubra qual plano faz mais sentido para o tamanho da sua academia.
+        <p className="font-body text-white/60 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+          Junte-se a quem já usa dados reais para mudar o corpo.
         </p>
 
         {/* Bullets */}
-        <ul className="inline-flex flex-col gap-3 text-left mb-10" aria-label="Benefícios">
+        <ul
+          className="inline-flex flex-wrap justify-center gap-x-6 gap-y-3 mb-10"
+          aria-label="Benefícios"
+        >
           {bullets.map((item) => (
-            <li key={item} className="flex items-center gap-3">
+            <li key={item} className="flex items-center gap-2">
               <svg
-                className="w-5 h-5 text-[#FF6A00] shrink-0"
+                className="w-4 h-4 text-[#FF6A00] shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -83,7 +86,7 @@ export default function FinalCTAMyDay() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
-              <span className="font-body text-white/80">{item}</span>
+              <span className="font-body text-white/80 text-sm">{item}</span>
             </li>
           ))}
         </ul>
@@ -91,12 +94,12 @@ export default function FinalCTAMyDay() {
         {/* CTA */}
         <div className="flex justify-center mb-6">
           <a
-            href={WHATSAPP_CONSULTOR}
+            href={WHATSAPP_MYDAY}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 bg-[#FF6A00] text-white font-body font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-xl hover:bg-[#FF6A00]/90 active:scale-95 transition-[background-color,transform] duration-200"
           >
-            Falar com um consultor
+            Começar agora — é grátis
             <svg
               className="w-4 h-4"
               fill="none"
@@ -110,9 +113,9 @@ export default function FinalCTAMyDay() {
           </a>
         </div>
 
-        {/* Social proof */}
+        {/* Microcopy */}
         <p className="font-body text-white/35 text-sm tracking-wide">
-          Já são +150 academias oferecendo o MyDay para seus alunos
+          Sem cartão de crédito. Abre no WhatsApp que você já tem.
         </p>
       </div>
     </section>

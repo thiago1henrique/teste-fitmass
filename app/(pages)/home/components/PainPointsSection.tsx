@@ -1,3 +1,10 @@
+function hexToRgba(hex: string, alpha: number) {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
 type PainItem = { problem: string; solution: string }
 
 type Props = {
@@ -8,6 +15,7 @@ type Props = {
   leftHeader?: string
   rightHeader?: string
   headingId?: string
+  accentHex?: string
 }
 
 const DEFAULT_ITEMS: PainItem[] = [
@@ -45,6 +53,7 @@ export default function PainPointsSection({
   leftHeader = 'Sem avaliação profissional',
   rightHeader = 'Com Fitmass',
   headingId = 'dores-heading',
+  accentHex = '#88BD23',
 }: Props) {
   return (
     <section className="py-16 px-4 bg-surface" aria-labelledby={headingId}>
@@ -52,8 +61,11 @@ export default function PainPointsSection({
 
         {/* Heading */}
         <div className="text-center mb-10">
-          <span className="inline-flex items-center gap-2 bg-accent/15 text-accent font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
+          <span
+            className="inline-flex items-center gap-2 font-body font-semibold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-5"
+            style={{ backgroundColor: hexToRgba(accentHex, 0.15), color: accentHex }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: accentHex }} aria-hidden="true" />
             {badge}
           </span>
           <h2
@@ -73,7 +85,6 @@ export default function PainPointsSection({
           {/* Cabeçalho */}
           <div className="grid grid-cols-2 divide-x divide-red-100">
             <div className="flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-red-100/60 border-b border-red-200/50">
-              {/* Ícone apenas no desktop */}
               <span className="hidden sm:flex w-5 h-5 rounded-full bg-red-100 items-center justify-center shrink-0" aria-hidden="true">
                 <svg className="w-3 h-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -83,14 +94,26 @@ export default function PainPointsSection({
                 {leftHeader}
               </span>
             </div>
-            <div className="flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-accent/12 border-b border-accent/25">
-              {/* Ícone apenas no desktop */}
-              <span className="hidden sm:flex w-5 h-5 rounded-full bg-accent items-center justify-center shrink-0" aria-hidden="true">
+            <div
+              className="flex items-center gap-2 px-3 sm:px-6 py-3 sm:py-4 border-b"
+              style={{
+                backgroundColor: hexToRgba(accentHex, 0.08),
+                borderBottomColor: hexToRgba(accentHex, 0.25),
+              }}
+            >
+              <span
+                className="hidden sm:flex w-5 h-5 rounded-full items-center justify-center shrink-0"
+                style={{ backgroundColor: accentHex }}
+                aria-hidden="true"
+              >
                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </span>
-              <span className="font-title text-[10px] sm:text-sm uppercase tracking-wide text-accent font-semibold leading-tight">
+              <span
+                className="font-title text-[10px] sm:text-sm uppercase tracking-wide font-semibold leading-tight"
+                style={{ color: accentHex }}
+              >
                 {rightHeader}
               </span>
             </div>
@@ -105,7 +128,10 @@ export default function PainPointsSection({
               <div className="px-3 sm:px-6 py-3 sm:py-5 bg-red-50/70">
                 <p className="font-body text-red-900/65 text-xs sm:text-sm leading-relaxed">{problem}</p>
               </div>
-              <div className="px-3 sm:px-6 py-3 sm:py-5 bg-accent/8">
+              <div
+                className="px-3 sm:px-6 py-3 sm:py-5"
+                style={{ backgroundColor: hexToRgba(accentHex, 0.05) }}
+              >
                 <p className="font-body text-contrast text-xs sm:text-sm leading-relaxed font-medium">{solution}</p>
               </div>
             </div>

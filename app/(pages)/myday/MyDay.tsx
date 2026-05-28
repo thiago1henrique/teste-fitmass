@@ -43,22 +43,24 @@ export default function MyDay() {
       <PainPointsSection
         items={MYDAY_ITEMS}
         badge="Comparativo"
-        title={<>O que muda para{' '}<span className="text-accent">a sua academia</span></>}
+        title={<>O que muda para{' '}<span className="text-[#FF6A00]">a sua academia</span></>}
         subtitle="Veja o antes e depois de oferecer o MyDay para seus alunos."
         leftHeader="Sem MyDay"
         rightHeader="Com Fitmass MyDay"
         headingId="myday-comparison-heading"
+        accentHex="#FF6A00"
       />
       <PlanCards
         visiblePlanIds={['ultra', 'premium']}
         ctaOverride="/planos"
         mobileSwipe={true}
         sectionBadge="Planos Fitmass"
-        sectionTitle={<>Escolha quanto sua academia{' '}<span className="text-accent">fatura por aluno</span></>}
+        sectionTitle={<>Escolha quanto sua academia{' '}<span className="text-[#FF6A00]">fatura por aluno</span></>}
         sectionSubtitle="O MyDay está incluído nos planos Fitmass Premium e Ultra. A diferença está em quanto fica para você."
         showToggle={false}
         headingId="myday-planos-fitmass-heading"
         cardWidth={300}
+        accentHex="#FF6A00"
       />
       <FinalCTAMyDay />
     </main>

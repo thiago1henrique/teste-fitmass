@@ -11,7 +11,7 @@ export type DropdownItem = {
   image?: string
   description?: string
   cta?: string
-  altView?: { label: string; description: string; cta?: string }
+  altView?: { label: string; href?: string; description: string; cta?: string }
 }
 
 export type NavLink =
@@ -32,13 +32,20 @@ function MobileProductCard({
   onClose,
   animDelay,
   visible,
+  activePathname,
 }: {
   item: DropdownItem
   onClose: () => void
   animDelay: number
   visible: boolean
+  activePathname: string
 }) {
-  const [viewIndex, setViewIndex] = useState(0)
+  const resolvedInitial = item.altView?.href === activePathname ? 1 : 0
+  const [viewIndex, setViewIndex] = useState(resolvedInitial)
+
+  useEffect(() => {
+    setViewIndex(item.altView?.href === activePathname ? 1 : 0)
+  }, [activePathname, item.altView?.href])
   const activeDesc = viewIndex === 1 && item.altView ? item.altView.description : item.description
   const activeCta  = viewIndex === 1 && item.altView?.cta ? item.altView.cta : item.cta
 
@@ -114,7 +121,7 @@ function MobileProductCard({
           {/* CTA */}
           {activeCta && (
             <a
-              href={item.href}
+              href={viewIndex === 1 && item.altView?.href ? item.altView.href : item.href}
               onClick={onClose}
               className="inline-flex items-center gap-1.5 font-body font-semibold text-[11px] uppercase tracking-widest
                 text-secondary border border-secondary/30 px-4 py-2.5 rounded-xl self-start
@@ -245,7 +252,7 @@ export default function Header({
     if (hoveredDropdownItem) {
       if (cardHideTimer.current) clearTimeout(cardHideTimer.current)
       setDisplayedItem(hoveredDropdownItem)
-      setCardViewIndex(0)
+      setCardViewIndex(hoveredDropdownItem.altView?.href === pathname ? 1 : 0)
       cancelAnimationFrame(cardRaf.current)
       cardRaf.current = requestAnimationFrame(() => setCardVisible(true))
     } else {
@@ -397,6 +404,7 @@ export default function Header({
                         onClose={() => setMenuOpen(false)}
                         animDelay={100 + nonDropCount * 55 + 100 + idx * 80}
                         visible={menuOpen}
+                        activePathname={pathname}
                       />
                     ))}
                   </div>
@@ -481,7 +489,9 @@ export default function Header({
             {navLinks.map((link) => {
               if (link.dropdown) {
                 const isMegaOpen = megaMenuLabel === link.label
-                const isActive = link.dropdown.some((item) => pathname === item.href)
+                const isActive = link.dropdown.some(
+                  (item) => pathname === item.href || pathname === item.altView?.href
+                )
                 return (
                   <div
                     key={link.label}
@@ -702,7 +712,11 @@ export default function Header({
                     )}
                     {(displayedItem.cta || displayedItem.altView?.cta) && (
                       <a
-                        href={displayedItem.href}
+                        href={
+                          cardViewIndex === 1 && displayedItem.altView?.href
+                            ? displayedItem.altView.href
+                            : displayedItem.href
+                        }
                         onClick={closeMegaMenu}
                         style={{
                           opacity: cardVisible ? 1 : 0,
