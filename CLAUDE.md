@@ -172,3 +172,8 @@ Security headers (`X-Frame-Options: DENY`, `Strict-Transport-Security`, `X-Conte
 ### Legacy files (non-functional)
 
 `scripts/import-wp-posts.ts`, `scripts/categorize-posts.ts`, `scripts/fix-categories.ts`, and `docker-compose.yml` reference Prisma/PostgreSQL from before the Amplify migration and are non-functional. The `db:seed` script in `package.json` also references a removed `prisma/seed.ts`.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

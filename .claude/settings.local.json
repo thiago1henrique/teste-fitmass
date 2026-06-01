@@ -90,7 +90,12 @@
       "Bash(npm run *)",
       "Bash(echo \"PID=$!\")",
       "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"fitness SaaS dark navigation mobile mega menu premium\" --design-system -p \"Fitmass Header\" -f markdown)",
-      "Bash(Remove-Item \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\\\\\\(pages\\)\\\\myday\\\\components\\\\ComparisonSection.tsx\")"
+      "Bash(Remove-Item \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\\\\\\(pages\\)\\\\myday\\\\components\\\\ComparisonSection.tsx\")",
+      "WebFetch(domain:github.com)",
+      "Bash(uv --version)",
+      "Bash(where.exe speckit *)",
+      "Bash(where.exe specify *)",
+      "PowerShell(& \".specify/extensions/git/scripts/powershell/initialize-repo.ps1\")"
     ]
   }
 }
