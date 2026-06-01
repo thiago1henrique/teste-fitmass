@@ -282,14 +282,32 @@ if ($env:GIT_BRANCH_NAME) {
         $branchSuffix = Get-BranchName -Description $featureDesc
     }
 
+    # Read branch_numbering and branch_prefix from init-options.json
+    $initOptionsPath = Join-Path $repoRoot '.specify/init-options.json'
+    $initBranchNumbering = 'sequential'
+    $initBranchPrefix = ''
+    if (Test-Path $initOptionsPath) {
+        try {
+            $initOptions = Get-Content $initOptionsPath -Raw | ConvertFrom-Json
+            if ($initOptions.branch_numbering) { $initBranchNumbering = $initOptions.branch_numbering }
+            if ($initOptions.branch_prefix)    { $initBranchPrefix    = $initOptions.branch_prefix }
+        } catch {
+            Write-Verbose "[specify] Could not parse init-options.json; using defaults"
+        }
+    }
+
     if ($Timestamp -and $Number -ne 0) {
         Write-Warning "[specify] Warning: -Number is ignored when -Timestamp is used"
         $Number = 0
     }
 
-    if ($Timestamp) {
+    if ($initBranchNumbering -eq 'none' -and -not $Timestamp) {
+        # No numeric prefix — use branch_prefix + suffix only (e.g. feat/feature-name)
+        $featureNum = ''
+        $branchName = "$initBranchPrefix$branchSuffix"
+    } elseif ($Timestamp) {
         $featureNum = Get-Date -Format 'yyyyMMdd-HHmmss'
-        $branchName = "$featureNum-$branchSuffix"
+        $branchName = "$initBranchPrefix$featureNum-$branchSuffix"
     } else {
         if ($Number -eq 0) {
             if ($DryRun -and $hasGit) {
@@ -304,7 +322,7 @@ if ($env:GIT_BRANCH_NAME) {
         }
 
         $featureNum = ('{0:000}' -f $Number)
-        $branchName = "$featureNum-$branchSuffix"
+        $branchName = "$initBranchPrefix$featureNum-$branchSuffix"
     }
 }
 

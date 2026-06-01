@@ -1,7 +1,8 @@
 {
   "ai": "claude",
   "ai_skills": true,
-  "branch_numbering": "sequential",
+  "branch_numbering": "none",
+  "branch_prefix": "feat/",
   "context_file": "CLAUDE.md",
   "here": true,
   "integration": "claude",

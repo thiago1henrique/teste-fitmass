@@ -37,7 +37,6 @@ export default function MyDay() {
   return (
     <main>
       <HeroMyDay />
-      <FAQMyDay />
       <MyDayPlanSection />
       <RevenueCalculatorSection />
       <PainPointsSection
@@ -62,6 +61,7 @@ export default function MyDay() {
         cardWidth={300}
         accentHex="#FF6A00"
       />
+      <FAQMyDay />
       <FinalCTAMyDay />
     </main>
   )

@@ -32,11 +32,11 @@ export default function Home() {
       <PartnersTicker />
       {/* <PersonalizationSection /> */}
       {/* <BrazilMapSection /> */}
-      <FAQHome />
       <Suspense>
         <BlogPreviewSection />
       </Suspense>
       <ContactSection />
+      <FAQHome />
       <FinalCTASection />
     </main>
   )

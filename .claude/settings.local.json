@@ -95,7 +95,11 @@
       "Bash(uv --version)",
       "Bash(where.exe speckit *)",
       "Bash(where.exe specify *)",
-      "PowerShell(& \".specify/extensions/git/scripts/powershell/initialize-repo.ps1\")"
+      "PowerShell(& \".specify/extensions/git/scripts/powershell/initialize-repo.ps1\")",
+      "PowerShell(& \".specify/extensions/git/scripts/powershell/create-new-feature.ps1\" -DryRun \"perfil do aluno com historico de treinos\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\" -Directory)",
+      "Bash(Move-Item \"app/\\(pages\\)/home/components/EmotionalHookSection.tsx\" \"app/\\(pages\\)/myday/aluno/components/EmotionalHookSection.tsx\")",
+      "PowerShell(Move-Item \"app/\\(pages\\)/home/components/EmotionalHookSection.tsx\" \"app/\\(pages\\)/myday/aluno/components/EmotionalHookSection.tsx\")"
     ]
   }
 }
