@@ -52,6 +52,21 @@ const schema = a.schema({
       allow.guest().to(['read']),
       allow.publicApiKey().to(['read']),
     ]),
+
+  ChatQuestion: a
+    .model({
+      question:    a.string().required(),
+      answer:      a.string(),
+      actionType:  a.enum(['ANSWER', 'WHATSAPP']),
+      whatsappMsg: a.string(),
+      order:       a.integer().required(),
+      active:      a.boolean().default(true),
+    })
+    .authorization((allow) => [
+      allow.groups(['ADMIN', 'EDITOR']),
+      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
+    ]),
 })
 
 export type Schema = ClientSchema<typeof schema>

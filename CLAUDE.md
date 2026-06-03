@@ -176,4 +176,7 @@ Security headers (`X-Frame-Options: DENY`, `Strict-Transport-Security`, `X-Conte
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
+at `specs/chat-widget/plan.md`. See also `specs/chat-widget/quickstart.md`
+for step-by-step implementation guidance and `specs/chat-widget/data-model.md`
+for the ChatQuestion schema definition.
 <!-- SPECKIT END -->

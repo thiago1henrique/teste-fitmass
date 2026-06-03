@@ -56,13 +56,6 @@ export default function ContactSection() {
       className="relative bg-contrast overflow-hidden"
       aria-label="Entre em contato com a Fitmass"
     >
-      {/* Diagonal de entrada */}
-      <div className="pointer-events-none" aria-hidden="true">
-        <svg viewBox="0 0 1440 72" preserveAspectRatio="none" className="w-full" style={{ height: 72, display: 'block' }}>
-          <polygon fill="#F8F8F8" points="0,0 1440,0 0,72" />
-        </svg>
-      </div>
-
       {/* Glow decorativo */}
       <div className="absolute -top-40 -right-40 w-150 h-150 rounded-full bg-accent/8 blur-3xl pointer-events-none" aria-hidden="true" />
 
