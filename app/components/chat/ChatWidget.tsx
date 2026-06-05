@@ -1,10 +1,13 @@
 import { unstable_cache } from 'next/cache'
-import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data'
-import { cookies } from 'next/headers'
+import { Amplify } from 'aws-amplify'
+import { generateClient } from 'aws-amplify/data'
 import outputs from '@/amplify_outputs.json'
 import type { Schema } from '@/amplify/data/resource'
 import { listAll } from '@/lib/list-all'
 import ChatWidgetClient from './ChatWidgetClient'
+
+Amplify.configure(outputs, { ssr: true })
+const amplifyClient = generateClient<Schema>({ authMode: 'apiKey' })
 
 type Question = {
   id: string
@@ -24,12 +27,7 @@ const DEFAULT_QUESTIONS: Question[] = [
 
 const getQuestions = unstable_cache(
   async () => {
-    const client = generateServerClientUsingCookies<Schema>({
-      config:   outputs,
-      cookies,
-      authMode: 'apiKey',
-    })
-    const raw = await listAll((token) => client.models.ChatQuestion.list({ nextToken: token }))
+    const raw = await listAll((token) => amplifyClient.models.ChatQuestion.list({ nextToken: token }))
     return raw
       .filter((q) => q.active !== false)
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))

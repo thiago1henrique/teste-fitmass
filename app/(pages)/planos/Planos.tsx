@@ -6,12 +6,15 @@ import BeforeAfterSection from '../home/components/BeforeAfterSection'
 import FAQ from './components/FAQ'
 import CTASection from './components/CTASection'
 import BlogPreviewSection from '../../components/blog/BlogPreviewSection'
+import EventBanners from '@/app/components/events/EventBanners'
 
 export default function Planos() {
   return (
     <main>
       <HeroSection />
+      <EventBanners position="after-plans-hero" />
       <PlanCards />
+      <EventBanners position="after-plan-cards" />
       <ComparisonAccordion />
       <PartnersTicker topDiagonal />
       <BeforeAfterSection />

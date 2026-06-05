@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { MouseEvent } from 'react'
+import EventPromoStrip from '@/app/components/events/EventPromoStrip'
 
 export type DropdownItem = {
   label: string
@@ -445,6 +446,7 @@ export default function Header({
         }`}
         style={{ background: '#050505' }}
       >
+        <EventPromoStrip />
         {/* Gradiente atmosférico — espelha o visual do mega menu */}
         <div
           className="pointer-events-none absolute inset-0 overflow-hidden"

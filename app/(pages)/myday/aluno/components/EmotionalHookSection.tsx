@@ -9,7 +9,7 @@ export default function EmotionalHookSection() {
         >
           Você treina.<br />
           Come bem.<br />
-          <span className="text-white/50">Mas os resultados não aparecem.</span>
+          <span className="text-[#FF6A00]">Mas os resultados não aparecem.</span>
         </h2>
 
         <div className="space-y-8">

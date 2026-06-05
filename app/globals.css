@@ -51,6 +51,19 @@
 }
 
 /* =====================================================
+   EVENT THEME OVERRIDES
+   Variáveis dinâmicas sobrescritas pelo EventThemeProvider
+   quando um evento sazonal está ativo. Fallback para as
+   cores padrão da marca.
+   ===================================================== */
+
+:root {
+  --event-accent:    var(--color-accent);
+  --event-secondary: var(--color-secondary);
+  --event-surface:   var(--color-surface);
+}
+
+/* =====================================================
    KEYFRAMES
    ===================================================== */
 

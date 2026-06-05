@@ -65,29 +65,30 @@ export default function RevenueCalculatorSection() {
   const [students, setStudents] = useState(100)
   const [fixedVisible, setFixedVisible] = useState(false)
 
+  const sliderRef  = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
-  const sliderRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // CSS sticky quebra no Safari/iOS quando html/body têm overflow-x: hidden.
-    // Usamos position:fixed controlado via scroll como fallback universal.
     if (window.matchMedia('(min-width: 1024px)').matches) return
 
     const HEADER_H = 64
-    const BUFFER = 80
 
-    const handleScroll = () => {
-      const slider = sliderRef.current
+    const update = () => {
+      const slider  = sliderRef.current
       const section = sectionRef.current
       if (!slider || !section) return
-      const sliderBottom = slider.getBoundingClientRect().bottom
+      const sliderBottom  = slider.getBoundingClientRect().bottom
       const sectionBottom = section.getBoundingClientRect().bottom
-      setFixedVisible(sliderBottom < HEADER_H && sectionBottom > HEADER_H + BUFFER)
+      setFixedVisible(sliderBottom < HEADER_H && sectionBottom > HEADER_H)
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', update, { passive: true })
+    document.addEventListener('scroll', update, { passive: true })
+    update()
+    return () => {
+      window.removeEventListener('scroll', update)
+      document.removeEventListener('scroll', update)
+    }
   }, [])
 
   const sliderPct = ((students - 1) / (500 - 1)) * 100
@@ -215,12 +216,13 @@ export default function RevenueCalculatorSection() {
           <SliderInput id="students-slider-mobile" students={students} sliderPct={sliderPct} onChange={setStudents} />
         </div>
 
-        {/* Slider fixed — aparece instantaneamente, some com fade ao sair da seção */}
+        {/* Slider fixed — desliza de cima com fade ao entrar, some com fade ao sair */}
         <div
           className={`fixed top-16 left-0 right-0 z-30 bg-surface border-b border-gray-200 px-6 py-5 shadow-md ${!fixedVisible && 'pointer-events-none'}`}
           style={{
             opacity: fixedVisible ? 1 : 0,
-            transition: fixedVisible ? 'none' : 'opacity 300ms ease-in-out',
+            transform: fixedVisible ? 'translateY(0)' : 'translateY(-8px)',
+            transition: 'opacity 220ms ease-out, transform 220ms ease-out',
           }}
         >
           <SliderInput id="students-slider-mobile-fixed" students={students} sliderPct={sliderPct} onChange={setStudents} />

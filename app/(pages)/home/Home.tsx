@@ -17,14 +17,18 @@ import FAQHome from './components/FAQHome'
 import BlogPreviewSection from '../../components/blog/BlogPreviewSection'
 import ContactSection from './components/ContactSection'
 import FinalCTASection from './components/FinalCTASection'
+import EventBanners from '@/app/components/events/EventBanners'
 
 export default function Home() {
   return (
     <main>
       <HeroHome />
+      <EventBanners position="after-hero" />
       <ProductsSection />
       <HowItWorksSection />
+      <EventBanners position="after-how-it-works" />
       <TestimonialsSection />
+      <EventBanners position="after-testimonials" />
       <BeforeAfterSection />
       {/* <AboutUsSection /> */}
       <PainPointsSection />
@@ -37,6 +41,7 @@ export default function Home() {
       </Suspense>
       <ContactSection />
       <FAQHome />
+      <EventBanners position="before-cta" />
       <FinalCTASection />
     </main>
   )
