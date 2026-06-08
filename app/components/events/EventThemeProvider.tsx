@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useSyncExternalStore, type ReactNode } from 'react'
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { getActiveEvent, deactivateEvent, EVENTS_SYNC_EVENT } from '@/app/lib/events'
 import { ActiveEventContext } from './ActiveEventContext'
 import type { FitmassEventData, FitmassEventThemeColors } from '@/app/types/events'
@@ -37,9 +37,18 @@ function subscribe(callback: () => void): () => void {
   }
 }
 
-// Always reads current localStorage — runs on every render, router-cache-proof
+// Cache the last parsed result so getSnapshot returns a stable reference when
+// localStorage hasn't changed — required by useSyncExternalStore to avoid
+// triggering an infinite re-render loop.
+let _snapshotCache: { key: string; value: FitmassEventData | null } | null = null
+
 function getSnapshot(): FitmassEventData | null {
-  return getActiveEvent()
+  if (typeof window === 'undefined') return null
+  const key = `${localStorage.getItem('fitmass_active_event')}::${localStorage.getItem('fitmass_events')}`
+  if (_snapshotCache && _snapshotCache.key === key) return _snapshotCache.value
+  const value = getActiveEvent()
+  _snapshotCache = { key, value }
+  return value
 }
 
 interface Props {
@@ -47,8 +56,13 @@ interface Props {
 }
 
 export default function EventThemeProvider({ children }: Props) {
-  // useSyncExternalStore calls getSnapshot() on every render, so even when
-  // Next.js restores this component from the router cache, the data is fresh.
+  // Delay exposing event data until after hydration: React uses getSnapshot()
+  // (not getServerSnapshot) during the client hydration pass, so it would
+  // immediately read localStorage and mismatch the server-rendered null tree.
+  // mounted=false keeps the context null on the first render, matching the server.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   const activeEvent = useSyncExternalStore(subscribe, getSnapshot, () => null)
 
   useEffect(() => {
@@ -73,7 +87,7 @@ export default function EventThemeProvider({ children }: Props) {
   }, [activeEvent])
 
   return (
-    <ActiveEventContext.Provider value={activeEvent}>
+    <ActiveEventContext.Provider value={mounted ? activeEvent : null}>
       {children}
     </ActiveEventContext.Provider>
   )

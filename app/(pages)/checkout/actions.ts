@@ -87,6 +87,16 @@ export async function processCheckout(
               credit_card: {
                 installments: parseInt(d.installments ?? '1', 10),
                 card_token: cardToken,
+                card: {
+                  billing_address: {
+                    line_1: [d.number, d.street, d.neighborhood].filter(Boolean).join(', '),
+                    line_2: d.complement ?? '',
+                    zip_code: d.zipCode.replace('-', ''),
+                    city: d.city,
+                    state: d.state,
+                    country: 'BR',
+                  },
+                },
               },
             },
           ]

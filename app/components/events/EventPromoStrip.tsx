@@ -1,6 +1,6 @@
 'use client'
 
-import { useSyncExternalStore } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { X } from 'lucide-react'
 import { useActiveEvent } from './ActiveEventContext'
@@ -21,6 +21,9 @@ function getDismissedSnapshot(eventId: string | undefined): boolean {
 }
 
 export default function EventPromoStrip() {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   const event = useActiveEvent()
 
   const dismissed = useSyncExternalStore(
@@ -29,7 +32,7 @@ export default function EventPromoStrip() {
     () => false, // SSR snapshot — always show until client hydrates
   )
 
-  if (!event || dismissed) return null
+  if (!mounted || !event || dismissed) return null
 
   const strip = event.promoStrip
 

@@ -99,7 +99,11 @@
       "PowerShell(& \".specify/extensions/git/scripts/powershell/create-new-feature.ps1\" -DryRun \"perfil do aluno com historico de treinos\")",
       "Bash(Get-ChildItem -Path \"d:\\\\Dev\\\\Fitmass\\\\fitmass-site\\\\app\" -Directory)",
       "Bash(Move-Item \"app/\\(pages\\)/home/components/EmotionalHookSection.tsx\" \"app/\\(pages\\)/myday/aluno/components/EmotionalHookSection.tsx\")",
-      "PowerShell(Move-Item \"app/\\(pages\\)/home/components/EmotionalHookSection.tsx\" \"app/\\(pages\\)/myday/aluno/components/EmotionalHookSection.tsx\")"
+      "PowerShell(Move-Item \"app/\\(pages\\)/home/components/EmotionalHookSection.tsx\" \"app/\\(pages\\)/myday/aluno/components/EmotionalHookSection.tsx\")",
+      "WebSearch",
+      "WebFetch(domain:docs.pagar.me)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:medium.com)"
     ]
   }
 }

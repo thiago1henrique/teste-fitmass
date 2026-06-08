@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { useForm, useWatch, type FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -213,6 +213,12 @@ export default function CheckoutForm({ plan }: Props) {
     defaultValues: { paymentMethod: 'credit_card', installments: '1' },
     mode: 'onTouched',
   })
+
+  useEffect(() => {
+    if (submitResult?.success) {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    }
+  }, [submitResult?.success])
 
   const paymentMethod = useWatch({ control: form.control, name: 'paymentMethod' }) ?? 'credit_card'
   const installmentsRaw = useWatch({ control: form.control, name: 'installments' })
