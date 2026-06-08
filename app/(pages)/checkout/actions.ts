@@ -66,8 +66,8 @@ export async function processCheckout(
       phones: {
         mobile_phone: {
           country_code: '55',
-          area_code: rawPhone.slice(0, 2),
-          number: rawPhone.slice(2),
+          area_code: rawPhone.slice(2, 4),
+          number: rawPhone.slice(4),
         },
       },
     },
