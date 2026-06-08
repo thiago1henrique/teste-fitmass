@@ -42,7 +42,10 @@ export async function processCheckout(
   }
 
   const d = parsed.data
-  const rawPhone = d.phone.replace(/\D/g, '')
+  const rawPhoneDigits = d.phone.replace(/\D/g, '')
+  const rawPhone = rawPhoneDigits.length > 11 && rawPhoneDigits.startsWith('55')
+    ? rawPhoneDigits.slice(2)
+    : rawPhoneDigits
 
   if (d.paymentMethod === 'credit_card' && !cardToken) {
     return { success: false, error: 'Token do cartão ausente. Recarregue a página e tente novamente.' }
@@ -66,8 +69,8 @@ export async function processCheckout(
       phones: {
         mobile_phone: {
           country_code: '55',
-          area_code: rawPhone.slice(2, 4),
-          number: rawPhone.slice(4),
+          area_code: rawPhone.slice(0, 2),
+          number: rawPhone.slice(2),
         },
       },
     },
