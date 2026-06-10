@@ -22,6 +22,11 @@ export async function processCheckout(
   cardToken?: string,
 ): Promise<CheckoutResult> {
   const secretKey = process.env.PAGARME_SECRET_KEY?.trim()
+  console.log('[processCheckout] DEBUG:', {
+    secretKeyExists: !!secretKey,
+    publicKeyExists: !!process.env.NEXT_PUBLIC_PAGARME_PUBLIC_KEY,
+    nodeEnv: process.env.NODE_ENV,
+  })
   if (!secretKey) {
     console.error('[processCheckout] PAGARME_SECRET_KEY não configurada em .env.local')
     return { success: false, error: 'Configuração de pagamento ausente. Contate o suporte.' }
