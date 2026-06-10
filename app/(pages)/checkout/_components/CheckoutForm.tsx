@@ -207,12 +207,29 @@ export default function CheckoutForm({ plan }: Props) {
   const [isPending, startTransition] = useTransition()
   const [submitResult, setSubmitResult] = useState<CheckoutResult | null>(null)
   const [errorCount, setErrorCount] = useState(0)
+  const [publicKey, setPublicKey] = useState<string | null>(null)
 
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: { paymentMethod: 'credit_card', installments: '1' },
     mode: 'onTouched',
   })
+
+  useEffect(() => {
+    fetch('/api/checkout/public-key')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.publicKey) {
+          console.log('[CheckoutForm] ✓ Public key loaded successfully from /api/checkout/public-key')
+          setPublicKey(data.publicKey)
+        } else if (data.error) {
+          console.error('[CheckoutForm] ✗ Server error:', data.error)
+        }
+      })
+      .catch((err) => {
+        console.error('[CheckoutForm] ✗ Failed to fetch public key:', err)
+      })
+  }, [])
 
   useEffect(() => {
     if (submitResult?.success) {
@@ -232,13 +249,13 @@ export default function CheckoutForm({ plan }: Props) {
         let cardToken: string | undefined
 
         if (data.paymentMethod === 'credit_card') {
-          const publicKey = process.env.NEXT_PUBLIC_PAGARME_PUBLIC_KEY
-          console.log('[CheckoutForm] DEBUG client:', { publicKey, hasPublicKey: !!publicKey })
           if (!publicKey) {
+            console.error('[CheckoutForm] ✗ Public key not loaded')
             setSubmitResult({ success: false, error: 'Configuração de pagamento ausente. Contate o suporte.' })
             return
           }
 
+          console.log('[CheckoutForm] ✓ Tokenizing card with public key')
           const [expMonthStr, expYearStr] = (data.cardExpiry ?? '').split('/')
           const tokenRes = await fetch(
             `https://api.pagar.me/core/v5/tokens?appId=${publicKey}`,
@@ -260,13 +277,14 @@ export default function CheckoutForm({ plan }: Props) {
 
           if (!tokenRes.ok) {
             const errBody = await tokenRes.text()
-            console.error('[CheckoutForm] tokenização falhou:', errBody)
+            console.error('[CheckoutForm] ✗ Tokenization failed:', errBody)
             setSubmitResult({ success: false, error: 'Dados do cartão inválidos. Verifique os dados e tente novamente.' })
             return
           }
 
           const tokenData = await tokenRes.json()
           cardToken = tokenData.id
+          console.log('[CheckoutForm] ✓ Card tokenized successfully')
         }
 
         // Strip raw card fields — only token + installments reach the server
