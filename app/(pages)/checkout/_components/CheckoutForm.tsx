@@ -233,6 +233,7 @@ export default function CheckoutForm({ plan }: Props) {
 
         if (data.paymentMethod === 'credit_card') {
           const publicKey = process.env.NEXT_PUBLIC_PAGARME_PUBLIC_KEY
+          console.log('[CheckoutForm] DEBUG client:', { publicKey, hasPublicKey: !!publicKey })
           if (!publicKey) {
             setSubmitResult({ success: false, error: 'Configuração de pagamento ausente. Contate o suporte.' })
             return
