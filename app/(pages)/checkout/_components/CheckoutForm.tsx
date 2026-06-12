@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { checkoutSchema, type CheckoutFormData } from '../schema'
-import { processCheckout, type CheckoutResult } from '../actions'
+import type { CheckoutResult } from '../actions'
 import PersonalInfo from './fields/PersonalInfo'
 import AddressInfo from './fields/AddressInfo'
 import PaymentSelector from './fields/PaymentSelector'
@@ -290,7 +290,12 @@ export default function CheckoutForm({ plan }: Props) {
         // Strip raw card fields — only token + installments reach the server
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { cardNumber, cardName, cardExpiry, cardCvv, ...nonCardData } = data
-        const result = await processCheckout(nonCardData, plan.id, plan.price, plan.name, cardToken)
+        const res = await fetch('/api/checkout/process', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ raw: nonCardData, planId: plan.id, planPrice: plan.price, planName: plan.name, cardToken }),
+        })
+        const result: CheckoutResult = await res.json()
         setSubmitResult(result)
       } catch (err) {
         console.error('[CheckoutForm] erro inesperado:', err)
