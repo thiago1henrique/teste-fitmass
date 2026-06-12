@@ -2,7 +2,6 @@
   "name": "fitmass",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@11.5.2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -35,15 +34,6 @@
     "recharts": "^3.8.1",
     "sharp": "^0.34.5",
     "zod": "^3.25.17"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "core-js",
-      "esbuild",
-      "sharp",
-      "unrs-resolver"
-    ]
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.22.0",
