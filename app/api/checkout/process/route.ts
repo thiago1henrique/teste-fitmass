@@ -10,7 +10,7 @@ function isoDateFromNow(days: number): string {
 export async function POST(req: NextRequest) {
   const secretKey = process.env.PAGARME_SECRET_KEY?.trim()
   if (!secretKey) {
-    return Response.json({ success: false, error: 'Configuração de pagamento ausente. Contate o suporte.' }, { status: 500 })
+    return Response.json({ success: false, error: `[API] PAGARME_SECRET_KEY ausente. nodeEnv=${process.env.NODE_ENV}` }, { status: 500 })
   }
   if (!secretKey.startsWith('sk_')) {
     return Response.json({ success: false, error: 'Chave de API inválida. Use a chave secreta (sk_...) do painel Pagar.me.' }, { status: 500 })
