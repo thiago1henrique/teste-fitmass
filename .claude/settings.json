@@ -10,7 +10,9 @@
       "Bash(git commit *)",
       "Bash(git add *)",
       "Bash(rm .npmrc)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(cd /d/Dev/Pessoal/fitmass-site)",
+      "Bash(node -e \"const n=require\\('next/package.json'\\); console.log\\('next', n.version\\)\")"
     ],
     "additionalDirectories": [
       "d:\\Dev\\Pessoal\\fitmass-site"

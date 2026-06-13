@@ -17,6 +17,20 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // AWS Amplify exposes console environment variables during the BUILD phase
+  // (`npm run build`) but NOT to the SSR/compute Lambda at runtime. Server-only
+  // vars (no NEXT_PUBLIC_ prefix) stay as runtime `process.env` lookups, which are
+  // undefined on the Lambda — that's why PAGARME_SECRET_KEY was "ausente" in prod
+  // while NEXT_PUBLIC_PAGARME_PUBLIC_KEY (inlined at build) worked. Listing the
+  // server secrets here inlines their build-time value into the bundle via webpack
+  // DefinePlugin. They are only referenced in server route handlers, so the value
+  // never ships to the client.
+  env: {
+    PAGARME_SECRET_KEY: process.env.PAGARME_SECRET_KEY ?? '',
+    PAGAR_ME_ACCOUNT_ID: process.env.PAGAR_ME_ACCOUNT_ID ?? '',
+    AMPLIFY_USERPOOL_ID: process.env.AMPLIFY_USERPOOL_ID ?? '',
+    AWS_S3_BUCKET: process.env.AWS_S3_BUCKET ?? '',
+  },
   // Prevent Next.js from bundling native-addon packages — they must be loaded at runtime
   // from node_modules so the platform-correct binary (Linux on Lambda) is used.
   serverExternalPackages: ['sharp'],

@@ -9,6 +9,13 @@ function isoDateFromNow(days: number): string {
 
 export async function POST(req: NextRequest) {
   const secretKey = process.env.PAGARME_SECRET_KEY?.trim()
+  console.log('[checkout/process] env check', {
+    nodeEnv: process.env.NODE_ENV,
+    hasSecret: !!secretKey,
+    secretLen: secretKey?.length ?? 0,
+    secretPrefix: secretKey ? secretKey.slice(0, 3) : null,
+    hasAccountId: !!process.env.PAGAR_ME_ACCOUNT_ID,
+  })
   if (!secretKey) {
     return Response.json({ success: false, error: `[API] PAGARME_SECRET_KEY ausente. nodeEnv=${process.env.NODE_ENV}` }, { status: 500 })
   }
