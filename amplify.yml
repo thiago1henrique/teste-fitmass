@@ -4,6 +4,13 @@ frontend:
     preBuild:
       commands:
         - npm install --legacy-peer-deps
+        - echo "PAGARME_SECRET_KEY=${PAGARME_SECRET_KEY}" >> .env.production.local
+        - echo "PAGAR_ME_ACCOUNT_ID=${PAGAR_ME_ACCOUNT_ID}" >> .env.production.local
+        - echo "AMPLIFY_USERPOOL_ID=${AMPLIFY_USERPOOL_ID}" >> .env.production.local
+        - echo "AWS_REGION=${AWS_REGION}" >> .env.production.local
+        - echo "AWS_S3_BUCKET=${AWS_S3_BUCKET}" >> .env.production.local
+        - echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> .env.production.local
+        - echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> .env.production.local
     build:
       commands:
         - npm run build
